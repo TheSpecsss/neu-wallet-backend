@@ -6,8 +6,14 @@
 		"source.removeUnusedImports": "always"
 	},
 	"editor.tabSize": 2,
+
 	"typescript.preferences.importModuleSpecifier": "non-relative",
 	"[typescript]": {
 		"editor.defaultFormatter": "biomejs.biome"
-	}
+	},
+
+	"javascript.preferences.importModuleSpecifier": "non-relative",
+	"[javascript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
 }

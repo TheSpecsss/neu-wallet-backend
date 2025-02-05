@@ -7,3 +7,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id                  String            @id
+  name                String
+  email               String            @unique
+  password            String
+  accountType         Int
+  studentId           String
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  isDeleted           Boolean
+  deletedAt           DateTime?
+  wallet              UserWallet?
+  auditLogs           UserAuditLog[]
+  transactions        UserTransaction[] @relation("UserTransactions")
+  relatedTransactions UserTransaction[] @relation("RelatedTransactions")
+}
+
+model UserWallet {
+  id        String   @id
+  userId    String   @unique
+  balance   Decimal  @default(0.00)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model UserTransaction {
+  id            String   @id
+  userId        String
+  relatedUserId String
+  amount        Decimal
+  type          Int
+  createdAt     DateTime @default(now())
+  User          User     @relation("UserTransactions", fields: [userId], references: [id])
+  relatedUser   User     @relation("RelatedTransactions", fields: [relatedUserId], references: [id])
+}
+
+model UserAuditLog {
+  id          String   @id
+  userId      String
+  type        Int
+  description String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}

@@ -4,6 +4,7 @@
     "": {
       "name": "neu-wallet-backend",
       "dependencies": {
+        "@prisma/client": "^6.3.1",
         "nodejs-snowflake": "^2.0.1",
       },
       "devDependencies": {
@@ -37,6 +38,8 @@
     "@biomejs/cli-win32-x64": ["@biomejs/cli-win32-x64@1.9.4", "", { "os": "win32", "cpu": "x64" }, "sha512-8Y5wMhVIPaWe6jw2H+KlEm4wP/f7EW3810ZLmDlrEEy5KvBsb9ECEfu/kMWD484ijfQ8+nIi0giMgu9g1UAuuA=="],
 
     "@faker-js/faker": ["@faker-js/faker@9.4.0", "", {}, "sha512-85+k0AxaZSTowL0gXp8zYWDIrWclTbRPg/pm/V0dSFZ6W6D4lhcG3uuZl4zLsEKfEvs69xDbLN2cHQudwp95JA=="],
+
+    "@prisma/client": ["@prisma/client@6.3.1", "", { "peerDependencies": { "prisma": "*", "typescript": ">=5.1.0" }, "optionalPeers": ["prisma", "typescript"] }, "sha512-ARAJaPs+eBkemdky/XU3cvGRl+mIPHCN2lCXsl5Vlb0E2gV+R6IN7aCI8CisRGszEZondwIsW9Iz8EJkTdykyA=="],
 
     "@prisma/debug": ["@prisma/debug@6.3.0", "", {}, "sha512-m1lQv//0Rc5RG8TBpNUuLCxC35Ghi5XfpPmL83Gh04/GICHD2J5H2ndMlaljrUNaQDF9dOxIuFAYP1rE9wkXkg=="],
 
