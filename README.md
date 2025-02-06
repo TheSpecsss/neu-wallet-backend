@@ -38,17 +38,19 @@ Before proceeding, ensure you have the following installed on your system:
     ```
     DATABASE_URL=postgresql://admin:password@localhost:5432/postgres
     ```
-
-3. **Install Dependencies:**
+4. **Install Dependencies:**
     ```bash
-    bun run install
+    bun install
     ```
 
-4. **Verify the setup:**
-
-    Ensure the PostgreSQL container is running:
+5. **Initialize your Database:**
     ```bash
-    docker ps
+    bun run db:push
+    ```
+
+6. **Run a test to check if everything is working:**
+    ```bash
+    bun test
     ```
 
 ### Required VS Code Extensions

@@ -12,8 +12,7 @@ model User {
   name                String
   email               String            @unique
   password            String
-  accountType         Int
-  studentId           String
+  accountType         String
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
   isDeleted           Boolean
