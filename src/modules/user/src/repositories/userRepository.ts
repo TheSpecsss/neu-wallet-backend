@@ -3,30 +3,45 @@ import { UserMapper } from "@/modules/user/src/mappers/userMapper";
 import type { Pagination, QueryOptions } from "@/shared/constant";
 import { db } from "@/shared/infrastructure/database";
 
-// TODO: Enable when wallet or transactions module are implemented
-// interface HydrateOption {
-// 	wallet: boolean;
-//  transactions: boolean
-// }
+export interface UserHydrateOption {
+	wallet?: boolean;
+	//  transactions?: boolean; // TODO: Enable when transactions module are implemented
+}
 
 export interface IUserRepository {
-	findUserById(userId: string, options?: QueryOptions): Promise<IUser | null>;
-	findUsersByIds(userIds: string[], options?: QueryOptions): Promise<IUser[]>;
-	findUsersByPagination(pagination: Pagination, options?: QueryOptions): Promise<IUser[]>;
+	findUserById(
+		userId: string,
+		options?: QueryOptions,
+		hydrate?: UserHydrateOption,
+	): Promise<IUser | null>;
+	findUsersByIds(
+		userIds: string[],
+		options?: QueryOptions,
+		hydrate?: UserHydrateOption,
+	): Promise<IUser[]>;
+	findUsersByPagination(
+		pagination: Pagination,
+		options?: QueryOptions,
+		hydrate?: UserHydrateOption,
+	): Promise<IUser[]>;
 	getUsersTotalPages(perPage: number, includeDeleted?: boolean): Promise<number>;
 }
 
 export class UserRepository implements IUserRepository {
-	private _userDatabase;
-	private _userMapper;
+	private _database;
+	private _mapper;
 
-	constructor(userDatabase = db.user, userMapper = UserMapper) {
-		this._userDatabase = userDatabase;
-		this._userMapper = userMapper;
+	constructor(database = db.user, mapper = UserMapper) {
+		this._database = database;
+		this._mapper = mapper;
 	}
 
-	async findUserById(userId: string, options?: QueryOptions): Promise<IUser | null> {
-		const users = await this.findUsersByIds([userId], options);
+	async findUserById(
+		userId: string,
+		options?: QueryOptions,
+		hydrate?: UserHydrateOption,
+	): Promise<IUser | null> {
+		const users = await this.findUsersByIds([userId], options, hydrate);
 
 		if (users.length === 0) {
 			return null;
@@ -35,39 +50,50 @@ export class UserRepository implements IUserRepository {
 		return users[0];
 	}
 
-	public async findUsersByIds(userIds: string[], options?: QueryOptions): Promise<IUser[]> {
-		const usersRaw = await this._userDatabase.findMany({
+	public async findUsersByIds(
+		userIds: string[],
+		options?: QueryOptions,
+		hydrate?: UserHydrateOption,
+	): Promise<IUser[]> {
+		const usersRaw = await this._database.findMany({
 			where: {
 				id: { in: userIds },
-				...this._deletedUserFilter(options?.includeDeleted),
+				...this._deletedFilter(options?.includeDeleted),
+			},
+			include: {
+				wallet: hydrate?.wallet ?? false,
 			},
 		});
 
-		return usersRaw.map((user) => this._userMapper.toDomain(user));
+		return usersRaw.map((user) => this._mapper.toDomain(user));
 	}
 
 	public async findUsersByPagination(
 		pagination: Pagination,
 		options?: QueryOptions,
+		hydrate?: UserHydrateOption,
 	): Promise<IUser[]> {
-		const usersRaw = await this._userDatabase.findMany({
+		const usersRaw = await this._database.findMany({
 			skip: pagination.start,
 			take: pagination.size,
-			where: this._deletedUserFilter(options?.includeDeleted),
+			where: this._deletedFilter(options?.includeDeleted),
 			orderBy: [{ createdAt: "asc" }],
+			include: {
+				wallet: hydrate?.wallet ?? false,
+			},
 		});
 
-		return usersRaw.map((user) => this._userMapper.toDomain(user));
+		return usersRaw.map((user) => this._mapper.toDomain(user));
 	}
 
 	public async getUsersTotalPages(perPage: number, includeDeleted?: boolean): Promise<number> {
-		const totalCount = await this._userDatabase.count({
-			where: this._deletedUserFilter(includeDeleted),
+		const totalCount = await this._database.count({
+			where: this._deletedFilter(includeDeleted),
 		});
 		return Math.ceil(totalCount / perPage);
 	}
 
-	private _deletedUserFilter(includeDeleted?: boolean) {
+	private _deletedFilter(includeDeleted?: boolean) {
 		if (includeDeleted) return {};
 
 		return {
@@ -75,3 +101,4 @@ export class UserRepository implements IUserRepository {
 		};
 	}
 }
+

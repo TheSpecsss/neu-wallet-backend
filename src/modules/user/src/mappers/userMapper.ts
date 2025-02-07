@@ -14,6 +14,7 @@ export class UserMapper {
 			email: user.emailValue,
 			password: user.password,
 			accountType: user.accountTypeValue,
+			walletId: user.walletIdValue,
 			isDeleted: user.isDeleted,
 			deletedAt: user.deletedAt,
 			createdAt: user.createdAt,

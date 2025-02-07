@@ -6,15 +6,16 @@ import {
 	UserRepository,
 } from "@/modules/user/src/repositories/userRepository";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
+import { seedWallet } from "@/modules/wallet/tests/utils/seedWallet";
 import { db } from "@/shared/infrastructure/database";
 
-const assertUser = (userValue: IUser, expectedUserValue: IUserRawObject) => {
-	expect(userValue!.idValue).toBe(expectedUserValue.id);
-	expect(userValue!.nameValue).toBe(expectedUserValue.name);
-	expect(userValue!.emailValue).toBe(expectedUserValue.email);
-	expect(userValue!.password).toBe(expectedUserValue.password);
-	expect(userValue!.accountTypeValue).toBe(expectedUserValue.accountType);
-	expect(userValue!.isDeleted).toBe(expectedUserValue.isDeleted);
+const assertUser = (value: IUser | null, expectedValue: IUserRawObject) => {
+	expect(value!.idValue).toBe(expectedValue.id);
+	expect(value!.nameValue).toBe(expectedValue.name);
+	expect(value!.emailValue).toBe(expectedValue.email);
+	expect(value!.password).toBe(expectedValue.password);
+	expect(value!.accountTypeValue).toBe(expectedValue.accountType);
+	expect(value!.isDeleted).toBe(expectedValue.isDeleted);
 };
 
 describe("Test User Repository findUsersByIds", () => {
@@ -29,8 +30,11 @@ describe("Test User Repository findUsersByIds", () => {
 	});
 
 	it("should retrieve a users by ids", async () => {
-		const seededUserOne = await seedUser();
-		const seededUserTwo = await seedUser();
+		const seededWalletOne = await seedWallet();
+		const seededWalletTwo = await seedWallet();
+
+		const seededUserOne = await seedUser({ walletId: seededWalletOne.id });
+		const seededUserTwo = await seedUser({ walletId: seededWalletTwo.id });
 
 		const users = await userRepository.findUsersByIds([seededUserOne.id, seededUserTwo.id]);
 
@@ -40,8 +44,11 @@ describe("Test User Repository findUsersByIds", () => {
 	});
 
 	it("should only retrieve existing users", async () => {
-		const seededUserOne = await seedUser();
-		const seededUserTwo = await seedUser();
+		const seededWalletOne = await seedWallet();
+		const seededWalletTwo = await seedWallet();
+
+		const seededUserOne = await seedUser({ walletId: seededWalletOne.id });
+		const seededUserTwo = await seedUser({ walletId: seededWalletTwo.id });
 		const seededUserIdThree = "non-existing-user-id";
 
 		const users = await userRepository.findUsersByIds([
@@ -57,9 +64,17 @@ describe("Test User Repository findUsersByIds", () => {
 	});
 
 	it("should retrieve deleted users when includeDeleted is true", async () => {
-		const seededUserOne = await seedUser();
-		const seededUserTwo = await seedUser();
-		const seededUserThree = await seedUser({ isDeleted: true, deletedAt: new Date() });
+		const seededWalletOne = await seedWallet();
+		const seededWalletTwo = await seedWallet();
+		const seededWalletThree = await seedWallet();
+
+		const seededUserOne = await seedUser({ walletId: seededWalletOne.id });
+		const seededUserTwo = await seedUser({ walletId: seededWalletTwo.id });
+		const seededUserThree = await seedUser({
+			walletId: seededWalletThree.id,
+			isDeleted: true,
+			deletedAt: new Date(),
+		});
 
 		const users = await userRepository.findUsersByIds(
 			[seededUserOne.id, seededUserTwo.id, seededUserThree.id],
@@ -73,9 +88,17 @@ describe("Test User Repository findUsersByIds", () => {
 	});
 
 	it("should not retrieve deleted users when includeDeleted is false", async () => {
-		const seededUserOne = await seedUser();
-		const seededUserTwo = await seedUser();
-		const seededUserThree = await seedUser({ isDeleted: true, deletedAt: new Date() });
+		const seededWalletOne = await seedWallet();
+		const seededWalletTwo = await seedWallet();
+		const seededWalletThree = await seedWallet();
+
+		const seededUserOne = await seedUser({ walletId: seededWalletOne.id });
+		const seededUserTwo = await seedUser({ walletId: seededWalletTwo.id });
+		const seededUserThree = await seedUser({
+			walletId: seededWalletThree.id,
+			isDeleted: true,
+			deletedAt: new Date(),
+		});
 
 		const users = await userRepository.findUsersByIds(
 			[seededUserOne.id, seededUserTwo.id, seededUserThree.id],

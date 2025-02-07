@@ -17,19 +17,21 @@ model User {
   updatedAt           DateTime          @updatedAt
   isDeleted           Boolean
   deletedAt           DateTime?
-  wallet              UserWallet?
+  walletId            String            @unique
+  wallet              UserWallet        @relation(fields: [walletId], references: [id])
   auditLogs           UserAuditLog[]
   transactions        UserTransaction[] @relation("UserTransactions")
   relatedTransactions UserTransaction[] @relation("RelatedTransactions")
 }
 
 model UserWallet {
-  id        String   @id
-  userId    String   @unique
-  balance   Decimal  @default(0.00)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
+  id        String    @id
+  balance   Decimal   @default(0.00)
+  isDeleted Boolean
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User?
 }
 
 model UserTransaction {

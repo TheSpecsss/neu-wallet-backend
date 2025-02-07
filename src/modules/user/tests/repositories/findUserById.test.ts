@@ -5,16 +5,17 @@ import {
 	type IUserRepository,
 	UserRepository,
 } from "@/modules/user/src/repositories/userRepository";
-import { db } from "@/shared/infrastructure/database";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
+import { seedWallet } from "@/modules/wallet/tests/utils/seedWallet";
+import { db } from "@/shared/infrastructure/database";
 
-const assertUser = (user: IUser, expectedUserValue: IUserRawObject) => {
-	expect(user!.idValue).toBe(expectedUserValue.id);
-	expect(user!.nameValue).toBe(expectedUserValue.name);
-	expect(user!.emailValue).toBe(expectedUserValue.email);
-	expect(user!.password).toBe(expectedUserValue.password);
-	expect(user!.accountTypeValue).toBe(expectedUserValue.accountType);
-	expect(user!.isDeleted).toBe(expectedUserValue.isDeleted);
+const assertUser = (value: IUser | null, expectedValue: IUserRawObject) => {
+	expect(value!.idValue).toBe(expectedValue.id);
+	expect(value!.nameValue).toBe(expectedValue.name);
+	expect(value!.emailValue).toBe(expectedValue.email);
+	expect(value!.password).toBe(expectedValue.password);
+	expect(value!.accountTypeValue).toBe(expectedValue.accountType);
+	expect(value!.isDeleted).toBe(expectedValue.isDeleted);
 };
 
 describe("Test User Repository findUserById", () => {
@@ -29,23 +30,48 @@ describe("Test User Repository findUserById", () => {
 	});
 
 	it("should retrieve existing user found by Id", async () => {
-		const seededUser = await seedUser();
+		const seededWallet = await seedWallet();
+		const seededUser = await seedUser({ walletId: seededWallet.id });
 
 		const user = await userRepository.findUserById(seededUser.id);
 
-		assertUser(user!, seededUser);
+		assertUser(user, seededUser);
 	});
 
-  it("should retrieve deleted user when includeDeleted is true", async () => {
-		const seededUser = await seedUser({ isDeleted: true, deletedAt: new Date() });
+	it("should retrieve deleted user when includeDeleted is true", async () => {
+		const seededWallet = await seedWallet();
+		const seededUser = await seedUser({
+			walletId: seededWallet.id,
+			isDeleted: true,
+			deletedAt: new Date(),
+		});
 
 		const user = await userRepository.findUserById(seededUser.id, { includeDeleted: true });
 
-		assertUser(user!, seededUser);
+		assertUser(user, seededUser);
+	});
+
+	it("should hydrate wallet in the users", async () => {
+		const seededWallet = await seedWallet();
+		const seededUser = await seedUser({ walletId: seededWallet.id });
+
+		const user = await userRepository.findUserById(
+			seededUser.id,
+			{ includeDeleted: false },
+			{ wallet: true },
+		);
+
+		assertUser(user, seededUser);
+		expect(user!.wallet!.idValue).toBe(seededWallet.id);
 	});
 
 	it("should return null when includeDeleted is false and user is deleted", async () => {
-		const seededUser = await seedUser({ isDeleted: true, deletedAt: new Date() });
+		const seededWallet = await seedWallet();
+		const seededUser = await seedUser({
+			walletId: seededWallet.id,
+			isDeleted: true,
+			deletedAt: new Date(),
+		});
 
 		const user = await userRepository.findUserById(seededUser.id, { includeDeleted: false });
 
