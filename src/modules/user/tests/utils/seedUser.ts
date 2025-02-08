@@ -16,6 +16,7 @@ export const seedUser = async (
 		email: faker.internet.email({ provider: "neu.edu.ph" }),
 		password: faker.internet.password(),
 		accountType: faker.helpers.arrayElement(Object.values(USER_ACCOUNT_TYPE)),
+		walletId: new SnowflakeID().toString(),
 		isDeleted: false,
 		deletedAt: null,
 		createdAt: new Date(),

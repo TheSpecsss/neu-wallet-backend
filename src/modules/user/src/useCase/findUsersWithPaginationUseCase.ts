@@ -23,11 +23,12 @@ export class FindUsersWithPaginationUseCase {
 	public async execute(
 		dto: FindUsersWithPaginationDTO,
 	): Promise<FindUsersWithPaginationResponseDTO> {
-		const { perPage, page, options } = dto;
+		const { perPage, page, options, hydrate } = dto;
 
 		const users = await this._userRepository.findUsersByPagination(
 			{ start: (page - 1) * perPage, size: perPage },
 			options,
+			hydrate,
 		);
 
 		const totalPages = await this._userRepository.getUsersTotalPages(

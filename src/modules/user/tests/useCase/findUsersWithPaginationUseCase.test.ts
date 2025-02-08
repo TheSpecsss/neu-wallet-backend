@@ -1,6 +1,7 @@
 import { beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { FindUsersWithPaginationUseCase } from "@/modules/user/src/useCase/findUsersWithPaginationUseCase";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
+import { seedWallet } from "@/modules/wallet/tests/utils/seedWallet";
 import { db } from "@/shared/infrastructure/database";
 
 describe("FindUsersWithPaginationUseCase", () => {
@@ -15,9 +16,13 @@ describe("FindUsersWithPaginationUseCase", () => {
 	});
 
 	it("should return users, limited by pagination size", async () => {
-		const seededUserOne = await seedUser();
-		const seededUserTwo = await seedUser();
-		const seededUserThree = await seedUser();
+		const seededWalletOne = await seedWallet();
+		const seededWalletTwo = await seedWallet();
+		const seededWalletThree = await seedWallet();
+
+		const seededUserOne = await seedUser({ walletId: seededWalletOne.id });
+		const seededUserTwo = await seedUser({ walletId: seededWalletTwo.id });
+		const seededUserThree = await seedUser({ walletId: seededWalletThree.id });
 
 		const result = await findUsersWithPaginationUseCase.execute({
 			perPage: 2,
@@ -36,12 +41,17 @@ describe("FindUsersWithPaginationUseCase", () => {
 	});
 
 	it("should return with delete users since includeDeleted is true, limited by pagination size", async () => {
-		const seededUserOne = await seedUser();
+		const seededWalletOne = await seedWallet();
+		const seededWalletTwo = await seedWallet();
+		const seededWalletThree = await seedWallet();
+
+		const seededUserOne = await seedUser({ walletId: seededWalletOne.id });
 		const seededUserTwo = await seedUser({
+			walletId: seededWalletTwo.id,
 			isDeleted: true,
 			deletedAt: new Date(),
 		});
-		const seededUserThree = await seedUser();
+		const seededUserThree = await seedUser({ walletId: seededWalletThree.id });
 
 		const result = await findUsersWithPaginationUseCase.execute({
 			perPage: 2,
@@ -55,12 +65,17 @@ describe("FindUsersWithPaginationUseCase", () => {
 	});
 
 	it("should not return deleted users, limited by pagination size", async () => {
-		const seededUserOne = await seedUser({});
+		const seededWalletOne = await seedWallet();
+		const seededWalletTwo = await seedWallet();
+		const seededWalletThree = await seedWallet();
+
+		const seededUserOne = await seedUser({ walletId: seededWalletOne.id });
 		const seededUserTwo = await seedUser({
+			walletId: seededWalletTwo.id,
 			isDeleted: true,
 			deletedAt: new Date(),
 		});
-		const seededUserThree = await seedUser({});
+		const seededUserThree = await seedUser({ walletId: seededWalletThree.id });
 
 		const result = await findUsersWithPaginationUseCase.execute({
 			perPage: 2,
