@@ -1,10 +1,16 @@
+import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
+import {
+	type ITransactionFactory,
+	TransactionFactory,
+} from "@/modules/transaction/src/domain/factory";
 import { type IUser, User } from "@/modules/user/src/domain/classes/user";
 import { UserAccountType } from "@/modules/user/src/domain/classes/userAccountType";
 import { UserEmail } from "@/modules/user/src/domain/classes/userEmail";
 import { UserName } from "@/modules/user/src/domain/classes/userName";
-import { WalletFactory, type IWalletFactory } from "@/modules/wallet/src/domain/factory";
+import { type IWalletFactory, WalletFactory } from "@/modules/wallet/src/domain/factory";
 import { Result } from "@/shared/core/result";
 import { SnowflakeID } from "@/shared/domain/snowflakeId";
+import { defaultTo, map, pipe } from "rambda";
 
 export interface IUserFactory {
 	id?: string;
@@ -14,6 +20,8 @@ export interface IUserFactory {
 	accountType: string;
 	walletId: string;
 	wallet?: IWalletFactory | null;
+	sentTransactions?: ITransactionFactory[];
+	receivedTransactions?: ITransactionFactory[];
 	isDeleted: boolean;
 	deletedAt: Date | null;
 	createdAt: Date;
@@ -37,8 +45,16 @@ export class UserFactory {
 				email: userEmailOrError.getValue(),
 				accountType: userAccountTypeOrError.getValue(),
 				walletId: new SnowflakeID(props.walletId),
-				wallet: props.wallet ? WalletFactory.create(props.wallet).getValue() : null
+				wallet: props.wallet ? WalletFactory.create(props.wallet).getValue() : null,
+				sentTransactions: UserFactory._getTransactions(props.sentTransactions),
+				receivedTransactions: UserFactory._getTransactions(props.receivedTransactions),
 			}),
 		);
+	}
+
+	private static _getTransactions(transactions?: ITransactionFactory[]): ITransaction[] {
+		const createTransaction = pipe(TransactionFactory.create, (instance) => instance.getValue());
+
+		return pipe(defaultTo([] as ITransactionFactory[]), map(createTransaction))(transactions);
 	}
 }

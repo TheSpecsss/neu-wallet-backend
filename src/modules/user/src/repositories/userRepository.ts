@@ -5,7 +5,8 @@ import { db } from "@/shared/infrastructure/database";
 
 export interface UserHydrateOption {
 	wallet?: boolean;
-	//  transactions?: boolean; // TODO: Enable when transactions module are implemented
+	sentTransactions?: boolean;
+	receivedTransactions?: boolean;
 }
 
 export interface IUserRepository {
@@ -60,9 +61,7 @@ export class UserRepository implements IUserRepository {
 				id: { in: userIds },
 				...this._deletedFilter(options?.includeDeleted),
 			},
-			include: {
-				wallet: hydrate?.wallet ?? false,
-			},
+			include: this._hydrateFilter(hydrate),
 		});
 
 		return usersRaw.map((user) => this._mapper.toDomain(user));
@@ -77,10 +76,8 @@ export class UserRepository implements IUserRepository {
 			skip: pagination.start,
 			take: pagination.size,
 			where: this._deletedFilter(options?.includeDeleted),
+			include: this._hydrateFilter(hydrate),
 			orderBy: [{ createdAt: "asc" }],
-			include: {
-				wallet: hydrate?.wallet ?? false,
-			},
 		});
 
 		return usersRaw.map((user) => this._mapper.toDomain(user));
@@ -100,5 +97,12 @@ export class UserRepository implements IUserRepository {
 			isDeleted: false,
 		};
 	}
-}
 
+	private _hydrateFilter(hydrate?: UserHydrateOption) {
+		return {
+			wallet: hydrate?.wallet ?? false,
+			sentTransactions: hydrate?.sentTransactions ?? false,
+			receivedTransactions: hydrate?.receivedTransactions ?? false,
+		};
+	}
+}

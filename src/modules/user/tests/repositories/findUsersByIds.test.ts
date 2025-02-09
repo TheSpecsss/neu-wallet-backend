@@ -111,7 +111,7 @@ describe("Test User Repository findUsersByIds", () => {
 		expect(users[2]).toBeUndefined();
 	});
 
-	it("should return null when given non-existing user id", async () => {
+	it("should return empty array when given non-existing user id", async () => {
 		const users = await userRepository.findUsersByIds(["non-existing-user-id"]);
 
 		expect(users).toEqual([]);

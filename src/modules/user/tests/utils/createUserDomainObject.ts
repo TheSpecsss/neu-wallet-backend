@@ -16,6 +16,8 @@ export const createUserDomainObject = (partialDomainObject: Partial<IUserRawObje
 		accountType: faker.helpers.arrayElement(Object.values(USER_ACCOUNT_TYPE)),
 		walletId: new SnowflakeID().toString(),
 		wallet: null,
+		sentTransactions: [],
+		receivedTransactions: [],
 		isDeleted: false,
 		deletedAt: null,
 		createdAt: new Date(),

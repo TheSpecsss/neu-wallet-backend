@@ -31,7 +31,7 @@ describe("Test Wallet Repository findWalletById", () => {
 
 		const wallet = await walletRepository.findWalletById(seededWallet.id);
 
-		assertWallet(wallet!, seededWallet);
+		assertWallet(wallet, seededWallet);
 	});
 
 	it("should retrieve deleted wallet when includeDeleted is true", async () => {
@@ -42,7 +42,7 @@ describe("Test Wallet Repository findWalletById", () => {
 
 		const wallet = await walletRepository.findWalletById(seededWallet.id, { includeDeleted: true });
 
-		assertWallet(wallet!, seededWallet);
+		assertWallet(wallet, seededWallet);
 	});
 
   it("should hydrate user in the wallet", async () => {
@@ -73,8 +73,8 @@ describe("Test Wallet Repository findWalletById", () => {
 	});
 
 	it("should return null when given non-existing wallet id", async () => {
-		const user = await walletRepository.findWalletById("not-a-wallet-id");
+		const wallet = await walletRepository.findWalletById("not-a-wallet-id");
 
-		expect(user).toBeNull();
+		expect(wallet).toBeNull();
 	});
 });

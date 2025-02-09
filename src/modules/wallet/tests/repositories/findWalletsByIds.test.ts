@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import type { IWallet } from "@/modules/wallet/src/domain/classes/wallet";
 import type { IWalletRawObject } from "@/modules/wallet/src/domain/shared/constant";
 import {
@@ -29,14 +29,14 @@ describe("Test Wallet Repository findWalletsByIds", () => {
 		const seededWalletOne = await seedWallet();
 		const seededWalletTwo = await seedWallet();
 
-		const wallet = await walletRepository.findWalletsByIds([
+		const wallets = await walletRepository.findWalletsByIds([
 			seededWalletOne.id,
 			seededWalletTwo.id,
 		]);
 
-		expect(wallet).toHaveLength(2);
-		assertWallet(wallet[0], seededWalletOne);
-		assertWallet(wallet[1], seededWalletTwo);
+		expect(wallets).toHaveLength(2);
+		assertWallet(wallets[0], seededWalletOne);
+		assertWallet(wallets[1], seededWalletTwo);
 	});
 
 	it("should only retrieve existing wallets", async () => {
@@ -94,7 +94,7 @@ describe("Test Wallet Repository findWalletsByIds", () => {
 		expect(wallets[2]).toBeUndefined();
 	});
 
-	it("should return null when given non-existing wallet id", async () => {
+	it("should return empty array when given non-existing wallet id", async () => {
 		const wallets = await walletRepository.findWalletsByIds(["non-existing-wallet-id"]);
 
 		expect(wallets).toEqual([]);

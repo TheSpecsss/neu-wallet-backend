@@ -1,6 +1,10 @@
 import { Result } from "@/shared/core/result";
 
-export class UserEmail {
+export interface IUserEmail {
+	value: string;
+}
+
+export class UserEmail implements IUserEmail {
 	private readonly _value: string;
 	public static readonly EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+(\.[a-zA-Z0-9._%+-]+)*@neu\.edu\.ph$/i;
 

@@ -1,6 +1,10 @@
 import { Result } from "@/shared/core/result";
 
-export class WalletBalance {
+export interface IWalletBalance {
+	value: number;
+}
+
+export class WalletBalance implements IWalletBalance {
 	private readonly _value: number;
 	public static readonly MINIMUM_BALANCE_AMOUNT = 0;
 
