@@ -23,7 +23,7 @@ export const seedUser = async (
 		updatedAt: new Date(),
 	};
 
-	return db.user.create({
+	return await db.user.create({
 		data: { ...defaultSchemaObject, ...partialSchemaObject },
 	});
 };

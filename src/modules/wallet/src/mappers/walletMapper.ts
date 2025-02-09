@@ -4,16 +4,12 @@ import type {
 	IWalletRawObject,
 	IWalletSchemaObject,
 } from "@/modules/wallet/src/domain/shared/constant";
-import { Prisma } from "@prisma/client";
 
 export class WalletMapper {
 	public static toDomain(rawData: IWalletRawObject): IWallet {
 		return WalletFactory.create({
 			...rawData,
-			balance:
-				rawData.balance instanceof Prisma.Decimal
-					? rawData.balance.toNumber()
-					: (rawData.balance ?? 0),
+			balance: rawData.balance.toNumber(),
 		}).getValue();
 	}
 

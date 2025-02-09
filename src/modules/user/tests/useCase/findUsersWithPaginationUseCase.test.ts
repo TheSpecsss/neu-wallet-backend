@@ -12,6 +12,7 @@ describe("FindUsersWithPaginationUseCase", () => {
 	});
 
 	beforeEach(async () => {
+		await db.userTransaction.deleteMany();
 		await db.user.deleteMany();
 	});
 

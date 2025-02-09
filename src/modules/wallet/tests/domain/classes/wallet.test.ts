@@ -8,7 +8,9 @@ describe("Wallet", () => {
 	const mockData = {
 		id: new SnowflakeID(),
 		user: null,
-		balance: WalletBalance.create(faker.number.float({ min: 0 })).getValue(),
+		balance: WalletBalance.create(
+			faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT }),
+		).getValue(),
 		isDeleted: false,
 		deletedAt: null,
 		createdAt: new Date(),

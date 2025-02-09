@@ -9,12 +9,12 @@ export interface WalletHydrateOption {
 
 export interface IWalletRepository {
 	findWalletById(
-		userId: string,
+		id: string,
 		options?: QueryOptions,
 		hydrate?: WalletHydrateOption,
 	): Promise<IWallet | null>;
 	findWalletsByIds(
-		userIds: string[],
+		ids: string[],
 		options?: QueryOptions,
 		hydrate?: WalletHydrateOption,
 	): Promise<IWallet[]>;
@@ -53,9 +53,7 @@ export class WalletRepository implements IWalletRepository {
 				id: { in: ids },
 				...this._deletedFilter(options?.includeDeleted),
 			},
-			include: {
-				user: hydrate?.user ?? false,
-			},
+			include: this._hydrateFilter(hydrate),
 		});
 
 		return usersRaw.map((user) => this._mapper.toDomain(user));
@@ -66,6 +64,12 @@ export class WalletRepository implements IWalletRepository {
 
 		return {
 			isDeleted: false,
+		};
+	}
+
+	private _hydrateFilter(hydrate?: WalletHydrateOption) {
+		return {
+			user: hydrate?.user ?? false,
 		};
 	}
 }

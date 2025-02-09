@@ -4,8 +4,8 @@ import {
 	UserRepository,
 } from "@/modules/user/src/repositories/userRepository";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
-import { db } from "@/shared/infrastructure/database";
 import { seedWallet } from "@/modules/wallet/tests/utils/seedWallet";
+import { db } from "@/shared/infrastructure/database";
 
 describe("Test User Repository findUsersByPagination", () => {
 	let userRepository: IUserRepository;
@@ -15,6 +15,7 @@ describe("Test User Repository findUsersByPagination", () => {
 	});
 
 	beforeEach(async () => {
+		await db.userTransaction.deleteMany();
 		await db.user.deleteMany();
 	});
 
@@ -84,8 +85,9 @@ describe("Test User Repository findUsersByPagination", () => {
 
 	it("should return an empty list and pagination information when there's no user", async () => {
 		const result = await userRepository.findUsersByPagination({
-      start: 0, size: 10
-    });
+			start: 0,
+			size: 10,
+		});
 
 		expect(result).toEqual([]);
 	});

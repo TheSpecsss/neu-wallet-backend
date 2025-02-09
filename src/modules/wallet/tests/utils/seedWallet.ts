@@ -1,3 +1,4 @@
+import { WalletBalance } from "@/modules/wallet/src/domain/classes/walletBalance";
 import type { IWalletRawObject } from "@/modules/wallet/src/domain/shared/constant";
 import { SnowflakeID } from "@/shared/domain/snowflakeId";
 import { db } from "@/shared/infrastructure/database";
@@ -9,14 +10,14 @@ export const seedWallet = async (
 ): Promise<IWalletRawObject> => {
 	const defaultSchemaObject = {
 		id: new SnowflakeID().toString(),
-		balance: new Prisma.Decimal(faker.number.float({ min: 0 })),
+		balance: new Prisma.Decimal(faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT })),
 		isDeleted: false,
 		deletedAt: null,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	};
 
-	return db.userWallet.create({
+	return await db.userWallet.create({
 		data: { ...defaultSchemaObject, ...partialSchemaObject },
 	});
 };

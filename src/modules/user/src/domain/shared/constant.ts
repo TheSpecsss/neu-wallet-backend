@@ -9,4 +9,4 @@ export const USER_ACCOUNT_TYPE = {
 	CASH_TOP_UP: "CASH_TOP_UP",
 	SUPER_ADMIN: "SUPER_ADMIN",
 } as const;
-export type IUserAccountType = (typeof USER_ACCOUNT_TYPE)[keyof typeof USER_ACCOUNT_TYPE];
+export type UserAccountTypeKind = (typeof USER_ACCOUNT_TYPE)[keyof typeof USER_ACCOUNT_TYPE];

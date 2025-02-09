@@ -1,11 +1,11 @@
 import type { IUser } from "@/modules/user/src/domain/classes/user";
-import type { WalletBalance } from "@/modules/wallet/src/domain/classes/walletBalance";
+import type { IWalletBalance } from "@/modules/wallet/src/domain/classes/walletBalance";
 import type { SnowflakeID } from "@/shared/domain/snowflakeId";
 
 export interface IWalletData {
 	id: SnowflakeID;
 	user: IUser | null;
-	balance: WalletBalance;
+	balance: IWalletBalance;
 	isDeleted: boolean;
 	deletedAt: Date | null;
 	createdAt: Date;
@@ -20,7 +20,7 @@ export interface IWallet extends IWalletData {
 export class Wallet implements IWallet {
 	private readonly _id: SnowflakeID;
 	private readonly _user: IUser | null;
-	private readonly _balance: WalletBalance;
+	private readonly _balance: IWalletBalance;
 	private readonly _isDeleted: boolean;
 	private readonly _deletedAt: Date | null;
 	private readonly _createdAt: Date;
@@ -48,7 +48,7 @@ export class Wallet implements IWallet {
 		return this._user;
 	}
 
-	get balance(): WalletBalance {
+	get balance(): IWalletBalance {
 		return this._balance;
 	}
 
