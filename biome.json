@@ -28,7 +28,8 @@
 			"style": {
 				"noNonNullAssertion": "off"
 			}
-		}
+		},
+		"ignore": ["src/shared/infrastructure/http/graphql/generated"]
 	},
 	"javascript": {
 		"formatter": {
