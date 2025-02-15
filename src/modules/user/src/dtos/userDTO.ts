@@ -13,10 +13,19 @@ export interface FindUserByEmailAndPasswordDTO {
 	password: string;
 }
 
+export interface FindUserByEmailDTO {
+	email: string;
+}
+
 export interface CreateUserDTO {
 	email: string;
 	name: string;
 	password: string;
 	confirmPassword: string;
 	type: string;
+}
+
+export interface LoginUserDTO {
+	email: string;
+	password: string;
 }
