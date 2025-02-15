@@ -17,6 +17,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  UserAccountType: "CASHIER" | "CASH_TOP_UP" | "SUPER_ADMIN" | "USER"
 }
 
 export interface NexusGenScalars {
@@ -28,6 +29,7 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  Mutation: {};
   Query: {};
   Transaction: {};
   User: {};
@@ -42,11 +44,14 @@ export interface NexusGenUnions {
 
 export type NexusGenRootTypes = NexusGenObjects
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
+  Mutation: { // field return type
+    createUser: NexusGenRootTypes['User'] | null; // User
+  }
   Query: { // field return type
-    ok: boolean; // Boolean!
+    findUserById: NexusGenRootTypes['User'] | null; // User
   }
   Transaction: { // field return type
     amount: number; // Float!
@@ -84,8 +89,11 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  Mutation: { // field return type name
+    createUser: 'User'
+  }
   Query: { // field return type name
-    ok: 'Boolean'
+    findUserById: 'User'
   }
   Transaction: { // field return type name
     amount: 'Float'
@@ -123,6 +131,20 @@ export interface NexusGenFieldTypeNames {
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    createUser: { // args
+      confirmPassword: string; // String!
+      email: string; // String!
+      name: string; // String!
+      password: string; // String!
+      type: NexusGenEnums['UserAccountType']; // UserAccountType!
+    }
+  }
+  Query: {
+    findUserById: { // args
+      id: string; // ID!
+    }
+  }
 }
 
 export interface NexusGenAbstractTypeMembers {
@@ -135,7 +157,7 @@ export type NexusGenObjectNames = keyof NexusGenObjects;
 
 export type NexusGenInputNames = never;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = keyof NexusGenEnums;
 
 export type NexusGenInterfaceNames = never;
 

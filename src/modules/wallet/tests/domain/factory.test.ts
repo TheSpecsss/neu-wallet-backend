@@ -11,8 +11,9 @@ describe("WalletFactory", () => {
 	beforeEach(() => {
 		mockData = {
 			id: new SnowflakeID().toString(),
-			balance: faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT }),
+			userId: new SnowflakeID().toString(),
 			user: null,
+			balance: faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT }),
 			isDeleted: false,
 			deletedAt: null,
 			createdAt: faker.date.past(),
@@ -29,6 +30,7 @@ describe("WalletFactory", () => {
 
 		const user = result.getValue();
 		expect(user.idValue).toBe(mockData.id!);
+		expect(user.userIdValue).toBe(mockData.userId);
 		expect(user.balanceValue).toBe(mockData.balance);
 		expect(user.isDeleted).toBe(mockData.isDeleted);
 		expect(user.createdAt.toString()).toBe(mockData.createdAt.toString());

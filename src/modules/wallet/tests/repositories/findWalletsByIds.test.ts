@@ -1,4 +1,5 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "bun:test";
+import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import type { IWallet } from "@/modules/wallet/src/domain/classes/wallet";
 import type { IWalletRawObject } from "@/modules/wallet/src/domain/shared/constant";
 import {
@@ -26,8 +27,11 @@ describe("Test Wallet Repository findWalletsByIds", () => {
 	});
 
 	it("should retrieve a wallets by ids", async () => {
-		const seededWalletOne = await seedWallet();
-		const seededWalletTwo = await seedWallet();
+		const seededUserOne = await seedUser();
+		const seededUserTwo = await seedUser();
+
+		const seededWalletOne = await seedWallet({ userId: seededUserOne.id });
+		const seededWalletTwo = await seedWallet({ userId: seededUserTwo.id });
 
 		const wallets = await walletRepository.findWalletsByIds([
 			seededWalletOne.id,
@@ -40,8 +44,11 @@ describe("Test Wallet Repository findWalletsByIds", () => {
 	});
 
 	it("should only retrieve existing wallets", async () => {
-		const seededWalletOne = await seedWallet();
-		const seededWalletTwo = await seedWallet();
+		const seededUserOne = await seedUser();
+		const seededUserTwo = await seedUser();
+
+		const seededWalletOne = await seedWallet({ userId: seededUserOne.id });
+		const seededWalletTwo = await seedWallet({ userId: seededUserTwo.id });
 		const seededWalletIdThree = "non-existing-wallet-id";
 
 		const wallets = await walletRepository.findWalletsByIds([
@@ -57,9 +64,14 @@ describe("Test Wallet Repository findWalletsByIds", () => {
 	});
 
 	it("should retrieve deleted wallets when includeDeleted is true", async () => {
-		const seededWalletOne = await seedWallet();
-		const seededWalletTwo = await seedWallet();
+		const seededUserOne = await seedUser();
+		const seededUserTwo = await seedUser();
+		const seededUserThree = await seedUser();
+
+		const seededWalletOne = await seedWallet({ userId: seededUserOne.id });
+		const seededWalletTwo = await seedWallet({ userId: seededUserTwo.id });
 		const seededWalletThree = await seedWallet({
+			userId: seededUserThree.id,
 			isDeleted: true,
 			deletedAt: new Date(),
 		});
@@ -76,9 +88,14 @@ describe("Test Wallet Repository findWalletsByIds", () => {
 	});
 
 	it("should not retrieve deleted users when includeDeleted is false", async () => {
-		const seededWalletOne = await seedWallet();
-		const seededWalletTwo = await seedWallet();
+		const seededUserOne = await seedUser();
+		const seededUserTwo = await seedUser();
+		const seededUserThree = await seedUser();
+
+		const seededWalletOne = await seedWallet({ userId: seededUserOne.id });
+		const seededWalletTwo = await seedWallet({ userId: seededUserTwo.id });
 		const seededWalletThree = await seedWallet({
+			userId: seededUserThree.id,
 			isDeleted: true,
 			deletedAt: new Date(),
 		});

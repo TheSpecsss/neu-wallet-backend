@@ -2,6 +2,7 @@ import type { IUser } from "@/modules/user/src/domain/classes/user";
 import { UserMapper } from "@/modules/user/src/mappers/userMapper";
 import type { Pagination, QueryOptions } from "@/shared/constant";
 import { db } from "@/shared/infrastructure/database";
+import { Prisma } from "@prisma/client";
 
 export interface UserHydrateOption {
 	wallet?: boolean;
@@ -10,6 +11,7 @@ export interface UserHydrateOption {
 }
 
 export interface IUserRepository {
+	createUser(user: IUser): Promise<void>;
 	findUserById(
 		userId: string,
 		options?: QueryOptions,
@@ -36,6 +38,20 @@ export class UserRepository implements IUserRepository {
 	constructor(database = db.user, mapper = UserMapper) {
 		this._database = database;
 		this._mapper = mapper;
+	}
+
+	async createUser(user: IUser): Promise<void> {
+		const userPersistenceObject = this._mapper.toPersistence(user);
+
+		try {
+			await this._database.create({ data: userPersistenceObject });
+		} catch (error) {
+			if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+				throw new Error(
+					`Unique constraint failed on the fields: (\`${(error.meta!.target as unknown[])[0]}\`)`,
+				);
+			}
+		}
 	}
 
 	async findUserById(
@@ -72,8 +88,8 @@ export class UserRepository implements IUserRepository {
 		const userRaw = await this._database.findUnique({
 			where: {
 				email,
-				password
-			}
+				password,
+			},
 		});
 		if (userRaw === null) {
 			return null;

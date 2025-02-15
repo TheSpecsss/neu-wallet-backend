@@ -11,7 +11,6 @@ export interface IUserData {
 	email: IUserEmail;
 	password: string;
 	accountType: UserAccountType;
-	walletId: SnowflakeID;
 	wallet: IWallet | null;
 	sentTransactions: ITransaction[];
 	receivedTransactions: ITransaction[];
@@ -26,7 +25,6 @@ export interface IUser extends IUserData {
 	nameValue: string;
 	emailValue: string;
 	accountTypeValue: string;
-	walletIdValue: string;
 }
 
 export class User implements IUser {
@@ -35,7 +33,6 @@ export class User implements IUser {
 	private readonly _email: IUserEmail;
 	private readonly _password: string;
 	private readonly _accountType: UserAccountType;
-	private readonly _walletId: SnowflakeID;
 	private readonly _wallet: IWallet | null;
 	private readonly _sentTransactions: ITransaction[];
 	private readonly _receivedTransactions: ITransaction[];
@@ -50,7 +47,6 @@ export class User implements IUser {
 		this._email = data.email;
 		this._password = data.password;
 		this._accountType = data.accountType;
-		this._walletId = data.walletId;
 		this._wallet = data.wallet;
 		this._sentTransactions = data.sentTransactions;
 		this._receivedTransactions = data.receivedTransactions;
@@ -94,14 +90,6 @@ export class User implements IUser {
 
 	get accountTypeValue(): string {
 		return this.accountType.value;
-	}
-
-	get walletId(): SnowflakeID {
-		return this._walletId;
-	}
-
-	get walletIdValue(): string {
-		return this.walletId.toString();
 	}
 
 	get wallet(): IWallet | null {

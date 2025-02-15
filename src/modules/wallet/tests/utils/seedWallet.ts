@@ -10,6 +10,7 @@ export const seedWallet = async (
 ): Promise<IWalletRawObject> => {
 	const defaultSchemaObject = {
 		id: new SnowflakeID().toString(),
+		userId: new SnowflakeID().toString(),
 		balance: new Prisma.Decimal(faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT })),
 		isDeleted: false,
 		deletedAt: null,

@@ -6,6 +6,7 @@ import { SnowflakeID } from "@/shared/domain/snowflakeId";
 
 export interface IWalletFactory {
 	id?: string;
+	userId: string;
 	user?: IUserFactory | null;
 	balance: number;
 	isDeleted: boolean;
@@ -25,6 +26,7 @@ export class WalletFactory {
 			Wallet.create({
 				...props,
 				id: new SnowflakeID(props.id),
+				userId: new SnowflakeID(props.userId),
 				user: props.user ? UserFactory.create(props.user).getValue() : null,
 				balance: balanceOrError.getValue(),
 			}),

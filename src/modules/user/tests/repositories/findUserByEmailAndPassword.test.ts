@@ -6,7 +6,6 @@ import {
 	UserRepository,
 } from "@/modules/user/src/repositories/userRepository";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
-import { seedWallet } from "@/modules/wallet/tests/utils/seedWallet";
 import { db } from "@/shared/infrastructure/database";
 
 const assertUser = (value: IUser | null, expectedValue: IUserRawObject) => {
@@ -30,8 +29,7 @@ describe("Test User Repository findUserByEmailAndPassword", () => {
 	});
 
 	it("should retrieve existing user found by email and password", async () => {
-		const seededWallet = await seedWallet();
-		const seededUser = await seedUser({ walletId: seededWallet.id });
+		const seededUser = await seedUser();
 
 		const user = await userRepository.findUserByEmailAndPassword(
 			seededUser.email,
@@ -42,8 +40,7 @@ describe("Test User Repository findUserByEmailAndPassword", () => {
 	});
 
 	it("should return null when given email does not exist", async () => {
-		const seededWallet = await seedWallet();
-		const seededUser = await seedUser({ walletId: seededWallet.id });
+		const seededUser = await seedUser();
 
 		const user = await userRepository.findUserByEmailAndPassword(
 			"seededUserEmail",
@@ -54,8 +51,7 @@ describe("Test User Repository findUserByEmailAndPassword", () => {
 	});
 
 	it("should return null when given password does not exist", async () => {
-		const seededWallet = await seedWallet();
-		const seededUser = await seedUser({ walletId: seededWallet.id });
+		const seededUser = await seedUser();
 
 		const user = await userRepository.findUserByEmailAndPassword(
 			seededUser.email,

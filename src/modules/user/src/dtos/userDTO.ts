@@ -12,3 +12,11 @@ export interface FindUserByEmailAndPasswordDTO {
 	email: string;
 	password: string;
 }
+
+export interface CreateUserDTO {
+	email: string;
+	name: string;
+	password: string;
+	confirmPassword: string;
+	type: string;
+}

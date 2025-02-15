@@ -7,6 +7,7 @@ import { faker } from "@faker-js/faker";
 describe("Wallet", () => {
 	const mockData = {
 		id: new SnowflakeID(),
+		userId: new SnowflakeID(),
 		user: null,
 		balance: WalletBalance.create(
 			faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT }),
@@ -22,8 +23,9 @@ describe("Wallet", () => {
 
 		expect(wallet).toBeInstanceOf(Wallet);
 		expect(wallet.id).toBe(mockData.id);
+		expect(wallet.userId).toBe(mockData.userId);
 		expect(wallet.user).toBe(mockData.user);
-		expect(wallet.balanceValue).toBe(mockData.balance.value);
+		expect(wallet.balance).toBe(mockData.balance);
 		expect(wallet.isDeleted).toBe(mockData.isDeleted);
 		expect(wallet.createdAt.toString()).toBe(mockData.createdAt.toString());
 		expect(wallet.updatedAt.toString()).toBe(mockData.updatedAt.toString());
