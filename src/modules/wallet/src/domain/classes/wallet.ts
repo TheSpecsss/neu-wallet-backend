@@ -4,6 +4,7 @@ import type { SnowflakeID } from "@/shared/domain/snowflakeId";
 
 export interface IWalletData {
 	id: SnowflakeID;
+	userId: SnowflakeID;
 	user: IUser | null;
 	balance: IWalletBalance;
 	isDeleted: boolean;
@@ -14,11 +15,13 @@ export interface IWalletData {
 
 export interface IWallet extends IWalletData {
 	idValue: string;
+	userIdValue: string;
 	balanceValue: number;
 }
 
 export class Wallet implements IWallet {
 	private readonly _id: SnowflakeID;
+	private readonly _userId: SnowflakeID;
 	private readonly _user: IUser | null;
 	private readonly _balance: IWalletBalance;
 	private readonly _isDeleted: boolean;
@@ -28,6 +31,7 @@ export class Wallet implements IWallet {
 
 	constructor(data: IWalletData) {
 		this._id = data.id;
+		this._userId = data.userId;
 		this._user = data.user;
 		this._balance = data.balance;
 		this._isDeleted = data.isDeleted;
@@ -42,6 +46,14 @@ export class Wallet implements IWallet {
 
 	get idValue(): string {
 		return this.id.toString();
+	}
+
+	get userId(): SnowflakeID {
+		return this._userId;
+	}
+
+	get userIdValue(): string {
+		return this.userId.toString();
 	}
 
 	get user(): IUser | null {

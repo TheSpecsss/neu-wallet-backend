@@ -12,6 +12,7 @@ export const createWalletDomainObject = (
 ): IWallet => {
 	const defaultDomainObject = {
 		id: new SnowflakeID().toString(),
+		userId: new SnowflakeID().toString(),
 		user: null,
 		balance: faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT }),
 		isDeleted: false,

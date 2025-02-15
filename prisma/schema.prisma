@@ -17,8 +17,7 @@ model User {
   updatedAt            DateTime          @updatedAt
   isDeleted            Boolean
   deletedAt            DateTime?
-  walletId             String            @unique
-  wallet               UserWallet        @relation(fields: [walletId], references: [id])
+  wallet               UserWallet?
   auditLogs            UserAuditLog[]
   sentTransactions     UserTransaction[] @relation("SenderTransaction")
   receivedTransactions UserTransaction[] @relation("ReceiverTransaction")
@@ -26,12 +25,13 @@ model User {
 
 model UserWallet {
   id        String    @id
+  userId    String    @unique
   balance   Decimal   @default(0.00)
   isDeleted Boolean
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  user      User?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserTransaction {

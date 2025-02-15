@@ -4,15 +4,11 @@ import { TransactionMapper } from "@/modules/transaction/src/mappers/transaction
 import { createTransactionDomainObject } from "@/modules/transaction/tests/utils/createTransactionDomainObject";
 import { seedTransaction } from "@/modules/transaction/tests/utils/seedTransaction";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
-import { seedWallet } from "@/modules/wallet/tests/utils/seedWallet";
 
 describe("TransactionMapper", () => {
 	it("should map to domain from persistence data", async () => {
-		const userWallet = await seedWallet();
-		const relatedUserWallet = await seedWallet();
-
-		const user = await seedUser({ walletId: userWallet.id });
-		const relatedUser = await seedUser({ walletId: relatedUserWallet.id });
+		const user = await seedUser();
+		const relatedUser = await seedUser();
 
 		const schemaObject = await seedTransaction({ senderId: user.id, receiverId: relatedUser.id });
 		const domainObject = TransactionMapper.toDomain(schemaObject);

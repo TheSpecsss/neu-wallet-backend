@@ -30,8 +30,7 @@ describe("Test User Repository findUserById", () => {
 	});
 
 	it("should retrieve existing user found by Id", async () => {
-		const seededWallet = await seedWallet();
-		const seededUser = await seedUser({ walletId: seededWallet.id });
+		const seededUser = await seedUser();
 
 		const user = await userRepository.findUserById(seededUser.id);
 
@@ -39,9 +38,7 @@ describe("Test User Repository findUserById", () => {
 	});
 
 	it("should retrieve deleted user when includeDeleted is true", async () => {
-		const seededWallet = await seedWallet();
 		const seededUser = await seedUser({
-			walletId: seededWallet.id,
 			isDeleted: true,
 			deletedAt: new Date(),
 		});
@@ -52,8 +49,8 @@ describe("Test User Repository findUserById", () => {
 	});
 
 	it("should hydrate wallet in the users", async () => {
-		const seededWallet = await seedWallet();
-		const seededUser = await seedUser({ walletId: seededWallet.id });
+		const seededUser = await seedUser();
+		const seededWallet = await seedWallet({ userId: seededUser.id });
 
 		const user = await userRepository.findUserById(
 			seededUser.id,
@@ -66,9 +63,7 @@ describe("Test User Repository findUserById", () => {
 	});
 
 	it("should return null when includeDeleted is false and user is deleted", async () => {
-		const seededWallet = await seedWallet();
 		const seededUser = await seedUser({
-			walletId: seededWallet.id,
 			isDeleted: true,
 			deletedAt: new Date(),
 		});

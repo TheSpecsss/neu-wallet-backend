@@ -16,6 +16,7 @@ export class WalletMapper {
 	public static toPersistence(wallet: IWallet): IWalletSchemaObject {
 		return {
 			id: wallet.idValue,
+			userId: wallet.userIdValue,
 			balance: wallet.balanceValue,
 			isDeleted: wallet.isDeleted,
 			deletedAt: wallet.deletedAt,

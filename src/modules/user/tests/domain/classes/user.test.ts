@@ -21,8 +21,9 @@ describe("User", () => {
 		accountType: UserAccountType.create(
 			faker.helpers.arrayElement(Object.values(USER_ACCOUNT_TYPE)),
 		).getValue(),
-		walletId: new SnowflakeID(),
 		wallet: null,
+		sentTransactions: [],
+		receivedTransactions: [],
 		isDeleted: false,
 		deletedAt: null,
 		createdAt: new Date(),

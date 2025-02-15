@@ -7,7 +7,6 @@ import {
 } from "@/modules/transaction/src/repositories/transactionRepository";
 import { seedTransaction } from "@/modules/transaction/tests/utils/seedTransaction";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
-import { seedWallet } from "@/modules/wallet/tests/utils/seedWallet";
 import { db } from "@/shared/infrastructure/database";
 
 const assertTransaction = (value: ITransaction | null, expectedValue: ITransactionRawObject) => {
@@ -30,11 +29,8 @@ describe("Test Transaction Repository findTransactionsByIds", () => {
 	});
 
 	const seedTransactionWithUserAndWallet = async () => {
-		const seededSenderWallet = await seedWallet();
-		const seededReceiverWallet = await seedWallet();
-
-		const seededSender = await seedUser({ walletId: seededSenderWallet.id });
-		const seededReceiver = await seedUser({ walletId: seededReceiverWallet.id });
+		const seededSender = await seedUser();
+		const seededReceiver = await seedUser();
 
 		return await seedTransaction({
 			senderId: seededSender.id,
@@ -74,7 +70,9 @@ describe("Test Transaction Repository findTransactionsByIds", () => {
 	});
 
 	it("should return empty array when given non-existing transaction id", async () => {
-		const transactions = await transactionRepository.findTransactionsByIds(["non-existing-transaction-id"]);
+		const transactions = await transactionRepository.findTransactionsByIds([
+			"non-existing-transaction-id",
+		]);
 
 		expect(transactions).toEqual([]);
 	});

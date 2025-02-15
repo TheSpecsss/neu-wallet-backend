@@ -18,7 +18,6 @@ export interface IUserFactory {
 	email: string;
 	password: string;
 	accountType: string;
-	walletId: string;
 	wallet?: IWalletFactory | null;
 	sentTransactions?: ITransactionFactory[];
 	receivedTransactions?: ITransactionFactory[];
@@ -44,7 +43,6 @@ export class UserFactory {
 				name: userNameOrError.getValue(),
 				email: userEmailOrError.getValue(),
 				accountType: userAccountTypeOrError.getValue(),
-				walletId: new SnowflakeID(props.walletId),
 				wallet: props.wallet ? WalletFactory.create(props.wallet).getValue() : null,
 				sentTransactions: UserFactory._getTransactions(props.sentTransactions),
 				receivedTransactions: UserFactory._getTransactions(props.receivedTransactions),
