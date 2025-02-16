@@ -12,6 +12,8 @@ export interface UserHydrateOption {
 
 export interface IUserRepository {
 	createUser(user: IUser): Promise<void>;
+	findUserByEmail(email: string): Promise<IUser | null>;
+	findUserByEmailAndPassword(email: string, password: string): Promise<IUser | null>;
 	findUserById(
 		userId: string,
 		options?: QueryOptions,
@@ -22,7 +24,6 @@ export interface IUserRepository {
 		options?: QueryOptions,
 		hydrate?: UserHydrateOption,
 	): Promise<IUser[]>;
-	findUserByEmailAndPassword(email: string, password: string): Promise<IUser | null>;
 	findUsersByPagination(
 		pagination: Pagination,
 		options?: QueryOptions,
@@ -54,6 +55,31 @@ export class UserRepository implements IUserRepository {
 		}
 	}
 
+	public async findUserByEmail(email: string): Promise<IUser | null> {
+		const userRaw = await this._database.findUnique({
+			where: { email }
+		});
+		if (userRaw === null) {
+			return null;
+		}
+
+		return this._mapper.toDomain(userRaw);
+	}
+
+	public async findUserByEmailAndPassword(email: string, password: string): Promise<IUser | null> {
+		const userRaw = await this._database.findUnique({
+			where: {
+				email,
+				password,
+			},
+		});
+		if (userRaw === null) {
+			return null;
+		}
+
+		return this._mapper.toDomain(userRaw);
+	}
+
 	async findUserById(
 		userId: string,
 		options?: QueryOptions,
@@ -82,20 +108,6 @@ export class UserRepository implements IUserRepository {
 		});
 
 		return usersRaw.map((user) => this._mapper.toDomain(user));
-	}
-
-	public async findUserByEmailAndPassword(email: string, password: string): Promise<IUser | null> {
-		const userRaw = await this._database.findUnique({
-			where: {
-				email,
-				password,
-			},
-		});
-		if (userRaw === null) {
-			return null;
-		}
-
-		return this._mapper.toDomain(userRaw);
 	}
 
 	public async findUsersByPagination(

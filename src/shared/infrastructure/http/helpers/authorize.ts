@@ -19,7 +19,10 @@ export const authorize: ApolloFastifyContextFunction<Context> = async (req) => {
 	}
 
 	const userService = new UserService();
-	const user = await userService.findUserByEmailAndPassword(decodedToken);
+	const user = await userService.findUserByEmailAndPassword({
+		email: decodedToken.email,
+		password: decodedToken.password,
+	});
 
 	return { user };
 };

@@ -1,4 +1,5 @@
 import { CreateUserUseCase } from "@/modules/user/src/useCase/createUserUseCase";
+import { LoginUserUseCase } from "@/modules/user/src/useCase/loginUserUseCase";
 import { mutationType, nonNull, stringArg } from "nexus";
 
 export default mutationType({
@@ -14,6 +15,17 @@ export default mutationType({
 			},
 			resolve: (_, args) => {
 				const useCase = new CreateUserUseCase();
+				return useCase.execute(args);
+			},
+		});
+		t.field("login", {
+			type: "Login",
+			args: {
+				email: nonNull(stringArg()),
+				password: nonNull(stringArg()),
+			},
+			resolve: (_, args) => {
+				const useCase = new LoginUserUseCase();
 				return useCase.execute(args);
 			},
 		});
