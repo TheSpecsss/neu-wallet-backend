@@ -18,11 +18,19 @@ export const authorize: ApolloFastifyContextFunction<Context> = async (req) => {
 		return { user: null };
 	}
 
-	const userService = new UserService();
-	const user = await userService.findUserByEmailAndPassword({
-		email: decodedToken.email,
-		password: decodedToken.password,
-	});
+	try {
+		const userService = new UserService();
+		const user = await userService.findUserByEmailAndPassword({
+			email: decodedToken.email,
+			password: decodedToken.password,
+		});
 
-	return { user };
+		if (decodedToken.exp < Date.now() / 1000) {
+			return { user: null };
+		}
+
+		return { user };
+	} catch (error) {
+		return { user: null };
+	}
 };

@@ -1,10 +1,4 @@
-import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
-import { enumType, objectType } from "nexus";
-
-const userAccountType = enumType({
-	name: "UserAccountType",
-	members: USER_ACCOUNT_TYPE,
-});
+import { objectType } from "nexus";
 
 const login = objectType({
 	name: "Login",
@@ -13,4 +7,4 @@ const login = objectType({
 	},
 });
 
-export default [userAccountType, login];
+export default [login];

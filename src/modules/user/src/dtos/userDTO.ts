@@ -22,7 +22,6 @@ export interface CreateUserDTO {
 	name: string;
 	password: string;
 	confirmPassword: string;
-	type: string;
 }
 
 export interface LoginUserDTO {
