@@ -7,7 +7,7 @@ type Login {
 }
 
 type Mutation {
-  createUser(confirmPassword: String!, email: String!, name: String!, password: String!, type: UserAccountType!): User
+  createUser(confirmPassword: String!, email: String!, name: String!, password: String!): User
   login(email: String!, password: String!): Login
 }
 
@@ -39,13 +39,6 @@ type User {
   updatedAt: String!
   wallet: Wallet
   walletId: ID!
-}
-
-enum UserAccountType {
-  CASHIER
-  CASH_TOP_UP
-  SUPER_ADMIN
-  USER
 }
 
 type Wallet {

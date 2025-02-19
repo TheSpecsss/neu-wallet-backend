@@ -1,5 +1,6 @@
 import type { IUser } from "@/modules/user/src/domain/classes/user";
 import { UserFactory } from "@/modules/user/src/domain/factory";
+import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
 import type { CreateUserDTO } from "@/modules/user/src/dtos/userDTO";
 import {
 	type IUserRepository,
@@ -17,11 +18,11 @@ export class CreateUserUseCase {
 	}
 
 	public async execute(request: CreateUserDTO): Promise<IUser> {
-		const { email, name, password, type } = this._getValidatedData(request);
+		const { email, name, password } = this._getValidatedData(request);
 
 		const hashedPassword = await this._hashPassword(password);
 
-		const user = this._createUser(email, name, hashedPassword, type);
+		const user = this._createUser(email, name, hashedPassword);
 
 		this._throwErrorIfUserIsInvalid(user);
 
@@ -40,12 +41,12 @@ export class CreateUserUseCase {
 		return await bcrypt.hash(password, 10);
 	}
 
-	private _createUser(email: string, name: string, password: string, type: string): Result<IUser> {
+	private _createUser(email: string, name: string, password: string): Result<IUser> {
 		return UserFactory.create({
 			email,
 			name,
 			password,
-			accountType: type,
+			accountType: USER_ACCOUNT_TYPE.USER,
 			isDeleted: false,
 			deletedAt: null,
 			createdAt: new Date(),
@@ -59,18 +60,13 @@ export class CreateUserUseCase {
 
 	private _validatePasswordConfirmation(password: string, confirmPassword: string): void {
 		if (password !== confirmPassword) {
-			this._throwError("Password and confirm password do not match");
+			throw Error("Password and confirm password do not match");
 		}
-	}
-
-	private _throwError(message: string, error?: Error): never {
-		const errorMessage = error ? `${message}: ${error.message}` : message;
-		throw Error(errorMessage);
 	}
 
 	private _throwErrorIfUserIsInvalid(user: Result<IUser>): void {
 		if (user.isFailure) {
-			this._throwError(defaultTo("Failed to create user", user.getErrorMessage()));
+			throw Error(defaultTo("Failed to create user", user.getErrorMessage()));
 		}
 	}
 }

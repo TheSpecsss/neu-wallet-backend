@@ -1,6 +1,5 @@
 import { beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { UserName } from "@/modules/user/src/domain/classes/userName";
-import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
 import { CreateUserUseCase } from "@/modules/user/src/useCase/createUserUseCase";
 import { db } from "@/shared/infrastructure/database";
 import { faker } from "@faker-js/faker";
@@ -26,7 +25,6 @@ describe("CreateUserUseCase", () => {
 			}),
 			password: "12345",
 			confirmPassword: "12345",
-			type: faker.helpers.arrayElement(Object.values(USER_ACCOUNT_TYPE)),
 		};
 
 		const result = await createUserUseCase.execute(variables);
@@ -45,7 +43,6 @@ describe("CreateUserUseCase", () => {
 				name: "Test User",
 				password: "password123",
 				confirmPassword: "12345",
-				type: USER_ACCOUNT_TYPE.USER,
 			});
 		} catch (error) {
 			errorMessage = (error as Error).message;
@@ -62,7 +59,6 @@ describe("CreateUserUseCase", () => {
 				name: "Test User",
 				password: "password123",
 				confirmPassword: "password123",
-				type: "user",
 			});
 		} catch (error) {
 			errorMessage = (error as Error).message;

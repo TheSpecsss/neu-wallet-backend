@@ -11,7 +11,6 @@ export default mutationType({
 				name: nonNull(stringArg()),
 				password: nonNull(stringArg()),
 				confirmPassword: nonNull(stringArg()),
-				type: nonNull("UserAccountType"),
 			},
 			resolve: (_, args) => {
 				const useCase = new CreateUserUseCase();

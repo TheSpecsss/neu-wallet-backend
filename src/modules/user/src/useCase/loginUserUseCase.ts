@@ -43,6 +43,8 @@ export class LoginUserUseCase {
 	}
 
 	private _createToken(email: string, password: string): string {
-		return jwt.sign({ email, password }, process.env.JWT_SECRET as string);
+		return jwt.sign({ email, password }, process.env.JWT_SECRET as string, {
+			expiresIn: "7d",
+		});
 	}
 }
