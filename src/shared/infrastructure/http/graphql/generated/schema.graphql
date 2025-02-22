@@ -13,6 +13,7 @@ type Mutation {
 
 type Query {
   findUserById(id: ID!): User
+  getUserBalanceByUserId(userId: ID!): UserBalance
 }
 
 type Transaction {
@@ -39,6 +40,10 @@ type User {
   updatedAt: String!
   wallet: Wallet
   walletId: ID!
+}
+
+type UserBalance {
+  balance: Float
 }
 
 type Wallet {
