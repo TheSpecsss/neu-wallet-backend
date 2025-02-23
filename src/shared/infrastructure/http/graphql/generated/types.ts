@@ -35,6 +35,9 @@ export interface NexusGenObjects {
   Query: {};
   Transaction: {};
   User: {};
+  UserBalance: { // root type
+    balance?: number | null; // Float
+  }
   Wallet: {};
 }
 
@@ -58,6 +61,7 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     findUserById: NexusGenRootTypes['User'] | null; // User
+    getUserBalanceByUserId: NexusGenRootTypes['UserBalance'] | null; // UserBalance
   }
   Transaction: { // field return type
     amount: number; // Float!
@@ -81,7 +85,9 @@ export interface NexusGenFieldTypes {
     sentTransactions: Array<NexusGenRootTypes['Transaction'] | null> | null; // [Transaction]
     updatedAt: string; // String!
     wallet: NexusGenRootTypes['Wallet'] | null; // Wallet
-    walletId: string; // ID!
+  }
+  UserBalance: { // field return type
+    balance: number | null; // Float
   }
   Wallet: { // field return type
     balance: number; // Float!
@@ -104,6 +110,7 @@ export interface NexusGenFieldTypeNames {
   }
   Query: { // field return type name
     findUserById: 'User'
+    getUserBalanceByUserId: 'UserBalance'
   }
   Transaction: { // field return type name
     amount: 'Float'
@@ -127,7 +134,9 @@ export interface NexusGenFieldTypeNames {
     sentTransactions: 'Transaction'
     updatedAt: 'String'
     wallet: 'Wallet'
-    walletId: 'ID'
+  }
+  UserBalance: { // field return type name
+    balance: 'Float'
   }
   Wallet: { // field return type name
     balance: 'Float'
@@ -156,6 +165,9 @@ export interface NexusGenArgTypes {
   Query: {
     findUserById: { // args
       id: string; // ID!
+    }
+    getUserBalanceByUserId: { // args
+      userId: string; // ID!
     }
   }
 }

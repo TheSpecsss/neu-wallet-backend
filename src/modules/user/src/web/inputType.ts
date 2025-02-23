@@ -7,4 +7,11 @@ const login = objectType({
 	},
 });
 
-export default [login];
+const userBalance = objectType({
+	name: "UserBalance",
+	definition(t) {
+		t.float("balance");
+	},
+});
+
+export default [login, userBalance];
