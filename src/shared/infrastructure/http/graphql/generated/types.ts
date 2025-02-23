@@ -85,7 +85,6 @@ export interface NexusGenFieldTypes {
     sentTransactions: Array<NexusGenRootTypes['Transaction'] | null> | null; // [Transaction]
     updatedAt: string; // String!
     wallet: NexusGenRootTypes['Wallet'] | null; // Wallet
-    walletId: string; // ID!
   }
   UserBalance: { // field return type
     balance: number | null; // Float
@@ -135,7 +134,6 @@ export interface NexusGenFieldTypeNames {
     sentTransactions: 'Transaction'
     updatedAt: 'String'
     wallet: 'Wallet'
-    walletId: 'ID'
   }
   UserBalance: { // field return type name
     balance: 'Float'

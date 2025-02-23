@@ -11,7 +11,6 @@ export interface UserHydrateOption {
 }
 
 export interface IUserRepository {
-	createUser(user: IUser): Promise<void>;
 	findUserByEmail(email: string): Promise<IUser | null>;
 	findUserByEmailAndPassword(email: string, password: string): Promise<IUser | null>;
 	findUserById(
@@ -39,20 +38,6 @@ export class UserRepository implements IUserRepository {
 	constructor(database = db.user, mapper = UserMapper) {
 		this._database = database;
 		this._mapper = mapper;
-	}
-
-	async createUser(user: IUser): Promise<void> {
-		const userPersistenceObject = this._mapper.toPersistence(user);
-
-		try {
-			await this._database.create({ data: userPersistenceObject });
-		} catch (error) {
-			if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-				throw new Error(
-					`Unique constraint failed on the fields: (\`${(error.meta!.target as unknown[])[0]}\`)`,
-				);
-			}
-		}
 	}
 
 	public async findUserByEmail(email: string): Promise<IUser | null> {

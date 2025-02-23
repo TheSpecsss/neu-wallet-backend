@@ -33,6 +33,7 @@ describe("CreateUserUseCase", () => {
 		expect(result.emailValue).toBe(variables.email);
 		expect(result.nameValue).toBe(variables.name);
 		expect(result.password).not.toEqual(variables.password);
+		expect(result.wallet!.userIdValue).toBe(result.idValue);
 	});
 
 	it("should throw error if password confirmation doesn't match", async () => {

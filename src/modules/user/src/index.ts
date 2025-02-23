@@ -6,7 +6,7 @@ export interface IUserService {
 	findUserByEmailAndPassword(dto: FindUserByEmailAndPasswordDTO): Promise<IUser | null>;
 }
 
-export class UserService {
+export class UserService implements IUserService {
 	private _findUserByEmailAndPasswordUseCase: FindUserByEmailAndPasswordUseCase;
 
 	constructor(findUserByEmailAndPasswordUseCase = new FindUserByEmailAndPasswordUseCase()) {
