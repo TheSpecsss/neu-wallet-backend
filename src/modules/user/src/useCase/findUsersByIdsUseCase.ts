@@ -1,10 +1,9 @@
 import type { IUser } from "@/modules/user/src/domain/classes/user";
+import type { FindUsersByIdsDTO } from "@/modules/user/src/dtos/userDTO";
 import {
 	type IUserRepository,
-	type UserHydrateOption,
 	UserRepository,
 } from "@/modules/user/src/repositories/userRepository";
-import type { QueryOptions } from "@/shared/constant";
 
 export class FindUsersByIdsUseCase {
 	private _userRepository: IUserRepository;
@@ -13,7 +12,9 @@ export class FindUsersByIdsUseCase {
 		this._userRepository = userRepository;
 	}
 
-	public async execute(userIds: string[], options?: QueryOptions, hydrate?: UserHydrateOption): Promise<IUser[]> {
-		return await this._userRepository.findUsersByIds(userIds, options);
+	public async execute(request: FindUsersByIdsDTO): Promise<IUser[]> {
+		const { userIds, options, hydrate } = request;
+
+		return await this._userRepository.findUsersByIds(userIds, options, hydrate);
 	}
 }
