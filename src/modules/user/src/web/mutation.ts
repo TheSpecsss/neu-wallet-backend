@@ -1,8 +1,9 @@
 import { CreateUserUseCase } from "@/modules/user/src/useCase/createUserUseCase";
 import { LoginUserUseCase } from "@/modules/user/src/useCase/loginUserUseCase";
-import { mutationType, nonNull, stringArg } from "nexus";
+import { extendType, nonNull, stringArg } from "nexus";
 
-export default mutationType({
+export default extendType({
+	type: "Mutation",
 	definition(t) {
 		t.field("createUser", {
 			type: "User",

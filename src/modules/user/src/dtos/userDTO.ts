@@ -4,7 +4,6 @@ import type { QueryOptions } from "@/shared/constant";
 export interface FindUsersWithPaginationDTO {
 	perPage: number;
 	page: number;
-	options?: QueryOptions;
 	hydrate?: UserHydrateOption;
 }
 
@@ -15,6 +14,18 @@ export interface FindUserByEmailAndPasswordDTO {
 
 export interface FindUserByEmailDTO {
 	email: string;
+}
+
+export interface FindUserByIdDTO {
+	userId: string;
+	options?: QueryOptions;
+	hydrate?: UserHydrateOption;
+}
+
+export interface FindUsersByIdsDTO {
+	userIds: string[];
+	options?: QueryOptions;
+	hydrate?: UserHydrateOption;
 }
 
 export interface CreateUserDTO {

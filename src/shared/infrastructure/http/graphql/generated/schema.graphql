@@ -12,8 +12,8 @@ type Mutation {
 }
 
 type Query {
-  findUserById(id: ID!): User
-  getUserBalanceByUserId(userId: ID!): UserBalance
+  getRecentTransactionByUserId(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionByUserIdWithPagination
+  getUserBalanceByUserId: UserBalance
 }
 
 type Transaction {
@@ -25,6 +25,19 @@ type Transaction {
   sender: User
   senderId: ID!
   type: String!
+}
+
+type TransactionByUserIdWithPagination {
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+  page: Int
+  totalPages: Int
+  transactions: [Transaction]
+}
+
+input TransactionHydrateOption {
+  receiver: Boolean!
+  sender: Boolean!
 }
 
 type User {
@@ -43,6 +56,12 @@ type User {
 
 type UserBalance {
   balance: Float
+}
+
+input UserHydrateOption {
+  receivedTransactions: Boolean!
+  sentTransactions: Boolean!
+  wallet: Boolean!
 }
 
 type Wallet {

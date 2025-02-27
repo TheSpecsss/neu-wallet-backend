@@ -14,6 +14,15 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  TransactionHydrateOption: { // input type
+    receiver: boolean; // Boolean!
+    sender: boolean; // Boolean!
+  }
+  UserHydrateOption: { // input type
+    receivedTransactions: boolean; // Boolean!
+    sentTransactions: boolean; // Boolean!
+    wallet: boolean; // Boolean!
+  }
 }
 
 export interface NexusGenEnums {
@@ -34,6 +43,13 @@ export interface NexusGenObjects {
   Mutation: {};
   Query: {};
   Transaction: {};
+  TransactionByUserIdWithPagination: { // root type
+    hasNextPage?: boolean | null; // Boolean
+    hasPreviousPage?: boolean | null; // Boolean
+    page?: number | null; // Int
+    totalPages?: number | null; // Int
+    transactions?: Array<NexusGenRootTypes['Transaction'] | null> | null; // [Transaction]
+  }
   User: {};
   UserBalance: { // root type
     balance?: number | null; // Float
@@ -60,7 +76,7 @@ export interface NexusGenFieldTypes {
     login: NexusGenRootTypes['Login'] | null; // Login
   }
   Query: { // field return type
-    findUserById: NexusGenRootTypes['User'] | null; // User
+    getRecentTransactionByUserId: NexusGenRootTypes['TransactionByUserIdWithPagination'] | null; // TransactionByUserIdWithPagination
     getUserBalanceByUserId: NexusGenRootTypes['UserBalance'] | null; // UserBalance
   }
   Transaction: { // field return type
@@ -72,6 +88,13 @@ export interface NexusGenFieldTypes {
     sender: NexusGenRootTypes['User'] | null; // User
     senderId: string; // ID!
     type: string; // String!
+  }
+  TransactionByUserIdWithPagination: { // field return type
+    hasNextPage: boolean | null; // Boolean
+    hasPreviousPage: boolean | null; // Boolean
+    page: number | null; // Int
+    totalPages: number | null; // Int
+    transactions: Array<NexusGenRootTypes['Transaction'] | null> | null; // [Transaction]
   }
   User: { // field return type
     accountType: string; // String!
@@ -109,7 +132,7 @@ export interface NexusGenFieldTypeNames {
     login: 'Login'
   }
   Query: { // field return type name
-    findUserById: 'User'
+    getRecentTransactionByUserId: 'TransactionByUserIdWithPagination'
     getUserBalanceByUserId: 'UserBalance'
   }
   Transaction: { // field return type name
@@ -121,6 +144,13 @@ export interface NexusGenFieldTypeNames {
     sender: 'User'
     senderId: 'ID'
     type: 'String'
+  }
+  TransactionByUserIdWithPagination: { // field return type name
+    hasNextPage: 'Boolean'
+    hasPreviousPage: 'Boolean'
+    page: 'Int'
+    totalPages: 'Int'
+    transactions: 'Transaction'
   }
   User: { // field return type name
     accountType: 'String'
@@ -163,11 +193,10 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
-    findUserById: { // args
-      id: string; // ID!
-    }
-    getUserBalanceByUserId: { // args
-      userId: string; // ID!
+    getRecentTransactionByUserId: { // args
+      hydrate?: NexusGenInputs['TransactionHydrateOption'] | null; // TransactionHydrateOption
+      page: number; // Int!
+      perPage: number; // Int!
     }
   }
 }
@@ -180,7 +209,7 @@ export interface NexusGenTypeInterfaces {
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = keyof NexusGenInputs;
 
 export type NexusGenEnumNames = never;
 

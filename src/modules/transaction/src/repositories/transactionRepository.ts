@@ -1,5 +1,6 @@
 import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
 import { TransactionMapper } from "@/modules/transaction/src/mappers/transactionMapper";
+import type { Pagination } from "@/shared/constant";
 import { db } from "@/shared/infrastructure/database";
 
 export interface TransactionHydrateOption {
@@ -13,6 +14,12 @@ export interface ITransactionRepository {
 		userIds: string[],
 		hydrate?: TransactionHydrateOption,
 	): Promise<ITransaction[]>;
+	getTransactionsByPagination(
+		userId: string,
+		pagination: Pagination,
+		hydrate?: TransactionHydrateOption,
+	): Promise<ITransaction[]>;
+	getTransactionsByUserIdTotalPages(userId: string, perPage: number): Promise<number>;
 }
 
 export class TransactionRepository implements ITransactionRepository {
@@ -47,6 +54,30 @@ export class TransactionRepository implements ITransactionRepository {
 		});
 
 		return transactionsRaw.map((transaction) => this._mapper.toDomain(transaction));
+	}
+
+	public async getTransactionsByPagination(
+		userId: string,
+		pagination: Pagination,
+		hydrate?: TransactionHydrateOption,
+	): Promise<ITransaction[]> {
+		const transactionsRaw = await this._database.findMany({
+			where: { OR: [{ senderId: userId }, { receiverId: userId }] },
+			skip: pagination.start,
+			take: pagination.size,
+			include: this._hydrateFilter(hydrate),
+			orderBy: [{ createdAt: "asc" }],
+		});
+
+		return transactionsRaw.map((transaction) => this._mapper.toDomain(transaction));
+	}
+
+	public async getTransactionsByUserIdTotalPages(userId: string, perPage: number): Promise<number> {
+		const totalCount = await this._database.count({
+			where: { OR: [{ senderId: userId }, { receiverId: userId }] },
+		});
+
+		return Math.ceil(totalCount / perPage);
 	}
 
 	private _hydrateFilter(hydrate?: TransactionHydrateOption) {
