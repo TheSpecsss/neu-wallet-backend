@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { beforeAll, describe, expect, it } from "bun:test";
 import type { IUser } from "@/modules/user/src/domain/classes/user";
 import type { IUserRawObject } from "@/modules/user/src/domain/shared/constant";
 import {
@@ -7,7 +7,6 @@ import {
 } from "@/modules/user/src/repositories/userRepository";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { seedWallet } from "@/modules/wallet/tests/utils/seedWallet";
-import { db } from "@/shared/infrastructure/database";
 
 const assertUser = (value: IUser | null, expectedValue: IUserRawObject) => {
 	expect(value!.idValue).toBe(expectedValue.id);
@@ -18,15 +17,11 @@ const assertUser = (value: IUser | null, expectedValue: IUserRawObject) => {
 	expect(value!.isDeleted).toBe(expectedValue.isDeleted);
 };
 
-describe("Test User Repository findUserById", () => {
+describe("UserRepository findUserById", () => {
 	let userRepository: IUserRepository;
 
 	beforeAll(async () => {
 		userRepository = new UserRepository();
-	});
-
-	afterAll(async () => {
-		await db.$disconnect();
 	});
 
 	it("should retrieve existing user found by Id", async () => {

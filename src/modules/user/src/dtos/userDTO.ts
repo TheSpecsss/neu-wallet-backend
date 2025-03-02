@@ -28,7 +28,7 @@ export interface FindUsersByIdsDTO {
 	hydrate?: UserHydrateOption;
 }
 
-export interface CreateUserDTO {
+export interface RegisterUserDTO {
 	email: string;
 	name: string;
 	password: string;
@@ -38,4 +38,8 @@ export interface CreateUserDTO {
 export interface LoginUserDTO {
 	email: string;
 	password: string;
+}
+
+export interface VerifyUserDTO {
+	userId: string;
 }

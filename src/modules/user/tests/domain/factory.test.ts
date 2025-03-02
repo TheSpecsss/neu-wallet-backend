@@ -23,6 +23,7 @@ describe("UserFactory", () => {
 			sentTransactions: [],
 			receivedTransactions: [],
 			isDeleted: false,
+			isVerified: false,
 			deletedAt: null,
 			createdAt: faker.date.past(),
 			updatedAt: faker.date.past(),

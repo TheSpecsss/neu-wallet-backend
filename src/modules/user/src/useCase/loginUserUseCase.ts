@@ -4,8 +4,8 @@ import {
 	type IUserRepository,
 	UserRepository,
 } from "@/modules/user/src/repositories/userRepository";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { comparePassword } from "@/shared/infrastructure/authentication/comparePassword";
+import { createToken } from "@/shared/infrastructure/authentication/createToken";
 
 export class LoginUserUseCase {
 	private readonly _userRepository: IUserRepository;
@@ -21,7 +21,7 @@ export class LoginUserUseCase {
 
 		await this._comparePassword(password, user.password);
 
-		const token = this._createToken(user.emailValue, user.password);
+		const token = createToken(user.emailValue, user.password);
 
 		return { token };
 	}
@@ -32,19 +32,17 @@ export class LoginUserUseCase {
 			throw new Error(`Email '${email}' does not exist`);
 		}
 
+		if (!user.isVerified) {
+			throw new Error(`Email ${email} not verified`);
+		}
+
 		return user;
 	}
 
 	private async _comparePassword(rawPassword: string, hashPassword: string): Promise<void> {
-		const comparedPassword = await bcrypt.compare(rawPassword, hashPassword);
+		const comparedPassword = await comparePassword(rawPassword, hashPassword);
 		if (!comparedPassword) {
 			throw new Error("Invalid password");
 		}
-	}
-
-	private _createToken(email: string, password: string): string {
-		return jwt.sign({ email, password }, process.env.JWT_SECRET as string, {
-			expiresIn: "7d",
-		});
 	}
 }

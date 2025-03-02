@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 import { schema } from "@/shared/infrastructure/http/graphql/schema";
 import { type Context, authorize } from "@/shared/infrastructure/http/helpers/authorize";
 import { ApolloServer } from "@apollo/server";

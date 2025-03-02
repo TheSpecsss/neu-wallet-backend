@@ -1,20 +1,14 @@
-import { beforeAll, beforeEach, describe, expect, it } from "bun:test";
+import { beforeAll, describe, expect, it } from "bun:test";
 import { GetUserBalanceByUserIdUseCase } from "@/modules/user/src/useCase/getUserBalanceByUserIdUseCase";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { seedWallet } from "@/modules/wallet/tests/utils/seedWallet";
 import { SnowflakeID } from "@/shared/domain/snowflakeId";
-import { db } from "@/shared/infrastructure/database";
 
 describe("GetUserBalanceByUserIdUseCase", () => {
 	let getUserBalanceByUserIdUseCase: GetUserBalanceByUserIdUseCase;
 
 	beforeAll(() => {
 		getUserBalanceByUserIdUseCase = new GetUserBalanceByUserIdUseCase();
-	});
-
-	beforeEach(async () => {
-		await db.userTransaction.deleteMany();
-		await db.user.deleteMany();
 	});
 
 	it("should retrieve user's balance when user does exist", async () => {

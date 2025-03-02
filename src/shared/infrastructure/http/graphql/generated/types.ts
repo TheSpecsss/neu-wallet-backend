@@ -4,7 +4,7 @@
  */
 
 
-
+import type { FieldAuthorizeResolver } from "nexus/dist/plugins/fieldAuthorizePlugin"
 
 
 
@@ -54,6 +54,7 @@ export interface NexusGenObjects {
   UserBalance: { // root type
     balance?: number | null; // Float
   }
+  Verification: {};
   Wallet: {};
 }
 
@@ -72,8 +73,10 @@ export interface NexusGenFieldTypes {
     token: string | null; // String
   }
   Mutation: { // field return type
-    createUser: NexusGenRootTypes['User'] | null; // User
+    confirmVerification: NexusGenRootTypes['Verification'] | null; // Verification
     login: NexusGenRootTypes['Login'] | null; // Login
+    register: NexusGenRootTypes['User'] | null; // User
+    resendVerification: NexusGenRootTypes['Verification'] | null; // Verification
   }
   Query: { // field return type
     getRecentTransactionByUserId: NexusGenRootTypes['TransactionByUserIdWithPagination'] | null; // TransactionByUserIdWithPagination
@@ -112,6 +115,16 @@ export interface NexusGenFieldTypes {
   UserBalance: { // field return type
     balance: number | null; // Float
   }
+  Verification: { // field return type
+    code: string; // String!
+    createdAt: string; // String!
+    expiredAt: string; // String!
+    id: string; // ID!
+    status: string; // String!
+    updatedAt: string; // String!
+    user: NexusGenRootTypes['User'] | null; // User
+    userId: string; // ID!
+  }
   Wallet: { // field return type
     balance: number; // Float!
     createdAt: string; // String!
@@ -128,8 +141,10 @@ export interface NexusGenFieldTypeNames {
     token: 'String'
   }
   Mutation: { // field return type name
-    createUser: 'User'
+    confirmVerification: 'Verification'
     login: 'Login'
+    register: 'User'
+    resendVerification: 'Verification'
   }
   Query: { // field return type name
     getRecentTransactionByUserId: 'TransactionByUserIdWithPagination'
@@ -168,6 +183,16 @@ export interface NexusGenFieldTypeNames {
   UserBalance: { // field return type name
     balance: 'Float'
   }
+  Verification: { // field return type name
+    code: 'String'
+    createdAt: 'String'
+    expiredAt: 'String'
+    id: 'ID'
+    status: 'String'
+    updatedAt: 'String'
+    user: 'User'
+    userId: 'ID'
+  }
   Wallet: { // field return type name
     balance: 'Float'
     createdAt: 'String'
@@ -181,15 +206,22 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
-    createUser: { // args
+    confirmVerification: { // args
+      code: string; // String!
+      email: string; // String!
+    }
+    login: { // args
+      email: string; // String!
+      password: string; // String!
+    }
+    register: { // args
       confirmPassword: string; // String!
       email: string; // String!
       name: string; // String!
       password: string; // String!
     }
-    login: { // args
+    resendVerification: { // args
       email: string; // String!
-      password: string; // String!
     }
   }
   Query: {
@@ -264,6 +296,15 @@ declare global {
   interface NexusGenPluginInputTypeConfig<TypeName extends string> {
   }
   interface NexusGenPluginFieldConfig<TypeName extends string, FieldName extends string> {
+    /**
+     * Authorization for an individual field. Returning "true"
+     * or "Promise<true>" means the field can be accessed.
+     * Returning "false" or "Promise<false>" will respond
+     * with a "Not Authorized" error for the field.
+     * Returning or throwing an error will also prevent the
+     * resolver from executing.
+     */
+    authorize?: FieldAuthorizeResolver<TypeName, FieldName>
   }
   interface NexusGenPluginInputFieldConfig<TypeName extends string, FieldName extends string> {
   }

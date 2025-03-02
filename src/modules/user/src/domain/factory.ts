@@ -22,6 +22,7 @@ export interface IUserFactory {
 	sentTransactions?: ITransactionFactory[];
 	receivedTransactions?: ITransactionFactory[];
 	isDeleted: boolean;
+	isVerified: boolean;
 	deletedAt: Date | null;
 	createdAt: Date;
 	updatedAt: Date;

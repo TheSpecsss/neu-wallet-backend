@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { beforeAll, describe, expect, it } from "bun:test";
 import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
 import type { ITransactionRawObject } from "@/modules/transaction/src/domain/shared/constant";
 import {
@@ -7,7 +7,6 @@ import {
 } from "@/modules/transaction/src/repositories/transactionRepository";
 import { seedTransaction } from "@/modules/transaction/tests/utils/seedTransaction";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
-import { db } from "@/shared/infrastructure/database";
 
 const assertTransaction = (value: ITransaction | null, expectedValue: ITransactionRawObject) => {
 	expect(value!.idValue).toBe(expectedValue.id);
@@ -22,10 +21,6 @@ describe("Test Transaction Repository findTransactionById", () => {
 
 	beforeAll(async () => {
 		transactionRepository = new TransactionRepository();
-	});
-
-	afterAll(async () => {
-		await db.$disconnect();
 	});
 
 	it("should retrieve existing wallet found by Id", async () => {

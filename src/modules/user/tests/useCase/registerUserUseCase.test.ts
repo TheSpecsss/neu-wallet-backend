@@ -1,19 +1,14 @@
-import { beforeAll, beforeEach, describe, expect, it } from "bun:test";
+import { beforeAll, describe, expect, it } from "bun:test";
 import { UserName } from "@/modules/user/src/domain/classes/userName";
-import { CreateUserUseCase } from "@/modules/user/src/useCase/createUserUseCase";
-import { db } from "@/shared/infrastructure/database";
+import { RegisterUserUseCase } from "@/modules/user/src/useCase/registerUserUseCase";
+import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { faker } from "@faker-js/faker";
 
-describe("CreateUserUseCase", () => {
-	let createUserUseCase: CreateUserUseCase;
+describe("RegisterUserUseCase", () => {
+	let useCase: RegisterUserUseCase;
 
 	beforeAll(() => {
-		createUserUseCase = new CreateUserUseCase();
-	});
-
-	beforeEach(async () => {
-		await db.userTransaction.deleteMany();
-		await db.user.deleteMany();
+		useCase = new RegisterUserUseCase();
 	});
 
 	it("should create a user with valid data", async () => {
@@ -27,7 +22,7 @@ describe("CreateUserUseCase", () => {
 			confirmPassword: "12345",
 		};
 
-		const result = await createUserUseCase.execute(variables);
+		const result = await useCase.execute(variables);
 
 		expect(result.id).toBeDefined();
 		expect(result.emailValue).toBe(variables.email);
@@ -39,7 +34,7 @@ describe("CreateUserUseCase", () => {
 	it("should throw error if password confirmation doesn't match", async () => {
 		let errorMessage = "";
 		try {
-			await createUserUseCase.execute({
+			await useCase.execute({
 				email: "test@neu.edu.ph",
 				name: "Test User",
 				password: "password123",
@@ -55,7 +50,7 @@ describe("CreateUserUseCase", () => {
 	it("should throw error if email is invalid", async () => {
 		let errorMessage = "";
 		try {
-			await createUserUseCase.execute({
+			await useCase.execute({
 				email: "invalid-email",
 				name: "Test User",
 				password: "password123",
@@ -67,6 +62,26 @@ describe("CreateUserUseCase", () => {
 
 		expect(errorMessage).toBe(
 			"Invalid email address. Please use a valid NEU email address (e.g., example@neu.edu.ph).",
+		);
+	});
+
+	it("should throw error if email already exist but not verified", async () => {
+		const seededUser = await seedUser({ isVerified: false });
+
+		let errorMessage = "";
+		try {
+			await useCase.execute({
+				email: seededUser.email,
+				name: seededUser.name,
+				password: seededUser.password,
+				confirmPassword: seededUser.password,
+			});
+		} catch (error) {
+			errorMessage = (error as Error).message;
+		}
+
+		expect(errorMessage).toBe(
+			`User with an email ${seededUser.email} already exist but not verified. Please verify your account`,
 		);
 	});
 });

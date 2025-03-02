@@ -6,7 +6,7 @@ import {
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { db } from "@/shared/infrastructure/database";
 
-describe("Test User Repository findUsersByPagination", () => {
+describe("UserRepository findUsersByPagination", () => {
 	let userRepository: IUserRepository;
 
 	beforeAll(() => {
@@ -15,6 +15,7 @@ describe("Test User Repository findUsersByPagination", () => {
 
 	beforeEach(async () => {
 		await db.userTransaction.deleteMany();
+		await db.userVerification.deleteMany();
 		await db.user.deleteMany();
 	});
 

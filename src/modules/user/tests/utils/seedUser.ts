@@ -17,6 +17,7 @@ export const seedUser = async (
 		password: faker.internet.password(),
 		accountType: faker.helpers.arrayElement(Object.values(USER_ACCOUNT_TYPE)),
 		isDeleted: false,
+		isVerified: true,
 		deletedAt: null,
 		createdAt: new Date(),
 		updatedAt: new Date(),
