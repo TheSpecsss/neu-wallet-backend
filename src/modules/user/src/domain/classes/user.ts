@@ -15,6 +15,7 @@ export interface IUserData {
 	sentTransactions: ITransaction[];
 	receivedTransactions: ITransaction[];
 	isDeleted: boolean;
+	isVerified: boolean;
 	deletedAt: Date | null;
 	createdAt: Date;
 	updatedAt: Date;
@@ -25,6 +26,7 @@ export interface IUser extends IUserData {
 	nameValue: string;
 	emailValue: string;
 	accountTypeValue: string;
+	updateIsVerified(isVerified: boolean): void;
 }
 
 export class User implements IUser {
@@ -37,6 +39,7 @@ export class User implements IUser {
 	private readonly _sentTransactions: ITransaction[];
 	private readonly _receivedTransactions: ITransaction[];
 	private readonly _isDeleted: boolean;
+	private _isVerified: boolean;
 	private readonly _deletedAt: Date | null;
 	private readonly _createdAt: Date;
 	private readonly _updatedAt: Date;
@@ -52,6 +55,7 @@ export class User implements IUser {
 		this._receivedTransactions = data.receivedTransactions;
 		this._isDeleted = data.isDeleted;
 		this._deletedAt = data.deletedAt;
+		this._isVerified = data.isVerified;
 		this._createdAt = data.createdAt;
 		this._updatedAt = data.updatedAt;
 	}
@@ -108,6 +112,10 @@ export class User implements IUser {
 		return this._isDeleted;
 	}
 
+	get isVerified(): boolean {
+		return this._isVerified;
+	}
+
 	get deletedAt(): Date | null {
 		return this._deletedAt;
 	}
@@ -118,6 +126,10 @@ export class User implements IUser {
 
 	get updatedAt(): Date {
 		return this._updatedAt;
+	}
+
+	updateIsVerified(isVerified: boolean): void {
+		this._isVerified = isVerified;
 	}
 
 	public static create(props: IUserData): IUser {

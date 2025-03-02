@@ -22,7 +22,6 @@ export class TransactionMapper {
 			receiverId: transaction.receiverIdValue,
 			amount: transaction.amountValue,
 			type: transaction.typeValue,
-			createdAt: transaction.createdAt,
 		};
 	}
 }

@@ -1,4 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { beforeAll, describe, expect, it } from "bun:test";
+import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import type { IWallet } from "@/modules/wallet/src/domain/classes/wallet";
 import type { IWalletRawObject } from "@/modules/wallet/src/domain/shared/constant";
 import {
@@ -6,8 +7,6 @@ import {
 	WalletRepository,
 } from "@/modules/wallet/src/repositories/walletRepository";
 import { seedWallet } from "@/modules/wallet/tests/utils/seedWallet";
-import { db } from "@/shared/infrastructure/database";
-import { seedUser } from "@/modules/user/tests/utils/seedUser";
 
 const assertWallet = (value: IWallet | null, expectedValue: IWalletRawObject) => {
 	expect(value!.idValue).toBe(expectedValue.id);
@@ -20,10 +19,6 @@ describe("Test Wallet Repository findWalletById", () => {
 
 	beforeAll(async () => {
 		walletRepository = new WalletRepository();
-	});
-
-	afterAll(async () => {
-		await db.$disconnect();
 	});
 
 	it("should retrieve existing wallet found by Id", async () => {
@@ -48,7 +43,7 @@ describe("Test Wallet Repository findWalletById", () => {
 		assertWallet(wallet, seededWallet);
 	});
 
-  it("should hydrate user in the wallet", async () => {
+	it("should hydrate user in the wallet", async () => {
 		const seededUser = await seedUser();
 		const seededWallet = await seedWallet({ userId: seededUser.id });
 

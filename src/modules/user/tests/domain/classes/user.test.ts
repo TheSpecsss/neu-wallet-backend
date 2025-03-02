@@ -25,6 +25,7 @@ describe("User", () => {
 		sentTransactions: [],
 		receivedTransactions: [],
 		isDeleted: false,
+		isVerified: false,
 		deletedAt: null,
 		createdAt: new Date(),
 		updatedAt: new Date(),
@@ -39,7 +40,23 @@ describe("User", () => {
 		expect(user.emailValue).toBe(mockData.email.value);
 		expect(user.password).toBe(mockData.password);
 		expect(user.accountTypeValue).toBe(mockData.accountType.value);
+		expect(user.wallet).toBe(mockData.wallet);
+		expect(user.sentTransactions).toBe(mockData.sentTransactions);
+		expect(user.receivedTransactions).toBe(mockData.receivedTransactions);
+		expect(user.isDeleted).toBe(mockData.isDeleted);
+		expect(user.isVerified).toBe(mockData.isVerified);
 		expect(user.createdAt.toString()).toBe(mockData.createdAt.toString());
 		expect(user.updatedAt.toString()).toBe(mockData.updatedAt.toString());
+	});
+
+	describe("updateIsVerified", () => {
+		it("should update the isVerified properties of user", () => {
+			const user = User.create(mockData);
+			expect(user.isVerified).toBe(false);
+
+			user.updateIsVerified(true);
+
+			expect(user.isVerified).toBe(true);
+		});
 	});
 });

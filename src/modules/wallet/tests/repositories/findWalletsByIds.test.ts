@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { beforeAll, describe, expect, it } from "bun:test";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import type { IWallet } from "@/modules/wallet/src/domain/classes/wallet";
 import type { IWalletRawObject } from "@/modules/wallet/src/domain/shared/constant";
@@ -7,7 +7,6 @@ import {
 	WalletRepository,
 } from "@/modules/wallet/src/repositories/walletRepository";
 import { seedWallet } from "@/modules/wallet/tests/utils/seedWallet";
-import { db } from "@/shared/infrastructure/database";
 
 const assertWallet = (value: IWallet | null, expectedValue: IWalletRawObject) => {
 	expect(value!.idValue).toBe(expectedValue.id);
@@ -20,10 +19,6 @@ describe("Test Wallet Repository findWalletsByIds", () => {
 
 	beforeAll(async () => {
 		walletRepository = new WalletRepository();
-	});
-
-	afterAll(async () => {
-		await db.$disconnect();
 	});
 
 	it("should retrieve a wallets by ids", async () => {

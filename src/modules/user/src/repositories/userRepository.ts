@@ -2,7 +2,6 @@ import type { IUser } from "@/modules/user/src/domain/classes/user";
 import { UserMapper } from "@/modules/user/src/mappers/userMapper";
 import type { Pagination, QueryOptions } from "@/shared/constant";
 import { db } from "@/shared/infrastructure/database";
-import { Prisma } from "@prisma/client";
 
 export interface UserHydrateOption {
 	wallet?: boolean;
@@ -29,6 +28,7 @@ export interface IUserRepository {
 		hydrate?: UserHydrateOption,
 	): Promise<IUser[]>;
 	getUsersTotalPages(perPage: number, includeDeleted?: boolean): Promise<number>;
+	updateUser(user: IUser): Promise<IUser | null>;
 }
 
 export class UserRepository implements IUserRepository {
@@ -42,7 +42,7 @@ export class UserRepository implements IUserRepository {
 
 	public async findUserByEmail(email: string): Promise<IUser | null> {
 		const userRaw = await this._database.findUnique({
-			where: { email }
+			where: { email },
 		});
 		if (userRaw === null) {
 			return null;
@@ -71,8 +71,7 @@ export class UserRepository implements IUserRepository {
 		hydrate?: UserHydrateOption,
 	): Promise<IUser | null> {
 		const users = await this.findUsersByIds([userId], options, hydrate);
-
-		if (users.length === 0) {
+		if (!users[0]) {
 			return null;
 		}
 
@@ -116,6 +115,19 @@ export class UserRepository implements IUserRepository {
 			where: this._deletedFilter(includeDeleted),
 		});
 		return Math.ceil(totalCount / perPage);
+	}
+
+	public async updateUser(user: IUser): Promise<IUser | null> {
+		try {
+			const userRaw = await this._database.update({
+				where: { id: user.idValue },
+				data: this._mapper.toPersistence(user),
+			});
+
+			return this._mapper.toDomain(userRaw);
+		} catch {
+			return null;
+		}
 	}
 
 	private _deletedFilter(includeDeleted?: boolean) {

@@ -35,8 +35,7 @@ export class WalletRepository implements IWalletRepository {
 		hydrate?: WalletHydrateOption,
 	): Promise<IWallet | null> {
 		const wallets = await this.findWalletsByIds([id], options, hydrate);
-
-		if (wallets.length === 0) {
+		if (!wallets[0]) {
 			return null;
 		}
 

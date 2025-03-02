@@ -16,6 +16,7 @@ describe("UserMapper", () => {
 		expect(userDomainObject.password).toBe(userSchemaObject.password);
 		expect(userDomainObject.accountTypeValue).toBe(userSchemaObject.accountType);
 		expect(userDomainObject.isDeleted).toBe(userSchemaObject.isDeleted);
+		expect(userDomainObject.isVerified).toBe(userSchemaObject.isVerified);
 	});
 
 	it("should map to persistence from domain", async () => {
@@ -28,5 +29,6 @@ describe("UserMapper", () => {
 		expect(userSchemaObject.password).toBe(userDomainObject.password);
 		expect(userSchemaObject.accountType).toBe(userDomainObject.accountTypeValue);
 		expect(userSchemaObject.isDeleted).toBe(userDomainObject.isDeleted);
+		expect(userSchemaObject.isVerified).toBe(userDomainObject.isVerified);
 	});
 });

@@ -20,8 +20,6 @@ export class WalletMapper {
 			balance: wallet.balanceValue,
 			isDeleted: wallet.isDeleted,
 			deletedAt: wallet.deletedAt,
-			createdAt: wallet.createdAt,
-			updatedAt: wallet.updatedAt,
 		};
 	}
 }

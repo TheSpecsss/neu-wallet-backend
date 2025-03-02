@@ -18,6 +18,7 @@ export const createUserDomainObject = (partialDomainObject: Partial<IUserRawObje
 		sentTransactions: [],
 		receivedTransactions: [],
 		isDeleted: false,
+		isVerified: true,
 		deletedAt: null,
 		createdAt: new Date(),
 		updatedAt: new Date(),

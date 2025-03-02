@@ -35,13 +35,12 @@ export class TransactionRepository implements ITransactionRepository {
 		id: string,
 		hydrate?: TransactionHydrateOption,
 	): Promise<ITransaction | null> {
-		const transaction = await this.findTransactionsByIds([id], hydrate);
-
-		if (transaction.length === 0) {
+		const transactions = await this.findTransactionsByIds([id], hydrate);
+		if (!transactions[0]) {
 			return null;
 		}
 
-		return transaction[0];
+		return transactions[0];
 	}
 
 	public async findTransactionsByIds(

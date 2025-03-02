@@ -1,11 +1,11 @@
-import { CreateUserUseCase } from "@/modules/user/src/useCase/createUserUseCase";
 import { LoginUserUseCase } from "@/modules/user/src/useCase/loginUserUseCase";
+import { RegisterUserUseCase } from "@/modules/user/src/useCase/registerUserUseCase";
 import { extendType, nonNull, stringArg } from "nexus";
 
 export default extendType({
 	type: "Mutation",
 	definition(t) {
-		t.field("createUser", {
+		t.field("register", {
 			type: "User",
 			args: {
 				email: nonNull(stringArg()),
@@ -14,7 +14,7 @@ export default extendType({
 				confirmPassword: nonNull(stringArg()),
 			},
 			resolve: (_, args) => {
-				const useCase = new CreateUserUseCase();
+				const useCase = new RegisterUserUseCase();
 				return useCase.execute(args);
 			},
 		});

@@ -3,7 +3,7 @@ import { UserRepository } from "@/modules/user/src/repositories/userRepository";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { db } from "@/shared/infrastructure/database";
 
-describe("Test User Repository findUsersByPagination", () => {
+describe("UserRepository findUsersByPagination", () => {
 	let userRepository: UserRepository;
 
 	beforeAll(() => {

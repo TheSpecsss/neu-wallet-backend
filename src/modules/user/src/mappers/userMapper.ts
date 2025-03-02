@@ -15,9 +15,8 @@ export class UserMapper {
 			password: user.password,
 			accountType: user.accountTypeValue,
 			isDeleted: user.isDeleted,
+			isVerified: user.isVerified,
 			deletedAt: user.deletedAt,
-			createdAt: user.createdAt,
-			updatedAt: user.updatedAt,
 		};
 	}
 }
