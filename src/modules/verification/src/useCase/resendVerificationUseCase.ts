@@ -42,11 +42,11 @@ export class ResendVerificationUseCase {
 	private async _getUserByEmail(email: string): Promise<IUser> {
 		const user = await this._userService.findUserByEmail({ email });
 		if (!user) {
-			throw new Error(`User ${email} does not exist`);
+			throw new Error(`${email} does not exist`);
 		}
 
 		if (user.isVerified) {
-			throw new Error(`User ${email} already been verified`);
+			throw new Error(`${email} has already been verified`);
 		}
 
 		return user;
@@ -58,12 +58,29 @@ export class ResendVerificationUseCase {
 			throw new Error("User does not have any pending verification");
 		}
 
-		const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
-		if (verification.updatedAt.getTime() > twoMinutesAgo.getTime()) {
-			throw new Error("Cannot resend verification within the last 2 minutes");
+		const lastUsed = verification.updatedAt.getTime();
+		if (this._isResendOnCooldown(lastUsed)) {
+			const currentCooldownTime = this._getRemainingCooldownTime(lastUsed);
+			throw new Error(
+				`Verification resend is on cooldown. Try again in ${currentCooldownTime} second(s).`,
+			);
 		}
 
 		return verification;
+	}
+
+	private _isResendOnCooldown(lastUsed: number): boolean {
+		const elapsedTime = Date.now() - lastUsed;
+		const twoMinutes = 2 * 60 * 1000;
+
+		return elapsedTime < twoMinutes;
+	}
+
+	private _getRemainingCooldownTime(lastUsed: number): number {
+		const elapsedTime = Date.now() - lastUsed;
+		const twoMinutes = 2 * 60 * 1000;
+
+		return Math.ceil((twoMinutes - elapsedTime) / 1000);
 	}
 
 	private async _updateVerification(verification: IVerification): Promise<IVerification> {

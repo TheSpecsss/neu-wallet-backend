@@ -38,11 +38,11 @@ export class ConfirmVerificationUseCase {
 	private async _getUserByEmail(email: string): Promise<IUser> {
 		const user = await this._userService.findUserByEmail({ email });
 		if (!user) {
-			throw new Error(`Email ${email} does not exist`);
+			throw new Error(`${email} does not exist`);
 		}
 
 		if (user.isVerified) {
-			throw new Error(`Email ${email} is already verified`);
+			throw new Error(`${email} has already been verified`);
 		}
 
 		return user;

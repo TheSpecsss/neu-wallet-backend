@@ -14,12 +14,12 @@ describe("ResendVerificationUseCase", () => {
 		userService = new UserService();
 	});
 
-	it("should resent and update user's verification properties", async () => {
+	it("should resent verification after the 2-minute cooldown period", async () => {
 		const seededUser = await seedUser({ isVerified: false });
 		const seededVerification = await seedVerification({
 			userId: seededUser.id,
 			status: VERIFICATION_STATUS.PENDING,
-			updatedAt: new Date(Date.now() - 3 * 60 * 1000),
+			updatedAt: new Date(Date.now() - 2 * 60 * 1000 + 1),
 		});
 
 		const verification = await useCase.execute({ email: seededUser.email });
@@ -39,7 +39,7 @@ describe("ResendVerificationUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe(`User ${email} does not exist`);
+		expect(errorMessage).toBe(`${email} does not exist`);
 	});
 
 	it("should throw an error when user is already verified", async () => {
@@ -53,7 +53,7 @@ describe("ResendVerificationUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe(`User ${seededUser.email} already been verified`);
+		expect(errorMessage).toBe(`${seededUser.email} has already been verified`);
 	});
 
 	it("should throw an error when user does not have a pending verification", async () => {
@@ -74,7 +74,7 @@ describe("ResendVerificationUseCase", () => {
 		await seedVerification({
 			userId: seededUser.id,
 			status: VERIFICATION_STATUS.PENDING,
-			expiredAt: new Date(),
+			updatedAt: new Date(Date.now() - 60 * 1000), // 1 minute lapse
 		});
 
 		let errorMessage = "";
@@ -84,6 +84,6 @@ describe("ResendVerificationUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe("Cannot resend verification within the last 2 minutes");
+		expect(errorMessage).toContain("Verification resend is on cooldown.");
 	});
 });

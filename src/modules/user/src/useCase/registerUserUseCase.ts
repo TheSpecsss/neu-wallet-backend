@@ -165,11 +165,11 @@ export class RegisterUserUseCase {
 		if (user && !user.isDeleted) {
 			if (!user.isVerified) {
 				throw Error(
-					`User with an email ${email} already exist but not verified. Please verify your account`,
+					`${email} already exist but not verified. Please verify your account`,
 				);
 			}
 
-			throw Error(`User with an email ${email} already exist`);
+			throw Error(`${email} already exist`);
 		}
 	}
 

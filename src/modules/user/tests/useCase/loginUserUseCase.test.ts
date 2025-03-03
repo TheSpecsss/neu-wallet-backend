@@ -37,7 +37,7 @@ describe("LoginUserUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe(`Email '${email}' does not exist`);
+		expect(errorMessage).toBe(`${email} does not exist`);
 	});
 
 	it("should throw error if email is valid but not verified", async () => {
@@ -56,7 +56,7 @@ describe("LoginUserUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe(`Email ${seededUser.email} not verified`);
+		expect(errorMessage).toBe(`${seededUser.email} is not yet verified. Please verify your account`);
 	});
 
 	it("should throw error if password does not match", async () => {
@@ -75,6 +75,6 @@ describe("LoginUserUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe("Invalid password");
+		expect(errorMessage).toBe("Incorrect password. Please try again");
 	});
 });

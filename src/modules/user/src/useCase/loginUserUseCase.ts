@@ -29,11 +29,11 @@ export class LoginUserUseCase {
 	private async _getUserByEmail(email: string): Promise<IUser> {
 		const user = await this._userRepository.findUserByEmail(email);
 		if (user === null) {
-			throw new Error(`Email '${email}' does not exist`);
+			throw new Error(`${email} does not exist`);
 		}
 
 		if (!user.isVerified) {
-			throw new Error(`Email ${email} not verified`);
+			throw new Error(`${email} is not yet verified. Please verify your account`);
 		}
 
 		return user;
@@ -42,7 +42,7 @@ export class LoginUserUseCase {
 	private async _comparePassword(rawPassword: string, hashPassword: string): Promise<void> {
 		const comparedPassword = await comparePassword(rawPassword, hashPassword);
 		if (!comparedPassword) {
-			throw new Error("Invalid password");
+			throw new Error("Incorrect password. Please try again");
 		}
 	}
 }

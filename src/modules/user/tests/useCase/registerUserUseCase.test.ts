@@ -65,6 +65,24 @@ describe("RegisterUserUseCase", () => {
 		);
 	});
 
+	it("should throw error if email already exist and verified", async () => {
+		const seededUser = await seedUser({ isVerified: true });
+
+		let errorMessage = "";
+		try {
+			await useCase.execute({
+				email: seededUser.email,
+				name: seededUser.name,
+				password: seededUser.password,
+				confirmPassword: seededUser.password,
+			});
+		} catch (error) {
+			errorMessage = (error as Error).message;
+		}
+
+		expect(errorMessage).toBe(`${seededUser.email} already exist`);
+	});
+
 	it("should throw error if email already exist but not verified", async () => {
 		const seededUser = await seedUser({ isVerified: false });
 
@@ -81,7 +99,7 @@ describe("RegisterUserUseCase", () => {
 		}
 
 		expect(errorMessage).toBe(
-			`User with an email ${seededUser.email} already exist but not verified. Please verify your account`,
+			`${seededUser.email} already exist but not verified. Please verify your account`,
 		);
 	});
 });
