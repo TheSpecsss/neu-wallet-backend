@@ -41,7 +41,7 @@ describe("ConfirmVerificationUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe(`Email ${email} does not exist`);
+		expect(errorMessage).toBe(`${email} does not exist`);
 	});
 
 	it("should throw an error when user is already verified", async () => {
@@ -58,7 +58,7 @@ describe("ConfirmVerificationUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe(`Email ${seededUser.email} is already verified`);
+		expect(errorMessage).toBe(`${seededUser.email} has already been verified`);
 	});
 
 	it("should throw an error when user verification does not exist", async () => {
