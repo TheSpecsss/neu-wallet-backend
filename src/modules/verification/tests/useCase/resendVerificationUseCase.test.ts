@@ -75,6 +75,7 @@ describe("ResendVerificationUseCase", () => {
 			userId: seededUser.id,
 			status: VERIFICATION_STATUS.PENDING,
 			expiredAt: new Date(),
+			updatedAt: new Date()
 		});
 
 		let errorMessage = "";

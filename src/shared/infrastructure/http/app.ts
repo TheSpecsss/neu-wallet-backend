@@ -21,7 +21,7 @@ import Fastify from "fastify";
 
 	await fastify.register(fastifyCors, { origin: "*", methods: ["POST"] });
 
-	fastify.listen({ port: Number(process.env.PORT) || 8080 }, (error) => {
+	fastify.listen({ port: Number(process.env.PORT) || 8080, host: '0.0.0.0' }, (error) => {
 		if (error) throw error;
 	});
 })();

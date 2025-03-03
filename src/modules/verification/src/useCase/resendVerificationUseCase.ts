@@ -58,8 +58,9 @@ export class ResendVerificationUseCase {
 			throw new Error("User does not have any pending verification");
 		}
 
-		const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
-		if (verification.updatedAt.getTime() > twoMinutesAgo.getTime()) {
+		const updatedAt = verification.updatedAt.getTime();
+		const twoMinutes = 2 * 60 * 1000;
+		if (Date.now() - updatedAt <= twoMinutes) {
 			throw new Error("Cannot resend verification within the last 2 minutes");
 		}
 
