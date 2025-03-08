@@ -2,6 +2,32 @@
 ### Do not make changes to this file directly
 
 
+type AuditLog {
+  actionType: String!
+  changes: [AuditLogChange]
+  createdAt: String!
+  executor: User
+  executorId: ID!
+  id: ID!
+  target: User
+  targetId: ID!
+}
+
+type AuditLogChange {
+  key: String
+  values: [AuditLogChangeValue]
+}
+
+type AuditLogChangeValue {
+  from: String
+  to: String
+}
+
+input AuditLogHydrateOption {
+  executor: Boolean!
+  target: Boolean!
+}
+
 type Login {
   token: String
 }

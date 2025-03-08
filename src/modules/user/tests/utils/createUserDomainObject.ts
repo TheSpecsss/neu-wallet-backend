@@ -15,6 +15,8 @@ export const createUserDomainObject = (partialDomainObject: Partial<IUserRawObje
 		password: faker.internet.password(),
 		accountType: faker.helpers.arrayElement(Object.values(USER_ACCOUNT_TYPE)),
 		wallet: null,
+		executorAuditLogs: [],
+		targetAuditLogs: [],
 		sentTransactions: [],
 		receivedTransactions: [],
 		isDeleted: false,
