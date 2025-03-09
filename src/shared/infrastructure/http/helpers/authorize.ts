@@ -1,6 +1,6 @@
 import { UserService } from "@/modules/user/src";
 import type { IUser } from "@/modules/user/src/domain/classes/user";
-import { userFromToken } from "@/shared/infrastructure/http/helpers/token";
+import { verifyToken } from "@/shared/infrastructure/http/helpers/verifyToken";
 import type { ApolloFastifyContextFunction } from "@as-integrations/fastify";
 
 export interface Context {
@@ -13,16 +13,15 @@ export const authorize: ApolloFastifyContextFunction<Context> = async (req) => {
 		return { user: null };
 	}
 
-	const decodedToken = userFromToken(token);
+	const decodedToken = verifyToken(token);
 	if (!decodedToken) {
 		return { user: null };
 	}
 
 	try {
 		const userService = new UserService();
-		const user = await userService.findUserByEmailAndPassword({
-			email: decodedToken.email,
-			password: decodedToken.password,
+		const user = await userService.findUserById({
+			userId: decodedToken.userId,
 		});
 
 		if (decodedToken.exp < Date.now() / 1000) {

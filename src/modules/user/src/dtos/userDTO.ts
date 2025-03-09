@@ -7,11 +7,6 @@ export interface FindUsersWithPaginationDTO {
 	hydrate?: UserHydrateOption;
 }
 
-export interface FindUserByEmailAndPasswordDTO {
-	email: string;
-	password: string;
-}
-
 export interface FindUserByEmailDTO {
 	email: string;
 }
