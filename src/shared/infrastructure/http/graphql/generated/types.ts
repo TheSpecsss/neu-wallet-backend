@@ -14,6 +14,10 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  AuditLogHydrateOption: { // input type
+    executor: boolean; // Boolean!
+    target: boolean; // Boolean!
+  }
   TransactionHydrateOption: { // input type
     receiver: boolean; // Boolean!
     sender: boolean; // Boolean!
@@ -37,6 +41,15 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  AuditLog: {};
+  AuditLogChange: { // root type
+    key?: string | null; // String
+    values?: Array<NexusGenRootTypes['AuditLogChangeValue'] | null> | null; // [AuditLogChangeValue]
+  }
+  AuditLogChangeValue: { // root type
+    from?: string | null; // String
+    to?: string | null; // String
+  }
   Login: { // root type
     token?: string | null; // String
   }
@@ -69,6 +82,24 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  AuditLog: { // field return type
+    actionType: string; // String!
+    changes: Array<NexusGenRootTypes['AuditLogChange'] | null> | null; // [AuditLogChange]
+    createdAt: string; // String!
+    executor: NexusGenRootTypes['User'] | null; // User
+    executorId: string; // ID!
+    id: string; // ID!
+    target: NexusGenRootTypes['User'] | null; // User
+    targetId: string; // ID!
+  }
+  AuditLogChange: { // field return type
+    key: string | null; // String
+    values: Array<NexusGenRootTypes['AuditLogChangeValue'] | null> | null; // [AuditLogChangeValue]
+  }
+  AuditLogChangeValue: { // field return type
+    from: string | null; // String
+    to: string | null; // String
+  }
   Login: { // field return type
     token: string | null; // String
   }
@@ -137,6 +168,24 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  AuditLog: { // field return type name
+    actionType: 'String'
+    changes: 'AuditLogChange'
+    createdAt: 'String'
+    executor: 'User'
+    executorId: 'ID'
+    id: 'ID'
+    target: 'User'
+    targetId: 'ID'
+  }
+  AuditLogChange: { // field return type name
+    key: 'String'
+    values: 'AuditLogChangeValue'
+  }
+  AuditLogChangeValue: { // field return type name
+    from: 'String'
+    to: 'String'
+  }
   Login: { // field return type name
     token: 'String'
   }

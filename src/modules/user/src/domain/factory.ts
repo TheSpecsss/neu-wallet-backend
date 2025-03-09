@@ -1,3 +1,5 @@
+import type { IAuditLog } from "@/modules/auditLog/src/domain/classes/auditLog";
+import { AuditLogFactory, type IAuditLogFactory } from "@/modules/auditLog/src/domain/factory";
 import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
 import {
 	type ITransactionFactory,
@@ -19,6 +21,8 @@ export interface IUserFactory {
 	password: string;
 	accountType: string;
 	wallet?: IWalletFactory | null;
+	executorAuditLogs?: IAuditLogFactory[];
+	targetAuditLogs?: IAuditLogFactory[];
 	sentTransactions?: ITransactionFactory[];
 	receivedTransactions?: ITransactionFactory[];
 	isDeleted: boolean;
@@ -45,10 +49,18 @@ export class UserFactory {
 				email: userEmailOrError.getValue(),
 				accountType: userAccountTypeOrError.getValue(),
 				wallet: props.wallet ? WalletFactory.create(props.wallet).getValue() : null,
+				executorAuditLogs: UserFactory._getAuditLogs(props.executorAuditLogs),
+				targetAuditLogs: UserFactory._getAuditLogs(props.targetAuditLogs),
 				sentTransactions: UserFactory._getTransactions(props.sentTransactions),
 				receivedTransactions: UserFactory._getTransactions(props.receivedTransactions),
 			}),
 		);
+	}
+
+	private static _getAuditLogs(auditLogs?: IAuditLogFactory[]): IAuditLog[] {
+		const createAuditLog = pipe(AuditLogFactory.create, (instance) => instance.getValue());
+
+		return pipe(defaultTo([] as IAuditLogFactory[]), map(createAuditLog))(auditLogs);
 	}
 
 	private static _getTransactions(transactions?: ITransactionFactory[]): ITransaction[] {

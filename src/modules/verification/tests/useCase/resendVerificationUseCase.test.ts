@@ -1,5 +1,4 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { type IUserService, UserService } from "@/modules/user/src";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { VERIFICATION_STATUS } from "@/modules/verification/src/domain/shared/constant";
 import { ResendVerificationUseCase } from "@/modules/verification/src/useCase/resendVerificationUseCase";
@@ -7,11 +6,9 @@ import { seedVerification } from "@/modules/verification/tests/utils/seedVerific
 
 describe("ResendVerificationUseCase", () => {
 	let useCase: ResendVerificationUseCase;
-	let userService: IUserService;
 
 	beforeAll(async () => {
 		useCase = new ResendVerificationUseCase();
-		userService = new UserService();
 	});
 
 	it("should resent verification after the 2-minute cooldown period", async () => {

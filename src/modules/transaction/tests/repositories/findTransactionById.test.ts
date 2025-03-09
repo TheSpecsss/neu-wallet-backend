@@ -56,7 +56,7 @@ describe("Test Transaction Repository findTransactionById", () => {
 		expect(transaction!.receiver!.idValue).toBe(seededReceiver.id);
 	});
 
-	it("should return null when given non-existing wallet id", async () => {
+	it("should return null when given non-existing transaction id", async () => {
 		const transaction = await transactionRepository.findTransactionById("not-a-transaction-id");
 
 		expect(transaction).toBeNull();

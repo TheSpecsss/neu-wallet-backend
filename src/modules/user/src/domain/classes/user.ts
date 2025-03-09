@@ -1,3 +1,4 @@
+import type { IAuditLog } from "@/modules/auditLog/src/domain/classes/auditLog";
 import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
 import type { UserAccountType } from "@/modules/user/src/domain/classes/userAccountType";
 import type { IUserEmail } from "@/modules/user/src/domain/classes/userEmail";
@@ -12,6 +13,8 @@ export interface IUserData {
 	password: string;
 	accountType: UserAccountType;
 	wallet: IWallet | null;
+	executorAuditLogs: IAuditLog[];
+	targetAuditLogs: IAuditLog[];
 	sentTransactions: ITransaction[];
 	receivedTransactions: ITransaction[];
 	isDeleted: boolean;
@@ -36,6 +39,8 @@ export class User implements IUser {
 	private readonly _password: string;
 	private readonly _accountType: UserAccountType;
 	private readonly _wallet: IWallet | null;
+	private readonly _executorAuditLogs: IAuditLog[];
+	private readonly _targetAuditLogs: IAuditLog[];
 	private readonly _sentTransactions: ITransaction[];
 	private readonly _receivedTransactions: ITransaction[];
 	private readonly _isDeleted: boolean;
@@ -51,6 +56,8 @@ export class User implements IUser {
 		this._password = data.password;
 		this._accountType = data.accountType;
 		this._wallet = data.wallet;
+		this._executorAuditLogs = data.executorAuditLogs;
+		this._targetAuditLogs = data.targetAuditLogs;
 		this._sentTransactions = data.sentTransactions;
 		this._receivedTransactions = data.receivedTransactions;
 		this._isDeleted = data.isDeleted;
@@ -98,6 +105,14 @@ export class User implements IUser {
 
 	get wallet(): IWallet | null {
 		return this._wallet;
+	}
+
+	get executorAuditLogs(): IAuditLog[] {
+		return this._executorAuditLogs;
+	}
+
+	get targetAuditLogs(): IAuditLog[] {
+		return this._targetAuditLogs;
 	}
 
 	get sentTransactions(): ITransaction[] {

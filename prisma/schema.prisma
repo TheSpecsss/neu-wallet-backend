@@ -15,25 +15,31 @@ model User {
   accountType          String
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
-  isDeleted            Boolean
+  isDeleted            Boolean            @default(false)
   isVerified           Boolean            @default(false)
   deletedAt            DateTime?
   wallet               UserWallet?
   verifications        UserVerification[]
-  auditLogs            UserAuditLog[]
+  executorAuditLogs    UserAuditLog[]     @relation("AuditLogExecutor")
+  targetAuditLogs      UserAuditLog[]     @relation("AuditLogTarget")
   sentTransactions     UserTransaction[]  @relation("SenderTransaction")
   receivedTransactions UserTransaction[]  @relation("ReceiverTransaction")
+
+  @@index([email])
+  @@index([isDeleted])
 }
 
 model UserWallet {
   id        String    @id
   userId    String    @unique
   balance   Decimal   @default(0.00)
-  isDeleted Boolean
+  isDeleted Boolean   @default(false)
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([isDeleted])
 }
 
 model UserTransaction {
@@ -45,15 +51,25 @@ model UserTransaction {
   createdAt  DateTime @default(now())
   sender     User     @relation("SenderTransaction", fields: [senderId], references: [id])
   receiver   User     @relation("ReceiverTransaction", fields: [receiverId], references: [id])
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([createdAt])
 }
 
 model UserAuditLog {
-  id          String   @id
-  userId      String
-  type        Int
-  description String
-  createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
+  id         String   @id
+  executorId String
+  targetId   String
+  actionType String
+  changes    Json[]
+  createdAt  DateTime @default(now())
+  executor   User     @relation("AuditLogExecutor", fields: [executorId], references: [id])
+  target     User     @relation("AuditLogTarget", fields: [targetId], references: [id])
+
+  @@index([executorId])
+  @@index([targetId])
+  @@index([actionType, createdAt])
 }
 
 model UserVerification {
@@ -65,4 +81,7 @@ model UserVerification {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
 }

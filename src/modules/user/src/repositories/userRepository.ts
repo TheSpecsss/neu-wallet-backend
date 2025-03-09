@@ -5,6 +5,8 @@ import { db } from "@/shared/infrastructure/database";
 
 export interface UserHydrateOption {
 	wallet?: boolean;
+	executorAuditLogs?: boolean;
+	targetAuditLogs?: boolean;
 	sentTransactions?: boolean;
 	receivedTransactions?: boolean;
 }
@@ -141,6 +143,8 @@ export class UserRepository implements IUserRepository {
 	private _hydrateFilter(hydrate?: UserHydrateOption) {
 		return {
 			wallet: hydrate?.wallet ?? false,
+			executorAuditLogs: hydrate?.executorAuditLogs ?? false,
+			targetAuditLogs: hydrate?.targetAuditLogs ?? false,
 			sentTransactions: hydrate?.sentTransactions ?? false,
 			receivedTransactions: hydrate?.receivedTransactions ?? false,
 		};
