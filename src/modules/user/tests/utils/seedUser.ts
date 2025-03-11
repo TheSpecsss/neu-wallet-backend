@@ -1,6 +1,7 @@
 import { UserName } from "@/modules/user/src/domain/classes/userName";
 import { type IUserRawObject, USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
 import { SnowflakeID } from "@/shared/domain/snowflakeId";
+import { saltPassword } from "@/shared/infrastructure/authentication/saltPassword";
 import { db } from "@/shared/infrastructure/database";
 import { faker } from "@faker-js/faker";
 
@@ -14,7 +15,7 @@ export const seedUser = async (
 			max: UserName.MAXIMUM_USERNAME_LENGTH,
 		}),
 		email: faker.internet.email({ provider: "neu.edu.ph" }),
-		password: faker.internet.password(),
+		password: await saltPassword(faker.internet.password()),
 		accountType: faker.helpers.arrayElement(Object.values(USER_ACCOUNT_TYPE)),
 		isDeleted: false,
 		isVerified: true,
