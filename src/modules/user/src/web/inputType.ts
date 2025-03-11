@@ -13,6 +13,16 @@ export default [
 			t.float("balance");
 		},
 	}),
+	objectType({
+		name: "UserPagination",
+		definition(t) {
+			t.list.field("users", { type: "User" });
+			t.boolean("hasNextPage");
+			t.boolean("hasPreviousPage");
+			t.int("page");
+			t.int("totalPages");
+		},
+	}),
 	inputObjectType({
 		name: "UserHydrateOption",
 		definition(t) {

@@ -1,9 +1,13 @@
 import type { IUser } from "@/modules/user/src/domain/classes/user";
-import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
+import {
+	USER_ACCOUNT_TYPE,
+	type UserAccountTypeKind,
+} from "@/modules/user/src/domain/shared/constant";
 import { UserRepository } from "@/modules/user/src/repositories/userRepository";
 
-export interface IUSerRoleManagementService {
+export interface IUserRoleManagementService {
 	isSuperAdmin(userInput: IUser | string): Promise<boolean>;
+	hasPermission(userInput: IUser | string, accountType: UserAccountTypeKind): Promise<boolean>;
 	hasHigherAccountType(accountType: string, targetAccountType: string): boolean;
 	ensureValidRoleChange(
 		updaterRole: string,
@@ -11,7 +15,7 @@ export interface IUSerRoleManagementService {
 	): void;
 }
 
-export class UserRoleManagementService implements IUSerRoleManagementService {
+export class UserRoleManagementService implements IUserRoleManagementService {
 	constructor(private _userRepository = new UserRepository()) {}
 
 	private ACCOUNT_TYPE_HIERARCHY: { [key: string]: number } = {
@@ -23,12 +27,26 @@ export class UserRoleManagementService implements IUSerRoleManagementService {
 	};
 
 	public async isSuperAdmin(userInput: IUser | string): Promise<boolean> {
-		const user =
-			typeof userInput === "string"
-				? await this._userRepository.findUserById(userInput)
-				: userInput;
+		const user = await this._getUser(userInput);
+		if (!user) {
+			return false;
+		}
 
-		return this._isAccountTypeSuperAdmin(user?.accountTypeValue ?? "");
+		return user.accountTypeValue === USER_ACCOUNT_TYPE.SUPER_ADMIN;
+	}
+
+	public async hasPermission(
+		userInput: IUser | string,
+		accountType: UserAccountTypeKind,
+	): Promise<boolean> {
+		const user = await this._getUser(userInput);
+		if (!user) {
+			return false;
+		}
+
+		const isSuperAdmin = await this.isSuperAdmin(user);
+
+		return isSuperAdmin || user.accountTypeValue === accountType;
 	}
 
 	public hasHigherAccountType(accountType: string, targetAccountType: string): boolean {
@@ -53,7 +71,7 @@ export class UserRoleManagementService implements IUSerRoleManagementService {
 		}
 	}
 
-	private _isAccountTypeSuperAdmin(accountType: string): boolean {
-		return accountType === USER_ACCOUNT_TYPE.SUPER_ADMIN;
+	private async _getUser(user: IUser | string): Promise<IUser | null> {
+		return typeof user === "string" ? await this._userRepository.findUserById(user) : user;
 	}
 }

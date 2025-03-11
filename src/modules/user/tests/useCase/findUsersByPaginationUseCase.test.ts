@@ -1,13 +1,14 @@
 import { beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { FindUsersWithPaginationUseCase } from "@/modules/user/src/useCase/findUsersWithPaginationUseCase";
+import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
+import { FindUsersByPaginationUseCase } from "@/modules/user/src/useCase/findUsersByPaginationUseCase";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { db } from "@/shared/infrastructure/database";
 
-describe("FindUsersWithPaginationUseCase", () => {
-	let findUsersWithPaginationUseCase: FindUsersWithPaginationUseCase;
+describe("FindUsersByPaginationUseCase", () => {
+	let useCase: FindUsersByPaginationUseCase;
 
 	beforeAll(() => {
-		findUsersWithPaginationUseCase = new FindUsersWithPaginationUseCase();
+		useCase = new FindUsersByPaginationUseCase();
 	});
 
 	beforeEach(async () => {
@@ -22,9 +23,12 @@ describe("FindUsersWithPaginationUseCase", () => {
 		const seededUserTwo = await seedUser();
 		const seededUserThree = await seedUser();
 
-		const result = await findUsersWithPaginationUseCase.execute({
+		const seededExecutor = await seedUser({ accountType: USER_ACCOUNT_TYPE.ADMIN });
+
+		const result = await useCase.execute({
 			perPage: 2,
 			page: 1,
+			userId: seededExecutor.id,
 		});
 
 		expect(result.users).toHaveLength(2);
@@ -38,16 +42,24 @@ describe("FindUsersWithPaginationUseCase", () => {
 		expect(userIds).not.toContain(seededUserThree.id);
 	});
 
-	it("should return an empty list and pagination information when no users are seeded", async () => {
-		const result = await findUsersWithPaginationUseCase.execute({
-			perPage: 10,
-			page: 1,
-		});
+	it("should thrown an error when executor does not have admin permission", async () => {
+		const seededExecutor = await seedUser({ accountType: USER_ACCOUNT_TYPE.USER });
 
-		expect(result.users).toEqual([]);
-		expect(result.hasNextPage).toBe(false);
-		expect(result.hasPreviousPage).toBe(false);
-		expect(result.page).toBe(1);
-		expect(result.totalPages).toBe(0);
+		await seedUser();
+		await seedUser();
+		await seedUser();
+
+		let errorMessage = "";
+		try {
+			await useCase.execute({
+				perPage: 2,
+				page: 1,
+				userId: seededExecutor.id,
+			});
+		} catch (error) {
+			errorMessage = (error as Error).message;
+		}
+
+		expect(errorMessage).toBe(`User ${seededExecutor.id} does not have admin permission`);
 	});
 });
