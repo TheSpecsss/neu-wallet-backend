@@ -43,6 +43,7 @@ type Mutation {
 type Query {
   getRecentTransactionByUserId(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionByUserIdWithPagination
   getUserBalanceByUserId: UserBalance
+  getUsersByPagination(page: Int!, perPage: Int!): UserPagination
 }
 
 type Transaction {
@@ -91,6 +92,14 @@ input UserHydrateOption {
   receivedTransactions: Boolean!
   sentTransactions: Boolean!
   wallet: Boolean!
+}
+
+type UserPagination {
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+  page: Int
+  totalPages: Int
+  users: [User]
 }
 
 type Verification {

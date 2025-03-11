@@ -67,6 +67,13 @@ export interface NexusGenObjects {
   UserBalance: { // root type
     balance?: number | null; // Float
   }
+  UserPagination: { // root type
+    hasNextPage?: boolean | null; // Boolean
+    hasPreviousPage?: boolean | null; // Boolean
+    page?: number | null; // Int
+    totalPages?: number | null; // Int
+    users?: Array<NexusGenRootTypes['User'] | null> | null; // [User]
+  }
   Verification: {};
   Wallet: {};
 }
@@ -113,6 +120,7 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     getRecentTransactionByUserId: NexusGenRootTypes['TransactionByUserIdWithPagination'] | null; // TransactionByUserIdWithPagination
     getUserBalanceByUserId: NexusGenRootTypes['UserBalance'] | null; // UserBalance
+    getUsersByPagination: NexusGenRootTypes['UserPagination'] | null; // UserPagination
   }
   Transaction: { // field return type
     amount: number; // Float!
@@ -146,6 +154,13 @@ export interface NexusGenFieldTypes {
   }
   UserBalance: { // field return type
     balance: number | null; // Float
+  }
+  UserPagination: { // field return type
+    hasNextPage: boolean | null; // Boolean
+    hasPreviousPage: boolean | null; // Boolean
+    page: number | null; // Int
+    totalPages: number | null; // Int
+    users: Array<NexusGenRootTypes['User'] | null> | null; // [User]
   }
   Verification: { // field return type
     code: string; // String!
@@ -200,6 +215,7 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     getRecentTransactionByUserId: 'TransactionByUserIdWithPagination'
     getUserBalanceByUserId: 'UserBalance'
+    getUsersByPagination: 'UserPagination'
   }
   Transaction: { // field return type name
     amount: 'Float'
@@ -233,6 +249,13 @@ export interface NexusGenFieldTypeNames {
   }
   UserBalance: { // field return type name
     balance: 'Float'
+  }
+  UserPagination: { // field return type name
+    hasNextPage: 'Boolean'
+    hasPreviousPage: 'Boolean'
+    page: 'Int'
+    totalPages: 'Int'
+    users: 'User'
   }
   Verification: { // field return type name
     code: 'String'
@@ -282,6 +305,10 @@ export interface NexusGenArgTypes {
   Query: {
     getRecentTransactionByUserId: { // args
       hydrate?: NexusGenInputs['TransactionHydrateOption'] | null; // TransactionHydrateOption
+      page: number; // Int!
+      perPage: number; // Int!
+    }
+    getUsersByPagination: { // args
       page: number; // Int!
       perPage: number; // Int!
     }
