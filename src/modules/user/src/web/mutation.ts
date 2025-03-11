@@ -1,5 +1,7 @@
 import { LoginUserUseCase } from "@/modules/user/src/useCase/loginUserUseCase";
 import { RegisterUserUseCase } from "@/modules/user/src/useCase/registerUserUseCase";
+import { UpdateUserAccountTypeByUserIdUseCase } from "@/modules/user/src/useCase/updateUserAccountTypeByUserId";
+import { requireVerifiedUser } from "@/shared/infrastructure/http/authorization/requireVerifiedUser";
 import { extendType, nonNull, stringArg } from "nexus";
 
 export default extendType({
@@ -27,6 +29,22 @@ export default extendType({
 			resolve: (_, args) => {
 				const useCase = new LoginUserUseCase();
 				return useCase.execute(args);
+			},
+		});
+		t.field("updateUserAccountTypeByUserId", {
+			authorize: requireVerifiedUser,
+			type: "User",
+			args: {
+				userId: nonNull(stringArg()),
+				accountType: nonNull(stringArg()),
+			},
+			resolve: (_, { userId, accountType }, ctx) => {
+				const useCase = new UpdateUserAccountTypeByUserIdUseCase();
+				return useCase.execute({
+					userId,
+					accountType,
+					updatedById: ctx.user.idValue,
+				});
 			},
 		});
 	},

@@ -38,3 +38,9 @@ export interface LoginUserDTO {
 export interface VerifyUserDTO {
 	userId: string;
 }
+
+export interface UpdateUserAccountTypeByUserIdDTO {
+	userId: string;
+	accountType: string;
+	updatedById: string;
+}

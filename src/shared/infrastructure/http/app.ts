@@ -10,6 +10,7 @@ import Fastify from "fastify";
 
 	const apollo = new ApolloServer<Context>({
 		schema,
+		introspection: true,
 		plugins: [fastifyApolloDrainPlugin(fastify)],
 	});
 

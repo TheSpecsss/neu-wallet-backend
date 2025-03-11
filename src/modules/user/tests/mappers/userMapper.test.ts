@@ -20,7 +20,7 @@ describe("UserMapper", () => {
 	});
 
 	it("should map to persistence from domain", async () => {
-		const userDomainObject = createUserDomainObject();
+		const userDomainObject = await createUserDomainObject();
 		const userSchemaObject = UserMapper.toPersistence(userDomainObject);
 
 		expect(userSchemaObject.id).toBe(userDomainObject.idValue);

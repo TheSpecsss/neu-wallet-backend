@@ -42,7 +42,7 @@ describe("UserRepository updateUser", () => {
 	});
 
 	it("should return null when trying to update non-existing user", async () => {
-		const userDomainObject = createUserDomainObject();
+		const userDomainObject = await createUserDomainObject();
 		const user = await userRepository.updateUser(userDomainObject);
 
 		expect(user).toBeNull();

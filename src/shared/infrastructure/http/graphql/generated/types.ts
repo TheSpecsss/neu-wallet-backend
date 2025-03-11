@@ -108,6 +108,7 @@ export interface NexusGenFieldTypes {
     login: NexusGenRootTypes['Login'] | null; // Login
     register: NexusGenRootTypes['User'] | null; // User
     resendVerification: NexusGenRootTypes['Verification'] | null; // Verification
+    updateUserAccountTypeByUserId: NexusGenRootTypes['User'] | null; // User
   }
   Query: { // field return type
     getRecentTransactionByUserId: NexusGenRootTypes['TransactionByUserIdWithPagination'] | null; // TransactionByUserIdWithPagination
@@ -194,6 +195,7 @@ export interface NexusGenFieldTypeNames {
     login: 'Login'
     register: 'User'
     resendVerification: 'Verification'
+    updateUserAccountTypeByUserId: 'User'
   }
   Query: { // field return type name
     getRecentTransactionByUserId: 'TransactionByUserIdWithPagination'
@@ -271,6 +273,10 @@ export interface NexusGenArgTypes {
     }
     resendVerification: { // args
       email: string; // String!
+    }
+    updateUserAccountTypeByUserId: { // args
+      accountType: string; // String!
+      userId: string; // String!
     }
   }
   Query: {

@@ -1,6 +1,6 @@
 import type { IAuditLog } from "@/modules/auditLog/src/domain/classes/auditLog";
 import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
-import type { UserAccountType } from "@/modules/user/src/domain/classes/userAccountType";
+import { UserAccountType, type IUserAccountType } from "@/modules/user/src/domain/classes/userAccountType";
 import type { IUserEmail } from "@/modules/user/src/domain/classes/userEmail";
 import type { IUserName } from "@/modules/user/src/domain/classes/userName";
 import type { IWallet } from "@/modules/wallet/src/domain/classes/wallet";
@@ -11,7 +11,7 @@ export interface IUserData {
 	name: IUserName;
 	email: IUserEmail;
 	password: string;
-	accountType: UserAccountType;
+	accountType: IUserAccountType;
 	wallet: IWallet | null;
 	executorAuditLogs: IAuditLog[];
 	targetAuditLogs: IAuditLog[];
@@ -30,6 +30,7 @@ export interface IUser extends IUserData {
 	emailValue: string;
 	accountTypeValue: string;
 	updateIsVerified(isVerified: boolean): void;
+	updateAccountType(type: string): void;
 }
 
 export class User implements IUser {
@@ -37,7 +38,7 @@ export class User implements IUser {
 	private readonly _name: IUserName;
 	private readonly _email: IUserEmail;
 	private readonly _password: string;
-	private readonly _accountType: UserAccountType;
+	private _accountType: IUserAccountType;
 	private readonly _wallet: IWallet | null;
 	private readonly _executorAuditLogs: IAuditLog[];
 	private readonly _targetAuditLogs: IAuditLog[];
@@ -95,7 +96,7 @@ export class User implements IUser {
 		return this._password;
 	}
 
-	get accountType(): UserAccountType {
+	get accountType(): IUserAccountType {
 		return this._accountType;
 	}
 
@@ -145,6 +146,17 @@ export class User implements IUser {
 
 	updateIsVerified(isVerified: boolean): void {
 		this._isVerified = isVerified;
+	}
+
+	updateAccountType(accountType: string): void {
+		const accountTypeOrError = UserAccountType.create(accountType);
+		if (accountTypeOrError.isFailure) {
+			throw new Error(
+				`Failed to update user's account type: ${accountTypeOrError.getErrorMessage()}`,
+			);
+		}
+
+		this._accountType = accountTypeOrError.getValue();
 	}
 
 	public static create(props: IUserData): IUser {

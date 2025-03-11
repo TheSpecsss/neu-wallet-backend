@@ -2,7 +2,7 @@ import type { IAuditLog } from "@/modules/auditLog/src/domain/classes/auditLog";
 import { AuditLogFactory, type IAuditLogFactory } from "@/modules/auditLog/src/domain/factory";
 import type { IAuditLogChange } from "@/modules/auditLog/src/domain/shared/auditLogChanges";
 import { ACTION_TYPE, type ActionTypeKind } from "@/modules/auditLog/src/domain/shared/constant";
-import type { ICreateUserAuditLogServiceDTO } from "@/modules/auditLog/src/dtos/auditLogServiceDTO";
+import type { CreateUserAuditLogServiceDTO } from "@/modules/auditLog/src/dtos/auditLogServiceDTO";
 import { AuditLogRepository } from "@/modules/auditLog/src/repositories/auditLogRepository";
 import type { IUser } from "@/modules/user/src/domain/classes/user";
 import type { IUserRawObject } from "@/modules/user/src/domain/shared/constant";
@@ -15,7 +15,7 @@ export class CreateUserAuditLogService {
 		private _userMapper = UserMapper,
 	) {}
 
-	public async execute(request: ICreateUserAuditLogServiceDTO): Promise<IAuditLog> {
+	public async execute(request: CreateUserAuditLogServiceDTO): Promise<IAuditLog> {
 		const { executorId, newUser, oldUser, actionType } = request;
 
 		this._validateUserIdentity(oldUser.idValue, newUser.idValue);
