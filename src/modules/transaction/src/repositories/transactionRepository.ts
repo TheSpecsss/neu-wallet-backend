@@ -10,16 +10,14 @@ export interface TransactionHydrateOption {
 
 export interface ITransactionRepository {
 	findTransactionById(id: string, hydrate?: TransactionHydrateOption): Promise<ITransaction | null>;
-	findTransactionsByIds(
-		userIds: string[],
-		hydrate?: TransactionHydrateOption,
-	): Promise<ITransaction[]>;
+	findTransactionsByIds(ids: string[], hydrate?: TransactionHydrateOption): Promise<ITransaction[]>;
 	getTransactionsByPagination(
 		userId: string,
 		pagination: Pagination,
 		hydrate?: TransactionHydrateOption,
 	): Promise<ITransaction[]>;
 	getTransactionsByUserIdTotalPages(userId: string, perPage: number): Promise<number>;
+	save(transaction: ITransaction): Promise<ITransaction>;
 }
 
 export class TransactionRepository implements ITransactionRepository {
@@ -77,6 +75,14 @@ export class TransactionRepository implements ITransactionRepository {
 		});
 
 		return Math.ceil(totalCount / perPage);
+	}
+
+	public async save(transaction: ITransaction): Promise<ITransaction> {
+		const transactionRaw = await this._database.create({
+			data: this._mapper.toPersistence(transaction),
+		});
+
+		return this._mapper.toDomain(transactionRaw);
 	}
 
 	private _hydrateFilter(hydrate?: TransactionHydrateOption) {

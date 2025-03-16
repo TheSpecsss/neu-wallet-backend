@@ -1,9 +1,9 @@
 import { WalletBalance } from "@/modules/wallet/src/domain/classes/walletBalance";
 import type { IWalletRawObject } from "@/modules/wallet/src/domain/shared/constant";
+import { Decimal } from "@/shared/domain/decimal";
 import { SnowflakeID } from "@/shared/domain/snowflakeId";
 import { db } from "@/shared/infrastructure/database";
 import { faker } from "@faker-js/faker";
-import { Prisma } from "@prisma/client";
 
 export const seedWallet = async (
 	partialSchemaObject: Partial<IWalletRawObject> = {},
@@ -11,7 +11,7 @@ export const seedWallet = async (
 	const defaultSchemaObject = {
 		id: new SnowflakeID().toString(),
 		userId: new SnowflakeID().toString(),
-		balance: new Prisma.Decimal(faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT })),
+		balance: new Decimal(faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT })),
 		isDeleted: false,
 		deletedAt: null,
 		createdAt: new Date(),

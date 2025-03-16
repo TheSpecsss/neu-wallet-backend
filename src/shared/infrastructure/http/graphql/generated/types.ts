@@ -27,6 +27,10 @@ export interface NexusGenInputs {
     sentTransactions: boolean; // Boolean!
     wallet: boolean; // Boolean!
   }
+  WalletHydrateOption: { // input type
+    receiver: boolean; // Boolean!
+    sender: boolean; // Boolean!
+  }
 }
 
 export interface NexusGenEnums {
@@ -113,6 +117,7 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     confirmVerification: NexusGenRootTypes['Verification'] | null; // Verification
     login: NexusGenRootTypes['Login'] | null; // Login
+    pay: NexusGenRootTypes['Wallet'] | null; // Wallet
     register: NexusGenRootTypes['User'] | null; // User
     resendVerification: NexusGenRootTypes['Verification'] | null; // Verification
     updateUserAccountTypeByUserId: NexusGenRootTypes['User'] | null; // User
@@ -208,6 +213,7 @@ export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
     confirmVerification: 'Verification'
     login: 'Login'
+    pay: 'Wallet'
     register: 'User'
     resendVerification: 'Verification'
     updateUserAccountTypeByUserId: 'User'
@@ -287,6 +293,10 @@ export interface NexusGenArgTypes {
     login: { // args
       email: string; // String!
       password: string; // String!
+    }
+    pay: { // args
+      amount: number; // Int!
+      cashierId: string; // String!
     }
     register: { // args
       confirmPassword: string; // String!

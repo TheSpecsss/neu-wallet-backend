@@ -1,5 +1,8 @@
 import type { IUser } from "@/modules/user/src/domain/classes/user";
-import type { IWalletBalance } from "@/modules/wallet/src/domain/classes/walletBalance";
+import {
+	type IWalletBalance,
+	WalletBalance,
+} from "@/modules/wallet/src/domain/classes/walletBalance";
 import type { SnowflakeID } from "@/shared/domain/snowflakeId";
 
 export interface IWalletData {
@@ -17,13 +20,14 @@ export interface IWallet extends IWalletData {
 	idValue: string;
 	userIdValue: string;
 	balanceValue: number;
+	reduceBalance(amount: number): void;
 }
 
 export class Wallet implements IWallet {
 	private readonly _id: SnowflakeID;
 	private readonly _userId: SnowflakeID;
 	private readonly _user: IUser | null;
-	private readonly _balance: IWalletBalance;
+	private _balance: IWalletBalance;
 	private readonly _isDeleted: boolean;
 	private readonly _deletedAt: Date | null;
 	private readonly _createdAt: Date;
@@ -82,6 +86,15 @@ export class Wallet implements IWallet {
 
 	get updatedAt(): Date {
 		return this._updatedAt;
+	}
+
+	reduceBalance(amount: number): void {
+		const balance = WalletBalance.create(this.balanceValue - amount);
+		if (balance.isFailure) {
+			throw new Error(`Failed creating a wallet balance: ${balance.getErrorMessage()}`);
+		}
+
+		this._balance = balance.getValue();
 	}
 
 	public static create(props: IWalletData): IWallet {

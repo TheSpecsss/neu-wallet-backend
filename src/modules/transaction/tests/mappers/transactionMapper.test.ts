@@ -17,7 +17,7 @@ describe("TransactionMapper", () => {
 		expect(domainObject.idValue).toBe(schemaObject.id);
 		expect(domainObject.senderIdValue).toBe(schemaObject.senderId);
 		expect(domainObject.receiverIdValue).toBe(schemaObject.receiverId);
-		expect(domainObject.amountValue).toBe(schemaObject.amount.toNumber());
+		expect(domainObject.amount).toBe(schemaObject.amount.toNumber());
 		expect(domainObject.typeValue).toBe(schemaObject.type);
 	});
 
@@ -28,7 +28,7 @@ describe("TransactionMapper", () => {
 		expect(schemaObject.id).toBe(domainObject.idValue);
 		expect(schemaObject.senderId).toBe(domainObject.senderIdValue);
 		expect(schemaObject.receiverId).toBe(domainObject.receiverIdValue);
-		expect(schemaObject.amount).toBe(domainObject.amountValue);
+		expect(schemaObject.amount).toBe(domainObject.amount);
 		expect(schemaObject.type).toBe(domainObject.typeValue);
 	});
 });

@@ -1,4 +1,3 @@
-import type { ITransactionAmount } from "@/modules/transaction/src/domain/classes/transactionAmount";
 import type { ITransactionType } from "@/modules/transaction/src/domain/classes/transactionType";
 import type { IUser } from "@/modules/user/src/domain/classes/user";
 import type { SnowflakeID } from "@/shared/domain/snowflakeId";
@@ -9,7 +8,7 @@ export interface ITransactionData {
 	sender: IUser | null;
 	receiverId: SnowflakeID;
 	receiver: IUser | null;
-	amount: ITransactionAmount;
+	amount: number;
 	type: ITransactionType;
 	createdAt: Date;
 }
@@ -18,7 +17,6 @@ export interface ITransaction extends ITransactionData {
 	idValue: string;
 	senderIdValue: string;
 	receiverIdValue: string;
-	amountValue: number;
 	typeValue: string;
 }
 
@@ -28,7 +26,7 @@ export class Transaction implements ITransaction {
 	private readonly _sender: IUser | null;
 	private readonly _receiverId: SnowflakeID;
 	private readonly _receiver: IUser | null;
-	private readonly _amount: ITransactionAmount;
+	private readonly _amount: number;
 	private readonly _type: ITransactionType;
 	private readonly _createdAt: Date;
 
@@ -75,12 +73,8 @@ export class Transaction implements ITransaction {
 		return this._receiver;
 	}
 
-	get amount(): ITransactionAmount {
+	get amount(): number {
 		return this._amount;
-	}
-
-	get amountValue(): number {
-		return this.amount.value;
 	}
 
 	get type(): ITransactionType {

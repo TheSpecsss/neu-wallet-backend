@@ -22,7 +22,7 @@ export const Transaction = objectType({
 			resolve: (source) => (source as ITransaction).receiver,
 		});
 		t.nonNull.float("amount", {
-			resolve: (source) => (source as ITransaction).amountValue,
+			resolve: (source) => (source as ITransaction).amount,
 		});
 		t.nonNull.string("type", {
 			resolve: (source) => (source as ITransaction).typeValue,

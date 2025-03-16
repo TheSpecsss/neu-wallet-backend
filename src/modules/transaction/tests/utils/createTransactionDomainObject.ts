@@ -1,5 +1,4 @@
 import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
-import { TransactionAmount } from "@/modules/transaction/src/domain/classes/transactionAmount";
 import { TransactionFactory } from "@/modules/transaction/src/domain/factory";
 import {
 	type ITransactionRawObject,
@@ -19,7 +18,7 @@ export const createTransactionDomainObject = (
 		receiverId: new SnowflakeID().toString(),
 		amount: new Prisma.Decimal(
 			faker.number.float({
-				min: TransactionAmount.MINIMUM_AMOUNT,
+				min: 1,
 				max: Number.MAX_SAFE_INTEGER,
 			}),
 		),

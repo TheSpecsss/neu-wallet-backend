@@ -35,6 +35,7 @@ type Login {
 type Mutation {
   confirmVerification(code: String!, email: String!): Verification
   login(email: String!, password: String!): Login
+  pay(amount: Int!, cashierId: String!): Wallet
   register(confirmPassword: String!, email: String!, name: String!, password: String!): User
   resendVerification(email: String!): Verification
   updateUserAccountTypeByUserId(accountType: String!, userId: String!): User
@@ -121,4 +122,9 @@ type Wallet {
   isDeleted: Boolean!
   updatedAt: String!
   user: User
+}
+
+input WalletHydrateOption {
+  receiver: Boolean!
+  sender: Boolean!
 }

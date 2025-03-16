@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test";
 import { Transaction } from "@/modules/transaction/src/domain/classes/transaction";
-import { TransactionAmount } from "@/modules/transaction/src/domain/classes/transactionAmount";
 import { TransactionType } from "@/modules/transaction/src/domain/classes/transactionType";
 import { TRANSACTION_TYPE } from "@/modules/transaction/src/domain/shared/constant";
 import { SnowflakeID } from "@/shared/domain/snowflakeId";
@@ -13,9 +12,7 @@ describe("Transaction", () => {
 		sender: null,
 		receiverId: new SnowflakeID(),
 		receiver: null,
-		amount: TransactionAmount.create(
-			faker.number.float({ min: TransactionAmount.MINIMUM_AMOUNT }),
-		).getValue(),
+		amount: faker.number.float({ min: 1, max: Number.MAX_SAFE_INTEGER }),
 		type: TransactionType.create(
 			faker.helpers.arrayElement(Object.values(TRANSACTION_TYPE)),
 		).getValue(),
