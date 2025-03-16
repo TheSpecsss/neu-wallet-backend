@@ -20,7 +20,7 @@ export class TransactionMapper {
 			id: transaction.idValue,
 			senderId: transaction.senderIdValue,
 			receiverId: transaction.receiverIdValue,
-			amount: transaction.amountValue,
+			amount: transaction.amount,
 			type: transaction.typeValue,
 		};
 	}

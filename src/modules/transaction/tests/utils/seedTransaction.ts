@@ -1,4 +1,3 @@
-import { TransactionAmount } from "@/modules/transaction/src/domain/classes/transactionAmount";
 import {
 	type ITransactionRawObject,
 	TRANSACTION_TYPE,
@@ -15,7 +14,7 @@ export const seedTransaction = async (
 		id: new SnowflakeID().toString(),
 		senderId: new SnowflakeID().toString(),
 		receiverId: new SnowflakeID().toString(),
-		amount: new Prisma.Decimal(faker.number.float({ min: TransactionAmount.MINIMUM_AMOUNT })),
+		amount: new Prisma.Decimal(faker.number.float({ min: 1, max: Number.MAX_SAFE_INTEGER })),
 		type: faker.helpers.arrayElement(Object.values(TRANSACTION_TYPE)),
 		createdAt: new Date(),
 	};

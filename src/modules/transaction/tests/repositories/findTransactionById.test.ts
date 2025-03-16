@@ -12,7 +12,7 @@ const assertTransaction = (value: ITransaction | null, expectedValue: ITransacti
 	expect(value!.idValue).toBe(expectedValue.id);
 	expect(value!.senderIdValue).toBe(expectedValue.senderId);
 	expect(value!.receiverIdValue).toBe(expectedValue.receiverId);
-	expect(value!.amountValue).toBe(expectedValue.amount.toNumber());
+	expect(value!.amount).toBe(expectedValue.amount.toNumber());
 	expect(value!.typeValue).toBe(expectedValue.type);
 };
 
