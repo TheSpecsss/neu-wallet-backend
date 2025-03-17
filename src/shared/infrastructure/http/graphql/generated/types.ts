@@ -55,6 +55,7 @@ export interface NexusGenObjects {
     to?: string | null; // String
   }
   Login: { // root type
+    expiresAt?: string | null; // String
     token?: string | null; // String
   }
   Mutation: {};
@@ -112,6 +113,7 @@ export interface NexusGenFieldTypes {
     to: string | null; // String
   }
   Login: { // field return type
+    expiresAt: string | null; // String
     token: string | null; // String
   }
   Mutation: { // field return type
@@ -124,6 +126,7 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     getRecentTransactionByUserId: NexusGenRootTypes['TransactionByUserIdWithPagination'] | null; // TransactionByUserIdWithPagination
+    getUser: NexusGenRootTypes['User'] | null; // User
     getUserBalanceByUserId: NexusGenRootTypes['UserBalance'] | null; // UserBalance
     getUsersByPagination: NexusGenRootTypes['UserPagination'] | null; // UserPagination
   }
@@ -208,6 +211,7 @@ export interface NexusGenFieldTypeNames {
     to: 'String'
   }
   Login: { // field return type name
+    expiresAt: 'String'
     token: 'String'
   }
   Mutation: { // field return type name
@@ -220,6 +224,7 @@ export interface NexusGenFieldTypeNames {
   }
   Query: { // field return type name
     getRecentTransactionByUserId: 'TransactionByUserIdWithPagination'
+    getUser: 'User'
     getUserBalanceByUserId: 'UserBalance'
     getUsersByPagination: 'UserPagination'
   }

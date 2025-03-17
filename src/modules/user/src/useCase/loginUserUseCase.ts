@@ -7,20 +7,18 @@ import { createToken } from "@/shared/infrastructure/authentication/createToken"
 export class LoginUserUseCase {
 	constructor(private _userRepository = new UserRepository()) {}
 
-	public async execute(request: LoginUserDTO): Promise<{ token: string }> {
+	public async execute(request: LoginUserDTO): Promise<{ token: string; expiresAt: string }> {
 		const { email, password } = request;
 
 		const user = await this._getUserByEmail(email);
 
 		await this._comparePassword(password, user.password);
 
-		const token = createToken({
+		return createToken({
 			userId: user.idValue,
 			email: user.emailValue,
 			accountType: user.accountTypeValue,
 		});
-
-		return { token };
 	}
 
 	private async _getUserByEmail(email: string): Promise<IUser> {

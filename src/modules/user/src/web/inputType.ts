@@ -5,6 +5,7 @@ export default [
 		name: "Login",
 		definition(t) {
 			t.string("token");
+			t.string("expiresAt");
 		},
 	}),
 	objectType({
