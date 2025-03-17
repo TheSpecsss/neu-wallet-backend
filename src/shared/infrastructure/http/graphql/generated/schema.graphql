@@ -29,6 +29,7 @@ input AuditLogHydrateOption {
 }
 
 type Login {
+  expiresAt: String
   token: String
 }
 
@@ -43,6 +44,7 @@ type Mutation {
 
 type Query {
   getRecentTransactionByUserId(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionByUserIdWithPagination
+  getUser: User
   getUserBalanceByUserId: UserBalance
   getUsersByPagination(page: Int!, perPage: Int!): UserPagination
 }

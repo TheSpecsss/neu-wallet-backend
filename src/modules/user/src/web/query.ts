@@ -1,3 +1,4 @@
+import { FindUserByIdUseCase } from "@/modules/user/src/useCase/findUserByIdUseCase";
 import { FindUsersByPaginationUseCase } from "@/modules/user/src/useCase/findUsersByPaginationUseCase";
 import { GetUserBalanceByUserIdUseCase } from "@/modules/user/src/useCase/getUserBalanceByUserIdUseCase";
 import { requireVerifiedUser } from "@/shared/infrastructure/http/authorization/requireVerifiedUser";
@@ -6,6 +7,14 @@ import { extendType, intArg, nonNull } from "nexus";
 export default extendType({
 	type: "Query",
 	definition(t) {
+		t.field("getUser", {
+			authorize: requireVerifiedUser,
+			type: "User",
+			resolve: async (_, __, ctx) => {
+				const useCase = new FindUserByIdUseCase();
+				return await useCase.execute({ userId: ctx.user.idValue });
+			},
+		});
 		t.field("getUserBalanceByUserId", {
 			authorize: requireVerifiedUser,
 			type: "UserBalance",
