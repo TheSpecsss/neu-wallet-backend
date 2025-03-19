@@ -1,4 +1,5 @@
 import { PayUseCase } from "@/modules/wallet/src/useCase/payUseCase";
+import { TopUpByIDUseCase } from "@/modules/wallet/src/useCase/topUpByIDUseCase";
 import { requireVerifiedUser } from "@/shared/infrastructure/http/authorization/requireVerifiedUser";
 import { extendType, intArg, nonNull, stringArg } from "nexus";
 
@@ -18,6 +19,22 @@ export default extendType({
 					cashierId,
 					amount,
 					senderId: ctx.user.idValue,
+				});
+			},
+		});
+		t.field("topUp", {
+			authorize: requireVerifiedUser,
+			type: "Wallet",
+			args: {
+				topUpCashierId: nonNull(stringArg()),
+				amount: nonNull(intArg()),
+			},
+			resolve: (_, { topUpCashierId, amount }, ctx) => {
+				const useCase = new TopUpByIDUseCase();
+				return useCase.execute({
+					topUpCashierId,
+					amount,
+					receiverId: ctx.user.idValue,
 				});
 			},
 		});
