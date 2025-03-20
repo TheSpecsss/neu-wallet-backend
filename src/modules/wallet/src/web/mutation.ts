@@ -29,12 +29,12 @@ export default extendType({
 				topUpCashierId: nonNull(stringArg()),
 				amount: nonNull(intArg()),
 			},
-			resolve: (_, { receiverId, amount, }, ctx) => {
+			resolve: (_, { topUpCashierId, amount }, ctx) => {
 				const useCase = new TopUpByIDUseCase();
 				return useCase.execute({
-					topUpCashierId : ctx.user.idValue,
+					topUpCashierId,
 					amount,
-					receiverId,
+					receiverId: ctx.user.idValue,
 				});
 			},
 		});

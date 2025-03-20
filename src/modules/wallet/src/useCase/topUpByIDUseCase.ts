@@ -12,7 +12,7 @@ export class TopUpByIDUseCase {
 	constructor(
 		private _createTransactionService = new CreateTransactionService(),
 		private _userService = new UserService(),
-		private _userRoleManamentService = new UserRoleManagementService(),
+		private _userRoleManagementService = new UserRoleManagementService(),
 		private _walletRepository = new WalletRepository(),
 	) {}
 
@@ -54,13 +54,12 @@ export class TopUpByIDUseCase {
 			throw new Error(`Cashier ${topUpCashierId} does not exist`);
 		}
 
-		const hasPermission = await this._userRoleManamentService.hasPermission(
+		const hasPermission = await this._userRoleManagementService.hasPermission(
 			user,
 			USER_ACCOUNT_TYPE.CASH_TOP_UP,
 		);
-
 		if (!hasPermission) {
-			throw new Error(`Cashier ${topUpCashierId} does not have the required permission`);
+			throw new Error(`Cashier ${user.idValue} does not have the required permission`);
 		}
 	}
 

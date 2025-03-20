@@ -13,7 +13,7 @@ export class PayUseCase {
 		private _createTransactionService = new CreateTransactionService(),
 		private _userService = new UserService(),
 		private _walletRepository = new WalletRepository(),
-		private _userRoleManamentService = new UserRoleManagementService(),
+		private _userRoleManagementService = new UserRoleManagementService(),
 	) {}
 
 	public async execute(dto: PayDTO): Promise<IWallet> {
@@ -61,13 +61,12 @@ export class PayUseCase {
 			throw new Error(`Cashier ${cashierId} does not exist`);
 		}
 
-		const hasPermission = await this._userRoleManamentService.hasPermission(
+		const hasPermission = await this._userRoleManagementService.hasPermission(
 			user,
 			USER_ACCOUNT_TYPE.CASHIER,
 		);
-
 		if (!hasPermission) {
-			throw new Error(`Cashier ${cashierId} does not have the required permission`);
+			throw new Error(`Cashier ${user.id} does not have the required permission`);
 		}
 	}
 
