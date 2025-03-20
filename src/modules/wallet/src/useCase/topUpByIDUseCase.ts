@@ -1,6 +1,7 @@
 import { CreateTransactionService } from "@/modules/transaction/src/domain/services/createTransactionService";
 import { TRANSACTION_TYPE } from "@/modules/transaction/src/domain/shared/constant";
 import { UserService } from "@/modules/user/src";
+import { UserRoleManagementService } from "@/modules/user/src/domain/services/userRoleManagementService";
 import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
 import type { IWallet } from "@/modules/wallet/src/domain/classes/wallet";
 import { MINIMUM_TOPUP_AMOUNT } from "@/modules/wallet/src/domain/shared/constant";
@@ -11,6 +12,7 @@ export class TopUpByIDUseCase {
 	constructor(
 		private _createTransactionService = new CreateTransactionService(),
 		private _userService = new UserService(),
+		private _userRoleManamentService = new UserRoleManagementService(),
 		private _walletRepository = new WalletRepository(),
 	) {}
 
@@ -47,12 +49,18 @@ export class TopUpByIDUseCase {
 
 	private async _validateTopUpCashier(topUpCashierId: string): Promise<void> {
 		const user = await this._userService.findUserById({ userId: topUpCashierId });
+
 		if (!user) {
 			throw new Error(`Cashier ${topUpCashierId} does not exist`);
 		}
 
-		if (user.accountTypeValue !== USER_ACCOUNT_TYPE.CASH_TOP_UP) {
-			throw new Error(`User ${topUpCashierId} is not a top up cashier`);
+		const hasPermission = await this._userRoleManamentService.hasPermission(
+			user,
+			USER_ACCOUNT_TYPE.CASH_TOP_UP,
+		);
+
+		if (!hasPermission) {
+			throw new Error(`Cashier ${topUpCashierId} does not have the required permission`);
 		}
 	}
 

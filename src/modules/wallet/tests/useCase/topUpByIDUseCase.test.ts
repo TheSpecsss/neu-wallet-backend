@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { MINIMUM_TOPUP_AMOUNT } from "@/modules/wallet/src/domain/shared/constant";
@@ -10,7 +10,7 @@ import { SnowflakeID } from "@/shared/domain/snowflakeId";
 describe("TopUpByIdUseCase", () => {
 	let useCase: TopUpByIDUseCase;
 
-	beforeAll(async () => {
+	beforeEach(async () => {
 		useCase = new TopUpByIDUseCase();
 	});
 
@@ -96,7 +96,7 @@ describe("TopUpByIdUseCase", () => {
 		expect(errorMessage).toBe(`Cashier ${seededTopUpCashier} does not exist`);
 	});
 
-	it("should throw an error when the topUpCashierId is not a top-up account type", async () => {
+	it("should throw an error when the said cashier does not have Top Up permission", async () => {
 		const seededTopUpCashier = await seedUser({ accountType: USER_ACCOUNT_TYPE.USER });
 		const seededReceiver = await seedUser({ accountType: USER_ACCOUNT_TYPE.USER });
 		await seedWallet({
@@ -104,17 +104,19 @@ describe("TopUpByIdUseCase", () => {
 			balance: new Decimal(500),
 		});
 
-    let errorMessage = "";
-    try {
-      await useCase.execute({
-        receiverId: seededReceiver.id,
-        topUpCashierId: seededTopUpCashier.id,
-        amount: 200,
-      });
-    } catch (error) {
-      errorMessage = (error as Error).message;
-    }
+		let errorMessage = "";
+		try {
+			await useCase.execute({
+				receiverId: seededReceiver.id,
+				topUpCashierId: seededTopUpCashier.id,
+				amount: 200,
+			});
+		} catch (error) {
+			errorMessage = (error as Error).message;
+		}
 
-    expect(errorMessage).toBe(`User ${seededTopUpCashier.id} is not a top up cashier`);
+		expect(errorMessage).toBe(
+			`Cashier ${seededTopUpCashier.id} does not have the required permission`,
+		);
 	});
 });

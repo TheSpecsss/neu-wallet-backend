@@ -1,6 +1,7 @@
 import { CreateTransactionService } from "@/modules/transaction/src/domain/services/createTransactionService";
 import { TRANSACTION_TYPE } from "@/modules/transaction/src/domain/shared/constant";
 import { UserService } from "@/modules/user/src";
+import { UserRoleManagementService } from "@/modules/user/src/domain/services/userRoleManagementService";
 import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
 import type { IWallet } from "@/modules/wallet/src/domain/classes/wallet";
 import { MINIMUM_PAY_AMOUNT } from "@/modules/wallet/src/domain/shared/constant";
@@ -12,6 +13,7 @@ export class PayUseCase {
 		private _createTransactionService = new CreateTransactionService(),
 		private _userService = new UserService(),
 		private _walletRepository = new WalletRepository(),
+		private _userRoleManamentService = new UserRoleManagementService(),
 	) {}
 
 	public async execute(dto: PayDTO): Promise<IWallet> {
@@ -34,7 +36,7 @@ export class PayUseCase {
 		return updatedWallet;
 	}
 
-  private async _validateMinimumPayAmount(amount: number): Promise<void> {
+	private async _validateMinimumPayAmount(amount: number): Promise<void> {
 		if (amount < MINIMUM_PAY_AMOUNT) {
 			throw new Error(`The amount to be sent must be at least ${MINIMUM_PAY_AMOUNT}`);
 		}
@@ -58,9 +60,14 @@ export class PayUseCase {
 		if (!user) {
 			throw new Error(`Cashier ${cashierId} does not exist`);
 		}
-		
-		if (user.accountTypeValue !== USER_ACCOUNT_TYPE.CASHIER) {
-			throw new Error(`User ${cashierId} is not a cashier`);
+
+		const hasPermission = await this._userRoleManamentService.hasPermission(
+			user,
+			USER_ACCOUNT_TYPE.CASHIER,
+		);
+
+		if (!hasPermission) {
+			throw new Error(`Cashier ${cashierId} does not have the required permission`);
 		}
 	}
 
