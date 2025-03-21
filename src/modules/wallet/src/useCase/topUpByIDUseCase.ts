@@ -43,7 +43,7 @@ export class TopUpByIDUseCase {
 	private async _ensureReceiverExist(receiverId: string): Promise<void> {
 		const user = await this._userService.findUserById({ userId: receiverId });
 		if (!user) {
-			throw new Error(`Receiver ${receiverId} does not exist`);
+			throw new Error(`User ${receiverId} does not exist`);
 		}
 	}
 

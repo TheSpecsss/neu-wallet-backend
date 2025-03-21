@@ -71,7 +71,7 @@ describe("TopUpByIdUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe(`Receiver ${seededReceiver} does not exist`);
+		expect(errorMessage).toBe(`User ${seededReceiver} does not exist`);
 	});
 
 	it("should throw an error when the top-up cashier does not exist", async () => {
