@@ -51,7 +51,7 @@ export class TopUpByIDUseCase {
 		const user = await this._userService.findUserById({ userId: topUpCashierId });
 
 		if (!user) {
-			throw new Error(`Cashier ${topUpCashierId} does not exist`);
+			throw new Error(`User ${topUpCashierId} does not exist`);
 		}
 
 		const hasPermission = await this._userRoleManagementService.hasPermission(
@@ -59,7 +59,7 @@ export class TopUpByIDUseCase {
 			USER_ACCOUNT_TYPE.CASH_TOP_UP,
 		);
 		if (!hasPermission) {
-			throw new Error(`Cashier ${user.idValue} does not have the required permission`);
+			throw new Error(`User ${topUpCashierId} does not have the required permission`);
 		}
 	}
 

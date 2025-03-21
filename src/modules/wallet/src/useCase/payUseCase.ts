@@ -58,7 +58,7 @@ export class PayUseCase {
 	private async _validateCashier(cashierId: string): Promise<void> {
 		const user = await this._userService.findUserById({ userId: cashierId });
 		if (!user) {
-			throw new Error(`Cashier ${cashierId} does not exist`);
+			throw new Error(`User ${cashierId} does not exist`);
 		}
 
 		const hasPermission = await this._userRoleManagementService.hasPermission(
@@ -66,7 +66,7 @@ export class PayUseCase {
 			USER_ACCOUNT_TYPE.CASHIER,
 		);
 		if (!hasPermission) {
-			throw new Error(`Cashier ${user.id} does not have the required permission`);
+			throw new Error(`User ${cashierId} does not have the required permission`);
 		}
 	}
 

@@ -93,7 +93,7 @@ describe("TopUpByIdUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe(`Cashier ${seededTopUpCashier} does not exist`);
+		expect(errorMessage).toBe(`User ${seededTopUpCashier} does not exist`);
 	});
 
 	it("should throw an error when the said cashier does not have Top Up permission", async () => {
@@ -116,7 +116,7 @@ describe("TopUpByIdUseCase", () => {
 		}
 
 		expect(errorMessage).toBe(
-			`Cashier ${seededTopUpCashier.id} does not have the required permission`,
+			`User ${seededTopUpCashier.id} does not have the required permission`,
 		);
 	});
 });

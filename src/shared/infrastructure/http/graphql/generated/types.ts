@@ -316,7 +316,7 @@ export interface NexusGenArgTypes {
     }
     topUp: { // args
       amount: number; // Int!
-      topUpCashierId: string; // String!
+      receiverId: string; // String!
     }
     updateUserAccountTypeByUserId: { // args
       accountType: string; // String!

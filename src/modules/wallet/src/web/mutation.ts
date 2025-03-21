@@ -26,15 +26,15 @@ export default extendType({
 			authorize: requireVerifiedUser,
 			type: "Wallet",
 			args: {
-				topUpCashierId: nonNull(stringArg()),
+				receiverId: nonNull(stringArg()),
 				amount: nonNull(intArg()),
 			},
-			resolve: (_, { topUpCashierId, amount }, ctx) => {
+			resolve: (_, { receiverId, amount }, ctx) => {
 				const useCase = new TopUpByIDUseCase();
 				return useCase.execute({
-					topUpCashierId,
+					topUpCashierId: ctx.user.idValue,
 					amount,
-					receiverId: ctx.user.idValue,
+					receiverId,
 				});
 			},
 		});
