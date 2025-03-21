@@ -4,3 +4,4 @@ export type IWalletRawObject = UserWallet;
 export type IWalletSchemaObject = Prisma.UserWalletUncheckedCreateInput;
 
 export const MINIMUM_PAY_AMOUNT = 1;
+export const MINIMUM_TOPUP_AMOUNT = 1;

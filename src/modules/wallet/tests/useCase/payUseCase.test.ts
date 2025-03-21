@@ -114,10 +114,10 @@ describe("PayUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe(`Cashier ${cashierId} does not exist`);
+		expect(errorMessage).toBe(`User ${cashierId} does not exist`);
 	});
 
-	it("should throw an error when cashierId are not cashier account type", async () => {
+	it("should throw an error when the cashier does not have permission", async () => {
 		const seededCashier = await seedUser({ accountType: USER_ACCOUNT_TYPE.USER });
 		const seededSender = await seedUser({ accountType: USER_ACCOUNT_TYPE.USER });
 		await seedWallet({
@@ -136,7 +136,7 @@ describe("PayUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe(`User ${seededCashier.id} is not a cashier`);
+		expect(errorMessage).toBe(`User ${seededCashier.id} does not have the required permission`);
 	});
 
 	it("should remove users wallet balance by the amount", async () => {

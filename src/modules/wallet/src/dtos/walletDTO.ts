@@ -3,3 +3,9 @@ export interface PayDTO {
 	cashierId: string;
 	amount: number;
 }
+
+export interface topUpByIDDTO {
+	receiverId: string;
+	topUpCashierId: string;
+	amount: number;
+}
