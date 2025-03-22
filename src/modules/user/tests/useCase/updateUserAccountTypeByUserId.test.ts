@@ -50,7 +50,7 @@ describe("UpdateUserAccountTypeByUserId", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe(`Failed to update user's account type: ${type} is invalid user account type`);
+		expect(errorMessage).toBe(`${type} is invalid user account type`);
 	});
 
 	it("should throw an error when userId does not exist", async () => {
@@ -123,7 +123,7 @@ describe("UpdateUserAccountTypeByUserId", () => {
 		}
 
 		expect(errorMessage).toBe(
-			"Assigning a role that is higher or equal to the current role is restricted.",
+			"Assigning a role that is higher or equal to the current role is restricted",
 		);
 	});
 
@@ -143,7 +143,7 @@ describe("UpdateUserAccountTypeByUserId", () => {
 		}
 
 		expect(errorMessage).toBe(
-			"Assigning a role that is higher or equal to the current role is restricted.",
+			"Assigning a role that is higher or equal to the current role is restricted",
 		);
 	});
 });

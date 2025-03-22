@@ -1,9 +1,9 @@
+import type { AuditLogDataKind } from "@/modules/auditLog/src/domain/services/createAuditLogService";
 import type { ActionTypeKind } from "@/modules/auditLog/src/domain/shared/constant";
-import type { IUser } from "@/modules/user/src/domain/classes/user";
 
-export interface CreateUserAuditLogServiceDTO {
+export interface CreateAuditLogServiceDTO {
 	executorId: string;
-	oldUser: IUser;
-	newUser: IUser;
+	oldData: AuditLogDataKind;
+	newData: AuditLogDataKind;
 	actionType: ActionTypeKind;
 }

@@ -1,6 +1,9 @@
 import type { IAuditLog } from "@/modules/auditLog/src/domain/classes/auditLog";
 import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
-import { UserAccountType, type IUserAccountType } from "@/modules/user/src/domain/classes/userAccountType";
+import {
+	type IUserAccountType,
+	UserAccountType,
+} from "@/modules/user/src/domain/classes/userAccountType";
 import type { IUserEmail } from "@/modules/user/src/domain/classes/userEmail";
 import type { IUserName } from "@/modules/user/src/domain/classes/userName";
 import type { IWallet } from "@/modules/wallet/src/domain/classes/wallet";
@@ -152,7 +155,7 @@ export class User implements IUser {
 		const accountTypeOrError = UserAccountType.create(accountType);
 		if (accountTypeOrError.isFailure) {
 			throw new Error(
-				`Failed to update user's account type: ${accountTypeOrError.getErrorMessage()}`,
+				accountTypeOrError.getErrorMessage() ?? "Failed to update user's account type",
 			);
 		}
 

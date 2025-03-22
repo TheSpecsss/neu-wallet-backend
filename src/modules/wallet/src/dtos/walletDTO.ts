@@ -4,8 +4,14 @@ export interface PayDTO {
 	amount: number;
 }
 
-export interface topUpByIDDTO {
+export interface TopUpByUserIdDTO {
 	receiverId: string;
 	topUpCashierId: string;
 	amount: number;
+}
+
+export interface SetBalanceByUserIdDTO {
+	userId: string;
+	executorId: string;
+	balance: number;
 }

@@ -56,7 +56,7 @@ describe("Wallet", () => {
 			const balance = WalletBalance.create(walletBalance);
 
 			expect(() => wallet.reduceBalance(amountToReduce)).toThrowError(
-				"Failed creating a wallet balance: Invalid balance amount. Balance must be greater than or equal to 0.",
+				"Invalid balance amount. Balance must be greater than or equal to 0.",
 			);
 		});
 	});
@@ -75,10 +75,30 @@ describe("Wallet", () => {
 		it("should throw an error if the amount to be added is invalid", () => {
 			const wallet = Wallet.create(mockData);
 			const invalidAmount = -wallet.balanceValue + -1;
-			const balance = WalletBalance.create(invalidAmount);
 
 			expect(() => wallet.addBalance(invalidAmount)).toThrowError(
-				"Failed creating a wallet balance: Invalid balance amount. Balance must be greater than or equal to 0.",
+				"Invalid balance amount. Balance must be greater than or equal to 0.",
+			);
+		});
+	});
+
+	describe("setBalance", () => {
+		it("should set balance", () => {
+			const wallet = Wallet.create({
+				...mockData,
+				balance: WalletBalance.create(100).getValue(),
+			});
+
+			wallet.setBalance(300);
+
+			expect(wallet.balanceValue).toBe(300);
+		});
+
+		it("should throw an error if the set balance is negative number", () => {
+			const wallet = Wallet.create(mockData);
+
+			expect(() => wallet.setBalance(-1)).toThrowError(
+				"Invalid balance amount. Balance must be greater than or equal to 0.",
 			);
 		});
 	});

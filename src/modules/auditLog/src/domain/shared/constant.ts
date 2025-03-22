@@ -6,5 +6,8 @@ export type IAuditLogSchemaObject = Prisma.UserAuditLogUncheckedCreateInput;
 export const ACTION_TYPE = {
 	USER_UPDATE: "USER_UPDATE",
 	USER_DELETE: "USER_DELETE",
+
+	WALLET_UPDATE: "WALLET_UPDATE",
+	WALLET_DELETE: "WALLET_DELETE",
 } as const;
 export type ActionTypeKind = (typeof ACTION_TYPE)[keyof typeof ACTION_TYPE];

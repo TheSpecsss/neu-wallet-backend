@@ -5,10 +5,10 @@ import { UserRoleManagementService } from "@/modules/user/src/domain/services/us
 import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
 import type { IWallet } from "@/modules/wallet/src/domain/classes/wallet";
 import { MINIMUM_TOPUP_AMOUNT } from "@/modules/wallet/src/domain/shared/constant";
-import type { topUpByIDDTO } from "@/modules/wallet/src/dtos/walletDTO";
+import type { TopUpByUserIdDTO } from "@/modules/wallet/src/dtos/walletDTO";
 import { WalletRepository } from "@/modules/wallet/src/repositories/walletRepository";
 
-export class TopUpByIDUseCase {
+export class TopUpByUserIdUseCase {
 	constructor(
 		private _createTransactionService = new CreateTransactionService(),
 		private _userService = new UserService(),
@@ -16,7 +16,7 @@ export class TopUpByIDUseCase {
 		private _walletRepository = new WalletRepository(),
 	) {}
 
-	public async execute(dto: topUpByIDDTO): Promise<IWallet> {
+	public async execute(dto: TopUpByUserIdDTO): Promise<IWallet> {
 		const { receiverId, topUpCashierId, amount } = dto;
 
 		await this._validateMinimumTopUpAmount(amount);

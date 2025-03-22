@@ -21,37 +21,54 @@ describe("WalletFactory", () => {
 		};
 	});
 
-	it("should successfully create a User when all properties are valid", () => {
-		const result = WalletFactory.create(mockData);
+	describe("create", () => {
+		it("should successfully create a User when all properties are valid", () => {
+			const result = WalletFactory.create(mockData);
 
-		expect(result.isSuccess).toBe(true);
-		expect(result.isFailure).toBe(false);
-		expect(result.getValue()).toBeInstanceOf(Wallet);
+			expect(result.isSuccess).toBe(true);
+			expect(result.isFailure).toBe(false);
+			expect(result.getValue()).toBeInstanceOf(Wallet);
 
-		const user = result.getValue();
-		expect(user.idValue).toBe(mockData.id!);
-		expect(user.userIdValue).toBe(mockData.userId);
-		expect(user.balanceValue).toBe(mockData.balance);
-		expect(user.isDeleted).toBe(mockData.isDeleted);
-		expect(user.createdAt.toString()).toBe(mockData.createdAt.toString());
-		expect(user.updatedAt.toString()).toBe(mockData.updatedAt.toString());
+			const user = result.getValue();
+			expect(user.idValue).toBe(mockData.id!);
+			expect(user.userIdValue).toBe(mockData.userId);
+			expect(user.balanceValue).toBe(mockData.balance);
+			expect(user.isDeleted).toBe(mockData.isDeleted);
+			expect(user.createdAt.toString()).toBe(mockData.createdAt.toString());
+			expect(user.updatedAt.toString()).toBe(mockData.updatedAt.toString());
+		});
+
+		it("should fail if balance is less than the minimum value", () => {
+			const invalidBalanceProps = {
+				...mockData,
+				balance: faker.number.float({
+					min: Number.MIN_SAFE_INTEGER,
+					max: WalletBalance.MINIMUM_BALANCE_AMOUNT - 1,
+				}),
+			};
+
+			const result = WalletFactory.create(invalidBalanceProps);
+
+			expect(result.isSuccess).toBe(false);
+			expect(result.isFailure).toBe(true);
+			expect(result.getErrorMessage()).toBe(
+				`Invalid balance amount. Balance must be greater than or equal to ${WalletBalance.MINIMUM_BALANCE_AMOUNT}.`,
+			);
+		});
 	});
 
-	it("should fail if balance is less than the minimum value", () => {
-		const invalidBalanceProps = {
-			...mockData,
-			balance: faker.number.float({
-				min: Number.MIN_SAFE_INTEGER,
-				max: WalletBalance.MINIMUM_BALANCE_AMOUNT - 1,
-			}),
-		};
+	describe("clone", () => {
+		it("should clone the current to wallet into new wallet object", () => {
+			const result = WalletFactory.create(mockData);
 
-		const result = WalletFactory.create(invalidBalanceProps);
+			expect(result.isSuccess).toBe(true);
+			expect(result.isFailure).toBe(false);
+			expect(result.getValue()).toBeInstanceOf(Wallet);
 
-		expect(result.isSuccess).toBe(false);
-		expect(result.isFailure).toBe(true);
-		expect(result.getErrorMessage()).toBe(
-			`Invalid balance amount. Balance must be greater than or equal to ${WalletBalance.MINIMUM_BALANCE_AMOUNT}.`,
-		);
+			const wallet = result.getValue();
+			const clonedWallet = WalletFactory.clone(wallet);
+
+			expect(wallet).toStrictEqual(clonedWallet);
+		});
 	});
 });
