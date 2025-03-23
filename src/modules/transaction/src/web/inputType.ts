@@ -1,14 +1,14 @@
-import { inputObjectType, objectType } from "nexus";
+import { inputObjectType, nonNull, objectType } from "nexus";
 
 export default [
 	objectType({
 		name: "TransactionByUserIdWithPagination",
 		definition(t) {
-			t.list.field("transactions", { type: "Transaction" });
-			t.boolean("hasNextPage");
-			t.boolean("hasPreviousPage");
-			t.int("page");
-			t.int("totalPages");
+			t.nonNull.list.field("transactions", { type: nonNull("Transaction") });
+			t.nonNull.boolean("hasNextPage");
+			t.nonNull.boolean("hasPreviousPage");
+			t.nonNull.int("page");
+			t.nonNull.int("totalPages");
 		},
 	}),
 	inputObjectType({

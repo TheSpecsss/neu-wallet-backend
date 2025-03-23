@@ -47,37 +47,37 @@ export interface NexusGenScalars {
 export interface NexusGenObjects {
   AuditLog: {};
   AuditLogChange: { // root type
-    key?: string | null; // String
-    values?: Array<NexusGenRootTypes['AuditLogChangeValue'] | null> | null; // [AuditLogChangeValue]
+    key: string; // String!
+    values: NexusGenRootTypes['AuditLogChangeValue'][]; // [AuditLogChangeValue!]!
   }
   AuditLogChangeValue: { // root type
-    from?: string | null; // String
-    to?: string | null; // String
+    from: string; // String!
+    to: string; // String!
   }
   Login: { // root type
-    expiresAt?: string | null; // String
-    token?: string | null; // String
+    expiresAt: string; // String!
+    token: string; // String!
   }
   Mutation: {};
   Query: {};
   Transaction: {};
   TransactionByUserIdWithPagination: { // root type
-    hasNextPage?: boolean | null; // Boolean
-    hasPreviousPage?: boolean | null; // Boolean
-    page?: number | null; // Int
-    totalPages?: number | null; // Int
-    transactions?: Array<NexusGenRootTypes['Transaction'] | null> | null; // [Transaction]
+    hasNextPage: boolean; // Boolean!
+    hasPreviousPage: boolean; // Boolean!
+    page: number; // Int!
+    totalPages: number; // Int!
+    transactions: NexusGenRootTypes['Transaction'][]; // [Transaction!]!
   }
   User: {};
   UserBalance: { // root type
-    balance?: number | null; // Float
+    balance: number; // Float!
   }
   UserPagination: { // root type
-    hasNextPage?: boolean | null; // Boolean
-    hasPreviousPage?: boolean | null; // Boolean
-    page?: number | null; // Int
-    totalPages?: number | null; // Int
-    users?: Array<NexusGenRootTypes['User'] | null> | null; // [User]
+    hasNextPage: boolean; // Boolean!
+    hasPreviousPage: boolean; // Boolean!
+    page: number; // Int!
+    totalPages: number; // Int!
+    users: NexusGenRootTypes['User'][]; // [User!]!
   }
   Verification: {};
   Wallet: {};
@@ -105,16 +105,16 @@ export interface NexusGenFieldTypes {
     targetId: string; // ID!
   }
   AuditLogChange: { // field return type
-    key: string | null; // String
-    values: Array<NexusGenRootTypes['AuditLogChangeValue'] | null> | null; // [AuditLogChangeValue]
+    key: string; // String!
+    values: NexusGenRootTypes['AuditLogChangeValue'][]; // [AuditLogChangeValue!]!
   }
   AuditLogChangeValue: { // field return type
-    from: string | null; // String
-    to: string | null; // String
+    from: string; // String!
+    to: string; // String!
   }
   Login: { // field return type
-    expiresAt: string | null; // String
-    token: string | null; // String
+    expiresAt: string; // String!
+    token: string; // String!
   }
   Mutation: { // field return type
     confirmVerification: NexusGenRootTypes['Verification'] | null; // Verification
@@ -126,7 +126,7 @@ export interface NexusGenFieldTypes {
     updateUserAccountTypeByUserId: NexusGenRootTypes['User'] | null; // User
   }
   Query: { // field return type
-    getRecentTransactionByUserId: NexusGenRootTypes['TransactionByUserIdWithPagination'] | null; // TransactionByUserIdWithPagination
+    getRecentTransactionsByUserId: NexusGenRootTypes['TransactionByUserIdWithPagination'] | null; // TransactionByUserIdWithPagination
     getUser: NexusGenRootTypes['User'] | null; // User
     getUserBalanceByUserId: NexusGenRootTypes['UserBalance'] | null; // UserBalance
     getUsersByPagination: NexusGenRootTypes['UserPagination'] | null; // UserPagination
@@ -142,11 +142,11 @@ export interface NexusGenFieldTypes {
     type: string; // String!
   }
   TransactionByUserIdWithPagination: { // field return type
-    hasNextPage: boolean | null; // Boolean
-    hasPreviousPage: boolean | null; // Boolean
-    page: number | null; // Int
-    totalPages: number | null; // Int
-    transactions: Array<NexusGenRootTypes['Transaction'] | null> | null; // [Transaction]
+    hasNextPage: boolean; // Boolean!
+    hasPreviousPage: boolean; // Boolean!
+    page: number; // Int!
+    totalPages: number; // Int!
+    transactions: NexusGenRootTypes['Transaction'][]; // [Transaction!]!
   }
   User: { // field return type
     accountType: string; // String!
@@ -162,14 +162,14 @@ export interface NexusGenFieldTypes {
     wallet: NexusGenRootTypes['Wallet'] | null; // Wallet
   }
   UserBalance: { // field return type
-    balance: number | null; // Float
+    balance: number; // Float!
   }
   UserPagination: { // field return type
-    hasNextPage: boolean | null; // Boolean
-    hasPreviousPage: boolean | null; // Boolean
-    page: number | null; // Int
-    totalPages: number | null; // Int
-    users: Array<NexusGenRootTypes['User'] | null> | null; // [User]
+    hasNextPage: boolean; // Boolean!
+    hasPreviousPage: boolean; // Boolean!
+    page: number; // Int!
+    totalPages: number; // Int!
+    users: NexusGenRootTypes['User'][]; // [User!]!
   }
   Verification: { // field return type
     code: string; // String!
@@ -225,7 +225,7 @@ export interface NexusGenFieldTypeNames {
     updateUserAccountTypeByUserId: 'User'
   }
   Query: { // field return type name
-    getRecentTransactionByUserId: 'TransactionByUserIdWithPagination'
+    getRecentTransactionsByUserId: 'TransactionByUserIdWithPagination'
     getUser: 'User'
     getUserBalanceByUserId: 'UserBalance'
     getUsersByPagination: 'UserPagination'
@@ -324,7 +324,7 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
-    getRecentTransactionByUserId: { // args
+    getRecentTransactionsByUserId: { // args
       hydrate?: NexusGenInputs['TransactionHydrateOption'] | null; // TransactionHydrateOption
       page: number; // Int!
       perPage: number; // Int!

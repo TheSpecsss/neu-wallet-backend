@@ -7,7 +7,7 @@ import { defaultTo } from "rambda";
 export default extendType({
 	type: "Query",
 	definition(t) {
-		t.field("getRecentTransactionByUserId", {
+		t.field("getRecentTransactionsByUserId", {
 			authorize: requireVerifiedUser,
 			type: "TransactionByUserIdWithPagination",
 			args: {

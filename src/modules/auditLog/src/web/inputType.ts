@@ -1,18 +1,18 @@
-import { inputObjectType, objectType } from "nexus";
+import { inputObjectType, nonNull, objectType } from "nexus";
 
 export default [
 	objectType({
 		name: "AuditLogChange",
 		definition(t) {
-			t.string("key");
-			t.list.field("values", { type: "AuditLogChangeValue" });
+			t.nonNull.string("key");
+			t.nonNull.list.field("values", { type: nonNull("AuditLogChangeValue") });
 		},
 	}),
 	objectType({
 		name: "AuditLogChangeValue",
 		definition(t) {
-			t.string("from");
-			t.string("to");
+			t.nonNull.string("from");
+			t.nonNull.string("to");
 		},
 	}),
 	inputObjectType({

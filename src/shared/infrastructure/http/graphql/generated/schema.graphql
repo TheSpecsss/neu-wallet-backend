@@ -14,13 +14,13 @@ type AuditLog {
 }
 
 type AuditLogChange {
-  key: String
-  values: [AuditLogChangeValue]
+  key: String!
+  values: [AuditLogChangeValue!]!
 }
 
 type AuditLogChangeValue {
-  from: String
-  to: String
+  from: String!
+  to: String!
 }
 
 input AuditLogHydrateOption {
@@ -29,8 +29,8 @@ input AuditLogHydrateOption {
 }
 
 type Login {
-  expiresAt: String
-  token: String
+  expiresAt: String!
+  token: String!
 }
 
 type Mutation {
@@ -44,7 +44,7 @@ type Mutation {
 }
 
 type Query {
-  getRecentTransactionByUserId(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionByUserIdWithPagination
+  getRecentTransactionsByUserId(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionByUserIdWithPagination
   getUser: User
   getUserBalanceByUserId: UserBalance
   getUsersByPagination(page: Int!, perPage: Int!): UserPagination
@@ -62,11 +62,11 @@ type Transaction {
 }
 
 type TransactionByUserIdWithPagination {
-  hasNextPage: Boolean
-  hasPreviousPage: Boolean
-  page: Int
-  totalPages: Int
-  transactions: [Transaction]
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  page: Int!
+  totalPages: Int!
+  transactions: [Transaction!]!
 }
 
 input TransactionHydrateOption {
@@ -89,7 +89,7 @@ type User {
 }
 
 type UserBalance {
-  balance: Float
+  balance: Float!
 }
 
 input UserHydrateOption {
@@ -99,11 +99,11 @@ input UserHydrateOption {
 }
 
 type UserPagination {
-  hasNextPage: Boolean
-  hasPreviousPage: Boolean
-  page: Int
-  totalPages: Int
-  users: [User]
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  page: Int!
+  totalPages: Int!
+  users: [User!]!
 }
 
 type Verification {
