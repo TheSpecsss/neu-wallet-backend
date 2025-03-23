@@ -1,5 +1,5 @@
 import type { IWallet } from "@/modules/wallet/src/domain/classes/wallet";
-import { objectType } from "nexus";
+import { nonNull, objectType } from "nexus";
 import { defaultTo } from "rambda";
 
 export const Wallet = objectType({
@@ -9,7 +9,7 @@ export const Wallet = objectType({
 			resolve: (source) => (source as IWallet).idValue,
 		});
 		t.nullable.field("user", {
-			type: "User",
+			type: nonNull("User"),
 			resolve: (source) => (source as IWallet).user,
 		});
 		t.nonNull.float("balance", {

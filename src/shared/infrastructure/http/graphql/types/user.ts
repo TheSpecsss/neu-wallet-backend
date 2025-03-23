@@ -1,5 +1,5 @@
 import type { IUser } from "@/modules/user/src/domain/classes/user";
-import { objectType } from "nexus";
+import { nonNull, objectType } from "nexus";
 import { defaultTo } from "rambda";
 
 export const User = objectType({
@@ -18,15 +18,15 @@ export const User = objectType({
 			resolve: (source) => (source as IUser).accountTypeValue,
 		});
 		t.nullable.field("wallet", {
-			type: "Wallet",
+			type: nonNull("Wallet"),
 			resolve: (source) => (source as IUser).wallet,
 		});
 		t.list.field("sentTransactions", {
-			type: "Transaction",
+			type: nonNull("Transaction"),
 			resolve: (source) => (source as IUser).sentTransactions,
 		});
 		t.list.field("receivedTransactions", {
-			type: "Transaction",
+			type: nonNull("Transaction"),
 			resolve: (source) => (source as IUser).receivedTransactions,
 		});
 		t.nonNull.boolean("isDeleted", {

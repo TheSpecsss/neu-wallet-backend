@@ -87,8 +87,8 @@ export class TransactionRepository implements ITransactionRepository {
 
 	private _hydrateFilter(hydrate?: TransactionHydrateOption) {
 		return {
-			sender: hydrate?.sender ?? false,
-			receiver: hydrate?.receiver ?? false,
+			sender: hydrate?.sender ?? true,
+			receiver: hydrate?.receiver ?? true,
 		};
 	}
 }

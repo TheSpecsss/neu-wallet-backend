@@ -1,5 +1,5 @@
 import type { IVerification } from "@/modules/verification/src/domain/classes/verification";
-import { objectType } from "nexus";
+import { nonNull, objectType } from "nexus";
 
 export const Verification = objectType({
 	name: "Verification",
@@ -11,7 +11,7 @@ export const Verification = objectType({
 			resolve: (source) => (source as IVerification).userIdValue,
 		});
 		t.nullable.field("user", {
-			type: "User",
+			type: nonNull("User"),
 			resolve: (source) => (source as IVerification).user,
 		});
 		t.nonNull.string("code", {

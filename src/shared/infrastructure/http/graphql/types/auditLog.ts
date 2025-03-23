@@ -1,5 +1,5 @@
 import type { IAuditLog } from "@/modules/auditLog/src/domain/classes/auditLog";
-import { objectType } from "nexus";
+import { nonNull, objectType } from "nexus";
 
 export const AuditLog = objectType({
 	name: "AuditLog",
@@ -11,21 +11,21 @@ export const AuditLog = objectType({
 			resolve: (source) => (source as IAuditLog).executorIdValue,
 		});
 		t.nullable.field("executor", {
-			type: "User",
+			type: nonNull("User"),
 			resolve: (source) => (source as IAuditLog).executor,
 		});
 		t.nonNull.id("targetId", {
 			resolve: (source) => (source as IAuditLog).targetIdValue,
 		});
 		t.nullable.field("target", {
-			type: "User",
+			type: nonNull("User"),
 			resolve: (source) => (source as IAuditLog).target,
 		});
 		t.nonNull.string("actionType", {
 			resolve: (source) => (source as IAuditLog).actionTypeValue,
 		});
 		t.list.field("changes", {
-			type: "AuditLogChange",
+			type: nonNull("AuditLogChange"),
 			resolve: (source) => (source as IAuditLog).changes,
 		});
 		t.nonNull.string("createdAt", {

@@ -97,7 +97,7 @@ export class VerificationRepository implements IVerificationRepository {
 
 	private _hydrateFilter(hydrate?: VerificationHydrateOption) {
 		return {
-			user: hydrate?.user ?? false,
+			user: hydrate?.user ?? true,
 		};
 	}
 }

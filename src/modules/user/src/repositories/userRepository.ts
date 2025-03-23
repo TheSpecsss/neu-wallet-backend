@@ -124,11 +124,11 @@ export class UserRepository implements IUserRepository {
 
 	private _hydrateFilter(hydrate?: UserHydrateOption) {
 		return {
-			wallet: hydrate?.wallet ?? false,
-			executorAuditLogs: hydrate?.executorAuditLogs ?? false,
-			targetAuditLogs: hydrate?.targetAuditLogs ?? false,
-			sentTransactions: hydrate?.sentTransactions ?? false,
-			receivedTransactions: hydrate?.receivedTransactions ?? false,
+			wallet: hydrate?.wallet ?? true,
+			executorAuditLogs: hydrate?.executorAuditLogs ?? true,
+			targetAuditLogs: hydrate?.targetAuditLogs ?? true,
+			sentTransactions: hydrate?.sentTransactions ?? true,
+			receivedTransactions: hydrate?.receivedTransactions ?? true,
 		};
 	}
 }

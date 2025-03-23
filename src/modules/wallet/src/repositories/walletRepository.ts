@@ -102,7 +102,7 @@ export class WalletRepository implements IWalletRepository {
 
 	private _hydrateFilter(hydrate?: WalletHydrateOption) {
 		return {
-			user: hydrate?.user ?? false,
+			user: hydrate?.user ?? true,
 		};
 	}
 }

@@ -44,8 +44,8 @@ export class AuditLogRepository implements IAuditLogRepository {
 
 	private _hydrateFilter(hydrate?: IAuditLogHydrateOption) {
 		return {
-			executor: hydrate?.executor ?? false,
-			target: hydrate?.target ?? false,
+			executor: hydrate?.executor ?? true,
+			target: hydrate?.target ?? true,
 		};
 	}
 }
