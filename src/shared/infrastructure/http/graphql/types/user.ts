@@ -18,7 +18,7 @@ export const User = objectType({
 			resolve: (source) => (source as IUser).accountTypeValue,
 		});
 		t.nullable.field("wallet", {
-			type: nonNull("Wallet"),
+			type: "Wallet",
 			resolve: (source) => (source as IUser).wallet,
 		});
 		t.list.field("sentTransactions", {

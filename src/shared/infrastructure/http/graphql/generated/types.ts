@@ -96,7 +96,7 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 export interface NexusGenFieldTypes {
   AuditLog: { // field return type
     actionType: string; // String!
-    changes: Array<NexusGenRootTypes['AuditLogChange'] | null> | null; // [AuditLogChange]
+    changes: NexusGenRootTypes['AuditLogChange'][] | null; // [AuditLogChange!]
     createdAt: string; // String!
     executor: NexusGenRootTypes['User'] | null; // User
     executorId: string; // ID!
@@ -157,8 +157,8 @@ export interface NexusGenFieldTypes {
     id: string; // String!
     isDeleted: boolean; // Boolean!
     name: string; // String!
-    receivedTransactions: Array<NexusGenRootTypes['Transaction'] | null> | null; // [Transaction]
-    sentTransactions: Array<NexusGenRootTypes['Transaction'] | null> | null; // [Transaction]
+    receivedTransactions: NexusGenRootTypes['Transaction'][] | null; // [Transaction!]
+    sentTransactions: NexusGenRootTypes['Transaction'][] | null; // [Transaction!]
     updatedAt: string; // String!
     wallet: NexusGenRootTypes['Wallet'] | null; // Wallet
   }

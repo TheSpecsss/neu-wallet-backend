@@ -9,7 +9,7 @@ export const Wallet = objectType({
 			resolve: (source) => (source as IWallet).idValue,
 		});
 		t.nullable.field("user", {
-			type: nonNull("User"),
+			type: "User",
 			resolve: (source) => (source as IWallet).user,
 		});
 		t.nonNull.float("balance", {

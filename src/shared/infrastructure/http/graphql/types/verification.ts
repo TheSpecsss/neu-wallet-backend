@@ -11,7 +11,7 @@ export const Verification = objectType({
 			resolve: (source) => (source as IVerification).userIdValue,
 		});
 		t.nullable.field("user", {
-			type: nonNull("User"),
+			type: "User",
 			resolve: (source) => (source as IVerification).user,
 		});
 		t.nonNull.string("code", {

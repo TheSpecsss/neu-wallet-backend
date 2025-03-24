@@ -11,14 +11,14 @@ export const Transaction = objectType({
 			resolve: (source) => (source as ITransaction).senderIdValue,
 		});
 		t.nullable.field("sender", {
-			type: nonNull("User"),
+			type: "User",
 			resolve: (source) => (source as ITransaction).sender,
 		});
 		t.nonNull.id("receiverId", {
 			resolve: (source) => (source as ITransaction).receiverIdValue,
 		});
 		t.nullable.field("receiver", {
-			type: nonNull("User"),
+			type: "User",
 			resolve: (source) => (source as ITransaction).receiver,
 		});
 		t.nonNull.float("amount", {

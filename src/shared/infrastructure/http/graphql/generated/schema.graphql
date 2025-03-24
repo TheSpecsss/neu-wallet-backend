@@ -4,7 +4,7 @@
 
 type AuditLog {
   actionType: String!
-  changes: [AuditLogChange]
+  changes: [AuditLogChange!]
   createdAt: String!
   executor: User
   executorId: ID!
@@ -83,8 +83,8 @@ type User {
   id: String!
   isDeleted: Boolean!
   name: String!
-  receivedTransactions: [Transaction]
-  sentTransactions: [Transaction]
+  receivedTransactions: [Transaction!]
+  sentTransactions: [Transaction!]
   updatedAt: String!
   wallet: Wallet
 }

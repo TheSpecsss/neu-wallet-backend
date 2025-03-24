@@ -11,14 +11,14 @@ export const AuditLog = objectType({
 			resolve: (source) => (source as IAuditLog).executorIdValue,
 		});
 		t.nullable.field("executor", {
-			type: nonNull("User"),
+			type: "User",
 			resolve: (source) => (source as IAuditLog).executor,
 		});
 		t.nonNull.id("targetId", {
 			resolve: (source) => (source as IAuditLog).targetIdValue,
 		});
 		t.nullable.field("target", {
-			type: nonNull("User"),
+			type: "User",
 			resolve: (source) => (source as IAuditLog).target,
 		});
 		t.nonNull.string("actionType", {
