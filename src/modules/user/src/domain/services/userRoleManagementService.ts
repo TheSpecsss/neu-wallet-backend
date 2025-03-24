@@ -8,6 +8,7 @@ import { UserRepository } from "@/modules/user/src/repositories/userRepository";
 export interface IUserRoleManagementService {
 	isSuperAdmin(userInput: IUser | string): Promise<boolean>;
 	hasPermission(userInput: IUser | string, accountType: UserAccountTypeKind): Promise<boolean>;
+	hasHigherPermission(user1Input: IUser | string, user2Input: IUser | string): Promise<boolean>;
 	hasHigherAccountType(accountType: string, targetAccountType: string): boolean;
 	ensureValidRoleChange(
 		updaterRole: string,
@@ -49,6 +50,17 @@ export class UserRoleManagementService implements IUserRoleManagementService {
 		return isSuperAdmin || user.accountTypeValue === accountType;
 	}
 
+	public async hasHigherPermission(
+		reference: IUser | string,
+		target: IUser | string,
+	): Promise<boolean> {
+		const referenceUser = await this._getUser(reference);
+		const targetUser = await this._getUser(target);
+		if (!referenceUser || !targetUser) return false;
+
+		return this.hasHigherAccountType(referenceUser.accountTypeValue, targetUser.accountTypeValue);
+	}
+
 	public hasHigherAccountType(accountType: string, targetAccountType: string): boolean {
 		return (
 			this.ACCOUNT_TYPE_HIERARCHY[accountType] >
@@ -66,7 +78,7 @@ export class UserRoleManagementService implements IUserRoleManagementService {
 
 		if (!this.hasHigherAccountType(updaterRole, targetAccountType.newRole)) {
 			throw new Error(
-				"Assigning a role that is higher or equal to the current role is restricted.",
+				"Assigning a role that is higher or equal to the current role is restricted",
 			);
 		}
 	}

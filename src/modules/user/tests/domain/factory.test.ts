@@ -30,83 +30,100 @@ describe("UserFactory", () => {
 		};
 	});
 
-	it("should successfully create a User when all properties are valid", () => {
-		const result = UserFactory.create(mockData);
+	describe("create", () => {
+		it("should successfully create a User when all properties are valid", () => {
+			const result = UserFactory.create(mockData);
 
-		expect(result.isSuccess).toBe(true);
-		expect(result.isFailure).toBe(false);
-		expect(result.getValue()).toBeInstanceOf(User);
+			expect(result.isSuccess).toBe(true);
+			expect(result.isFailure).toBe(false);
+			expect(result.getValue()).toBeInstanceOf(User);
 
-		const user = result.getValue();
-		expect(user.idValue).toBe(mockData.id!);
-		expect(user.nameValue).toBe(mockData.name);
-		expect(user.emailValue).toBe(mockData.email);
-		expect(user.password).toBe(mockData.password);
-		expect(user.accountTypeValue).toBe(mockData.accountType);
-		expect(user.createdAt.toString()).toBe(mockData.createdAt.toString());
-		expect(user.updatedAt.toString()).toBe(mockData.updatedAt.toString());
+			const user = result.getValue();
+			expect(user.idValue).toBe(mockData.id!);
+			expect(user.nameValue).toBe(mockData.name);
+			expect(user.emailValue).toBe(mockData.email);
+			expect(user.password).toBe(mockData.password);
+			expect(user.accountTypeValue).toBe(mockData.accountType);
+			expect(user.createdAt.toString()).toBe(mockData.createdAt.toString());
+			expect(user.updatedAt.toString()).toBe(mockData.updatedAt.toString());
+		});
+
+		it("should fail if name is greater than the maximum value", () => {
+			const invalidNameProps = {
+				...mockData,
+				name: faker.string.sample({
+					min: UserName.MAXIMUM_USERNAME_LENGTH + 1,
+					max: UserName.MAXIMUM_USERNAME_LENGTH + 1,
+				}),
+			};
+
+			const result = UserFactory.create(invalidNameProps);
+
+			expect(result.isSuccess).toBe(false);
+			expect(result.isFailure).toBe(true);
+			expect(result.getErrorMessage()).toBe(
+				`Name is limited to ${UserName.MAXIMUM_USERNAME_LENGTH} characters long`,
+			);
+		});
+
+		it("should fail if name is less than the minimum value", () => {
+			const invalidNameProps = {
+				...mockData,
+				name: faker.string.sample({
+					min: UserName.MINIMUM_USERNAME_LENGTH - 1,
+					max: UserName.MINIMUM_USERNAME_LENGTH - 1,
+				}),
+			};
+
+			const result = UserFactory.create(invalidNameProps);
+
+			expect(result.isSuccess).toBe(false);
+			expect(result.isFailure).toBe(true);
+			expect(result.getErrorMessage()).toBe(
+				`Name must be at least ${UserName.MINIMUM_USERNAME_LENGTH} characters long`,
+			);
+		});
+
+		it("should fail when email is not an NEU email address", () => {
+			const invalidEmailProps = {
+				...mockData,
+				email: faker.internet.email({ provider: "gmail.com" }),
+			};
+
+			const result = UserFactory.create(invalidEmailProps);
+
+			expect(result.isSuccess).toBe(false);
+			expect(result.isFailure).toBe(true);
+			expect(result.getErrorMessage()).toBe(
+				"Invalid email address. Please use a valid NEU email address (e.g., example@neu.edu.ph).",
+			);
+		});
+
+		it("should fail when accountType is invalid type", () => {
+			const invalidAccountTypeProps = { ...mockData, accountType: "STUDENT" };
+
+			const result = UserFactory.create(invalidAccountTypeProps);
+
+			expect(result.isSuccess).toBe(false);
+			expect(result.isFailure).toBe(true);
+			expect(result.getErrorMessage()).toBe(
+				`${invalidAccountTypeProps.accountType} is invalid user account type`,
+			);
+		});
 	});
 
-	it("should fail if name is greater than the maximum value", () => {
-		const invalidNameProps = {
-			...mockData,
-			name: faker.string.sample({
-				min: UserName.MAXIMUM_USERNAME_LENGTH + 1,
-				max: UserName.MAXIMUM_USERNAME_LENGTH + 1,
-			}),
-		};
+	describe("clone", () => {
+		it("should clone the current to user into new user object", () => {
+			const result = UserFactory.create(mockData);
 
-		const result = UserFactory.create(invalidNameProps);
+			expect(result.isSuccess).toBe(true);
+			expect(result.isFailure).toBe(false);
+			expect(result.getValue()).toBeInstanceOf(User);
 
-		expect(result.isSuccess).toBe(false);
-		expect(result.isFailure).toBe(true);
-		expect(result.getErrorMessage()).toBe(
-			`Name is limited to ${UserName.MAXIMUM_USERNAME_LENGTH} characters long`,
-		);
-	});
+			const user = result.getValue();
+			const clonedUser = UserFactory.clone(user);
 
-	it("should fail if name is less than the minimum value", () => {
-		const invalidNameProps = {
-			...mockData,
-			name: faker.string.sample({
-				min: UserName.MINIMUM_USERNAME_LENGTH - 1,
-				max: UserName.MINIMUM_USERNAME_LENGTH - 1,
-			}),
-		};
-
-		const result = UserFactory.create(invalidNameProps);
-
-		expect(result.isSuccess).toBe(false);
-		expect(result.isFailure).toBe(true);
-		expect(result.getErrorMessage()).toBe(
-			`Name must be at least ${UserName.MINIMUM_USERNAME_LENGTH} characters long`,
-		);
-	});
-
-	it("should fail when email is not an NEU email address", () => {
-		const invalidEmailProps = {
-			...mockData,
-			email: faker.internet.email({ provider: "gmail.com" }),
-		};
-
-		const result = UserFactory.create(invalidEmailProps);
-
-		expect(result.isSuccess).toBe(false);
-		expect(result.isFailure).toBe(true);
-		expect(result.getErrorMessage()).toBe(
-			"Invalid email address. Please use a valid NEU email address (e.g., example@neu.edu.ph).",
-		);
-	});
-
-	it("should fail when accountType is invalid type", () => {
-		const invalidAccountTypeProps = { ...mockData, accountType: "STUDENT" };
-
-		const result = UserFactory.create(invalidAccountTypeProps);
-
-		expect(result.isSuccess).toBe(false);
-		expect(result.isFailure).toBe(true);
-		expect(result.getErrorMessage()).toBe(
-			`${invalidAccountTypeProps.accountType} is invalid user account type`,
-		);
+			expect(user).toStrictEqual(clonedUser);
+		});
 	});
 });

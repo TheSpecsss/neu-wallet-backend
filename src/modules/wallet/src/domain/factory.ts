@@ -32,4 +32,8 @@ export class WalletFactory {
 			}),
 		);
 	}
+
+	public static clone(wallet: IWallet): IWallet {
+		return Wallet.create(wallet);
+	}
 }

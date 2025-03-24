@@ -39,6 +39,7 @@ type Mutation {
   pay(amount: Int!, cashierId: String!): Wallet
   register(confirmPassword: String!, email: String!, name: String!, password: String!): User
   resendVerification(email: String!): Verification
+  setBalance(balance: Int!, userId: String!): Wallet
   topUp(amount: Int!, receiverId: String!): Wallet
   updateUserAccountTypeByUserId(accountType: String!, userId: String!): User
 }

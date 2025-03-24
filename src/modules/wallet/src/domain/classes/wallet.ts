@@ -22,6 +22,7 @@ export interface IWallet extends IWalletData {
 	balanceValue: number;
 	reduceBalance(amount: number): void;
 	addBalance(amount: number): void;
+	setBalance(amount: number): void;
 }
 
 export class Wallet implements IWallet {
@@ -92,7 +93,7 @@ export class Wallet implements IWallet {
 	reduceBalance(amount: number): void {
 		const balance = WalletBalance.create(this.balanceValue - amount);
 		if (balance.isFailure) {
-			throw new Error(`Failed creating a wallet balance: ${balance.getErrorMessage()}`);
+			throw new Error(balance.getErrorMessage() ?? "Failed creating a wallet balance");
 		}
 
 		this._balance = balance.getValue();
@@ -101,7 +102,16 @@ export class Wallet implements IWallet {
 	addBalance(amount: number): void {
 		const balance = WalletBalance.create(this.balanceValue + amount);
 		if (balance.isFailure) {
-			throw new Error(`Failed creating a wallet balance: ${balance.getErrorMessage()}`);
+			throw new Error(balance.getErrorMessage() ?? "Failed creating a wallet balance");
+		}
+
+		this._balance = balance.getValue();
+	}
+
+	setBalance(amount: number): void {
+		const balance = WalletBalance.create(amount);
+		if (balance.isFailure) {
+			throw new Error(balance.getErrorMessage() ?? "Failed creating a wallet balance");
 		}
 
 		this._balance = balance.getValue();

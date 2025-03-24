@@ -1,17 +1,17 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { beforeAll, describe, expect, it } from "bun:test";
 import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { MINIMUM_TOPUP_AMOUNT } from "@/modules/wallet/src/domain/shared/constant";
-import { TopUpByIDUseCase } from "@/modules/wallet/src/useCase/topUpByIDUseCase";
+import { TopUpByUserIdUseCase } from "@/modules/wallet/src/useCase/topUpByUserIdUseCase";
 import { seedWallet } from "@/modules/wallet/tests/utils/seedWallet";
 import { Decimal } from "@/shared/domain/decimal";
 import { SnowflakeID } from "@/shared/domain/snowflakeId";
 
-describe("TopUpByIdUseCase", () => {
-	let useCase: TopUpByIDUseCase;
+describe("TopUpByUserIdUseCase", () => {
+	let useCase: TopUpByUserIdUseCase;
 
-	beforeEach(async () => {
-		useCase = new TopUpByIDUseCase();
+	beforeAll(async () => {
+		useCase = new TopUpByUserIdUseCase();
 	});
 
 	it("should increase the receiver's wallet balance by the top-up amount", async () => {

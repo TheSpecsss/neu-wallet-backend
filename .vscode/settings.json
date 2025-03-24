@@ -6,7 +6,7 @@
 		"source.removeUnusedImports": "always"
 	},
 	"editor.tabSize": 2,
-	"cSpell.words": ["brevo", "rambda"],
+	"cSpell.words": ["brevo", "rambda", "TOPUP"],
 
 	"typescript.preferences.importModuleSpecifier": "non-relative",
 	"[typescript]": {

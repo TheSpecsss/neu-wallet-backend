@@ -122,6 +122,7 @@ export interface NexusGenFieldTypes {
     pay: NexusGenRootTypes['Wallet'] | null; // Wallet
     register: NexusGenRootTypes['User'] | null; // User
     resendVerification: NexusGenRootTypes['Verification'] | null; // Verification
+    setBalance: NexusGenRootTypes['Wallet'] | null; // Wallet
     topUp: NexusGenRootTypes['Wallet'] | null; // Wallet
     updateUserAccountTypeByUserId: NexusGenRootTypes['User'] | null; // User
   }
@@ -221,6 +222,7 @@ export interface NexusGenFieldTypeNames {
     pay: 'Wallet'
     register: 'User'
     resendVerification: 'Verification'
+    setBalance: 'Wallet'
     topUp: 'Wallet'
     updateUserAccountTypeByUserId: 'User'
   }
@@ -313,6 +315,10 @@ export interface NexusGenArgTypes {
     }
     resendVerification: { // args
       email: string; // String!
+    }
+    setBalance: { // args
+      balance: number; // Int!
+      userId: string; // String!
     }
     topUp: { // args
       amount: number; // Int!

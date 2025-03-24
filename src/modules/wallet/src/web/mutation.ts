@@ -1,5 +1,6 @@
 import { PayUseCase } from "@/modules/wallet/src/useCase/payUseCase";
-import { TopUpByIDUseCase } from "@/modules/wallet/src/useCase/topUpByIDUseCase";
+import { SetBalanceByUserIdUseCase } from "@/modules/wallet/src/useCase/setBalanceByUserIdUseCase";
+import { TopUpByUserIdUseCase } from "@/modules/wallet/src/useCase/topUpByUserIdUseCase";
 import { requireVerifiedUser } from "@/shared/infrastructure/http/authorization/requireVerifiedUser";
 import { extendType, intArg, nonNull, stringArg } from "nexus";
 
@@ -30,11 +31,27 @@ export default extendType({
 				amount: nonNull(intArg()),
 			},
 			resolve: (_, { receiverId, amount }, ctx) => {
-				const useCase = new TopUpByIDUseCase();
+				const useCase = new TopUpByUserIdUseCase();
 				return useCase.execute({
 					topUpCashierId: ctx.user.idValue,
 					amount,
 					receiverId,
+				});
+			},
+		});
+		t.field("setBalance", {
+			authorize: requireVerifiedUser,
+			type: "Wallet",
+			args: {
+				userId: nonNull(stringArg()),
+				balance: nonNull(intArg()),
+			},
+			resolve: (_, { userId, balance }, ctx) => {
+				const useCase = new SetBalanceByUserIdUseCase();
+				return useCase.execute({
+					executorId: ctx.user.idValue,
+					userId,
+					balance,
 				});
 			},
 		});

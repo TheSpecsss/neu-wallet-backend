@@ -57,6 +57,10 @@ export class UserFactory {
 		);
 	}
 
+	public static clone(user: IUser): IUser {
+		return User.create(user);
+	}
+
 	private static _getAuditLogs(auditLogs?: IAuditLogFactory[]): IAuditLog[] {
 		const createAuditLog = pipe(AuditLogFactory.create, (instance) => instance.getValue());
 
