@@ -15,3 +15,9 @@ export interface SetBalanceByUserIdDTO {
 	executorId: string;
 	balance: number;
 }
+
+export interface TransferBalanceByUserIdDTO {
+	receiverId: string;
+	senderId: string;
+	amount: number;
+}

@@ -124,6 +124,7 @@ export interface NexusGenFieldTypes {
     resendVerification: NexusGenRootTypes['Verification'] | null; // Verification
     setBalance: NexusGenRootTypes['Wallet'] | null; // Wallet
     topUp: NexusGenRootTypes['Wallet'] | null; // Wallet
+    transferBalance: NexusGenRootTypes['Wallet'] | null; // Wallet
     updateUserAccountTypeByUserId: NexusGenRootTypes['User'] | null; // User
   }
   Query: { // field return type
@@ -224,6 +225,7 @@ export interface NexusGenFieldTypeNames {
     resendVerification: 'Verification'
     setBalance: 'Wallet'
     topUp: 'Wallet'
+    transferBalance: 'Wallet'
     updateUserAccountTypeByUserId: 'User'
   }
   Query: { // field return type name
@@ -321,6 +323,10 @@ export interface NexusGenArgTypes {
       userId: string; // String!
     }
     topUp: { // args
+      amount: number; // Int!
+      receiverId: string; // String!
+    }
+    transferBalance: { // args
       amount: number; // Int!
       receiverId: string; // String!
     }

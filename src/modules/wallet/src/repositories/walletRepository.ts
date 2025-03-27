@@ -23,7 +23,8 @@ export interface IWalletRepository {
 		options?: QueryOptions,
 		hydrate?: WalletHydrateOption,
 	): Promise<IWallet | null>;
-	update(wallet: IWallet): Promise<IWallet>;
+	update(wallet: IWallet, hydrate?: WalletHydrateOption): Promise<IWallet | null>;
+	updateMany(wallets: IWallet[], hydrate?: WalletHydrateOption): Promise<IWallet[]>;
 }
 
 export class WalletRepository implements IWalletRepository {
@@ -83,13 +84,31 @@ export class WalletRepository implements IWalletRepository {
 		return this._mapper.toDomain(wallet);
 	}
 
-	public async update(wallet: IWallet): Promise<IWallet> {
-		const walletRaw = await this._database.update({
-			where: { id: wallet.idValue },
-			data: this._mapper.toPersistence(wallet),
-		});
+	public async update(wallet: IWallet, hydrate?: WalletHydrateOption): Promise<IWallet | null> {
+		const wallets = await this.updateMany([wallet], hydrate);
+		if (wallets.length !== 1) {
+			return null;
+		}
 
-		return this._mapper.toDomain(walletRaw);
+		return wallets[0];
+	}
+
+	public async updateMany(wallets: IWallet[], hydrate?: WalletHydrateOption): Promise<IWallet[]> {
+		try {
+			const walletsRaw = await db.$transaction(
+				wallets.map((wallet) =>
+					this._database.update({
+						where: { id: wallet.idValue },
+						data: this._mapper.toPersistence(wallet),
+						include: this._hydrateFilter(hydrate),
+					}),
+				),
+			);
+
+			return walletsRaw.map((walletRaw) => this._mapper.toDomain(walletRaw));
+		} catch (error) {
+			return [];
+		}
 	}
 
 	private _deletedFilter(includeDeleted?: boolean) {
