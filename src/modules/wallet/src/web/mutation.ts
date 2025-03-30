@@ -2,6 +2,7 @@ import { PayUseCase } from "@/modules/wallet/src/useCase/payUseCase";
 import { SetBalanceByUserIdUseCase } from "@/modules/wallet/src/useCase/setBalanceByUserIdUseCase";
 import { TopUpByUserIdUseCase } from "@/modules/wallet/src/useCase/topUpByUserIdUseCase";
 import { TransferBalanceByUserIdUseCase } from "@/modules/wallet/src/useCase/transferBalanceByUserIdUseCase";
+import { WithdrawBalanceByUserIdUseCase } from "@/modules/wallet/src/useCase/withdrawBalanceByUserIdUseCase";
 import { requireVerifiedUser } from "@/shared/infrastructure/http/authorization/requireVerifiedUser";
 import { extendType, intArg, nonNull, stringArg } from "nexus";
 
@@ -68,6 +69,22 @@ export default extendType({
 				return useCase.execute({
 					senderId: ctx.user.idValue,
 					receiverId,
+					amount,
+				});
+			},
+		});
+		t.field("withdrawBalance", {
+			authorize: requireVerifiedUser,
+			type: "Wallet",
+			args: {
+				topUpCashierId: nonNull(stringArg()),
+				amount: nonNull(intArg()),
+			},
+			resolve: (_, { topUpCashierId, amount }, ctx) => {
+				const useCase = new WithdrawBalanceByUserIdUseCase();
+				return useCase.execute({
+					senderId: ctx.user.idValue,
+					topUpCashierId,
 					amount,
 				});
 			},

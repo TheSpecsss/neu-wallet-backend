@@ -126,6 +126,7 @@ export interface NexusGenFieldTypes {
     topUp: NexusGenRootTypes['Wallet'] | null; // Wallet
     transferBalance: NexusGenRootTypes['Wallet'] | null; // Wallet
     updateUserAccountTypeByUserId: NexusGenRootTypes['User'] | null; // User
+    withdrawBalance: NexusGenRootTypes['Wallet'] | null; // Wallet
   }
   Query: { // field return type
     getRecentTransactionsByUserId: NexusGenRootTypes['TransactionByUserIdWithPagination'] | null; // TransactionByUserIdWithPagination
@@ -227,6 +228,7 @@ export interface NexusGenFieldTypeNames {
     topUp: 'Wallet'
     transferBalance: 'Wallet'
     updateUserAccountTypeByUserId: 'User'
+    withdrawBalance: 'Wallet'
   }
   Query: { // field return type name
     getRecentTransactionsByUserId: 'TransactionByUserIdWithPagination'
@@ -333,6 +335,10 @@ export interface NexusGenArgTypes {
     updateUserAccountTypeByUserId: { // args
       accountType: string; // String!
       userId: string; // String!
+    }
+    withdrawBalance: { // args
+      amount: number; // Int!
+      topUpCashierId: string; // String!
     }
   }
   Query: {

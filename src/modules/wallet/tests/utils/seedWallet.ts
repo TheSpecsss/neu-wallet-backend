@@ -11,7 +11,9 @@ export const seedWallet = async (
 	const defaultSchemaObject = {
 		id: new SnowflakeID().toString(),
 		userId: new SnowflakeID().toString(),
-		balance: new Decimal(faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT })),
+		balance: new Decimal(
+			faker.number.int({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT, max: Number.MAX_SAFE_INTEGER }),
+		),
 		isDeleted: false,
 		deletedAt: null,
 		createdAt: new Date(),

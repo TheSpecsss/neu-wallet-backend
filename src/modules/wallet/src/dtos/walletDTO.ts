@@ -21,3 +21,9 @@ export interface TransferBalanceByUserIdDTO {
 	senderId: string;
 	amount: number;
 }
+
+export interface WithdrawBalanceByUserIdDTO {
+	topUpCashierId: string;
+	senderId: string;
+	amount: number;
+}

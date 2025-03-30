@@ -29,7 +29,7 @@ export class PayUseCase {
 
 		wallet.reduceBalance(amount);
 
-		const updatedWallet = await this._walletRepository.update(wallet);
+		const updatedWallet = await this._updateWallet(wallet);
 
 		await this._createTransaction(senderId, cashierId, amount);
 
@@ -51,7 +51,7 @@ export class PayUseCase {
 	private async _ensureSenderExist(senderId: string): Promise<void> {
 		const user = await this._userService.findUserById({ userId: senderId });
 		if (!user) {
-			throw new Error(`Sender ${senderId} does not exist`);
+			throw new Error(`User ${senderId} does not exist`);
 		}
 	}
 
@@ -85,8 +85,17 @@ export class PayUseCase {
 		amount: number,
 	): Promise<void> {
 		if (balance - amount < 0) {
-			throw new Error(`User ${senderId} does not have enough money`);
+			throw new Error(`User ${senderId} does not have sufficient balance`);
 		}
+	}
+
+	private async _updateWallet(wallet: IWallet): Promise<IWallet> {
+		const updatedWallet = await this._walletRepository.update(wallet);
+		if (!updatedWallet) {
+			throw new Error("Something went wrong while updating wallet");
+		}
+
+		return updatedWallet;
 	}
 
 	private async _createTransaction(

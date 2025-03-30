@@ -41,7 +41,7 @@ describe("WalletFactory", () => {
 		it("should fail if balance is less than the minimum value", () => {
 			const invalidBalanceProps = {
 				...mockData,
-				balance: faker.number.float({
+				balance: faker.number.int({
 					min: Number.MIN_SAFE_INTEGER,
 					max: WalletBalance.MINIMUM_BALANCE_AMOUNT - 1,
 				}),

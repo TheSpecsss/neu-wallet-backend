@@ -91,6 +91,10 @@ export class Wallet implements IWallet {
 	}
 
 	reduceBalance(amount: number): void {
+		if (amount < 0) {
+			throw new Error("Invalid amount. Amount should be a positive number");
+		}
+
 		const balance = WalletBalance.create(this.balanceValue - amount);
 		if (balance.isFailure) {
 			throw new Error(balance.getErrorMessage() ?? "Failed creating a wallet balance");
@@ -100,6 +104,10 @@ export class Wallet implements IWallet {
 	}
 
 	addBalance(amount: number): void {
+		if (amount < 0) {
+			throw new Error("Invalid amount. Amount should be a positive number.");
+		}
+
 		const balance = WalletBalance.create(this.balanceValue + amount);
 		if (balance.isFailure) {
 			throw new Error(balance.getErrorMessage() ?? "Failed creating a wallet balance");

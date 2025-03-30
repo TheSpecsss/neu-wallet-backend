@@ -23,7 +23,12 @@ describe("WalletRepository update", () => {
 		const seededWallet = await seedWallet({ userId: seededUser.id });
 
 		const newData = {
-			balance: new Decimal(faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT })),
+			balance: new Decimal(
+				faker.number.int({
+					min: WalletBalance.MINIMUM_BALANCE_AMOUNT,
+					max: Number.MAX_SAFE_INTEGER,
+				}),
+			),
 		};
 
 		const walletDomainObject = WalletMapper.toDomain({ ...seededWallet, ...newData });
