@@ -43,6 +43,7 @@ type Mutation {
   topUp(amount: Int!, receiverId: String!): Wallet
   transferBalance(amount: Int!, receiverId: String!): Wallet
   updateUserAccountTypeByUserId(accountType: String!, userId: String!): User
+  withdrawBalance(amount: Int!, topUpCashierId: String!): Wallet
 }
 
 type Query {

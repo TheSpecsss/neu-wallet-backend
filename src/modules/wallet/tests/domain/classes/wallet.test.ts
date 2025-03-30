@@ -13,7 +13,10 @@ describe("Wallet", () => {
 			userId: new SnowflakeID(),
 			user: null,
 			balance: WalletBalance.create(
-				faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT, max: 1000 }),
+				faker.number.int({
+					min: WalletBalance.MINIMUM_BALANCE_AMOUNT,
+					max: Number.MAX_SAFE_INTEGER,
+				}),
 			).getValue(),
 			isDeleted: false,
 			deletedAt: null,
@@ -48,12 +51,18 @@ describe("Wallet", () => {
 			expect(wallet.balanceValue).toBe(walletBalance - amountToReduce);
 		});
 
+		it("should throw an error if the amount is negative number", () => {
+			const wallet = Wallet.create(mockData);
+			const amountToReduce = -1;
+
+			expect(() => wallet.reduceBalance(amountToReduce)).toThrowError(
+				"Invalid amount. Amount should be a positive number",
+			);
+		});
+
 		it("should throw an error if the balance is not enough", () => {
 			const wallet = Wallet.create(mockData);
-			const walletBalance = wallet.balanceValue;
-			const amountToReduce = walletBalance + 10;
-
-			const balance = WalletBalance.create(walletBalance);
+			const amountToReduce = wallet.balanceValue + 10;
 
 			expect(() => wallet.reduceBalance(amountToReduce)).toThrowError(
 				"Invalid balance amount. Balance must be greater than or equal to 0.",
@@ -72,12 +81,12 @@ describe("Wallet", () => {
 			expect(wallet.balanceValue).toBe(walletBalance + amountToAdd);
 		});
 
-		it("should throw an error if the amount to be added is invalid", () => {
+		it("should throw an error if the amount is negative number", () => {
 			const wallet = Wallet.create(mockData);
-			const invalidAmount = -wallet.balanceValue + -1;
+			const invalidAmount = -1;
 
 			expect(() => wallet.addBalance(invalidAmount)).toThrowError(
-				"Invalid balance amount. Balance must be greater than or equal to 0.",
+				"Invalid amount. Amount should be a positive number",
 			);
 		});
 	});

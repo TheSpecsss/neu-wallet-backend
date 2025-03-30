@@ -9,3 +9,4 @@ export type IWalletSchemaObject =
 export const MINIMUM_PAY_AMOUNT = 1;
 export const MINIMUM_TOPUP_AMOUNT = 1;
 export const MINIMUM_TRANSFER_AMOUNT = 1;
+export const MINIMUM_WITHDRAW_AMOUNT = 1;

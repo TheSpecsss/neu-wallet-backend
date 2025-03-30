@@ -4,7 +4,10 @@ import { faker } from "@faker-js/faker";
 
 describe("WalletBalance", () => {
 	it("should successfully create a WalletBalance instance with a valid balance amount", () => {
-		const balance = faker.number.float({ min: WalletBalance.MINIMUM_BALANCE_AMOUNT });
+		const balance = faker.number.int({
+			min: WalletBalance.MINIMUM_BALANCE_AMOUNT,
+			max: Number.MAX_SAFE_INTEGER,
+		});
 		const result = WalletBalance.create(balance);
 
 		expect(result.isSuccess).toBe(true);
@@ -14,7 +17,7 @@ describe("WalletBalance", () => {
 	});
 
 	it("should return an error when creating a WalletBalance with invalid balance amount", () => {
-		const balance = faker.number.float({
+		const balance = faker.number.int({
 			min: Number.MIN_SAFE_INTEGER,
 			max: WalletBalance.MINIMUM_BALANCE_AMOUNT - 1,
 		});

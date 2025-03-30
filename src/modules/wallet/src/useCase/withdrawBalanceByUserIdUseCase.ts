@@ -1,49 +1,45 @@
 import { CreateTransactionService } from "@/modules/transaction/src/domain/services/createTransactionService";
 import { TRANSACTION_TYPE } from "@/modules/transaction/src/domain/shared/constant";
 import { UserService } from "@/modules/user/src";
+import { UserRoleManagementService } from "@/modules/user/src/domain/services/userRoleManagementService";
+import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
 import type { IWallet } from "@/modules/wallet/src/domain/classes/wallet";
-import { MINIMUM_TRANSFER_AMOUNT } from "@/modules/wallet/src/domain/shared/constant";
-import type { TransferBalanceByUserIdDTO } from "@/modules/wallet/src/dtos/walletDTO";
+import { MINIMUM_WITHDRAW_AMOUNT } from "@/modules/wallet/src/domain/shared/constant";
+import type { WithdrawBalanceByUserIdDTO } from "@/modules/wallet/src/dtos/walletDTO";
 import { WalletRepository } from "@/modules/wallet/src/repositories/walletRepository";
 
-export class TransferBalanceByUserIdUseCase {
+export class WithdrawBalanceByUserIdUseCase {
 	constructor(
 		private _createTransactionService = new CreateTransactionService(),
+		private _userRoleManagementService = new UserRoleManagementService(),
 		private _userService = new UserService(),
 		private _walletRepository = new WalletRepository(),
 	) {}
 
-	public async execute(
-		dto: TransferBalanceByUserIdDTO,
-	): Promise<{ senderWallet: IWallet; receiverWallet: IWallet }> {
-		const { senderId, receiverId, amount } = dto;
+	public async execute(dto: WithdrawBalanceByUserIdDTO): Promise<IWallet> {
+		const { senderId, topUpCashierId, amount } = dto;
 
-		await this._validateMinimumTransferAmount(amount);
-		await this._ensureSenderIsNotSendingToThemselves(senderId, receiverId);
+		await this._validateMinimumWithdrawAmount(amount);
+		await this._ensureSenderIsNotSendingToThemselves(senderId, topUpCashierId);
 		await this._ensureUserExist(senderId);
-		await this._ensureUserExist(receiverId);
+		await this._ensureReceiverIsCashierTopUp(topUpCashierId);
 
 		const senderWallet = await this._getWalletByUserId(senderId);
-		const receiverWallet = await this._getWalletByUserId(receiverId);
 
 		await this._ensureSenderHaveEnoughMoney(senderId, senderWallet.balanceValue, amount);
 
 		senderWallet.reduceBalance(amount);
-		receiverWallet.addBalance(amount);
 
-		const [updatedSenderWallet, updatedReceiverWallet] = await this._updateWallets([
-			senderWallet,
-			receiverWallet,
-		]);
+		const updatedWallet = await this._updateWallet(senderWallet);
 
-		await this._createTransaction(senderId, receiverId, amount);
+		await this._createTransaction(senderId, topUpCashierId, amount);
 
-		return { senderWallet: updatedSenderWallet, receiverWallet: updatedReceiverWallet };
+		return updatedWallet;
 	}
 
-	private async _validateMinimumTransferAmount(amount: number): Promise<void> {
-		if (amount < MINIMUM_TRANSFER_AMOUNT) {
-			throw new Error(`The amount to be transfer must be at least ${MINIMUM_TRANSFER_AMOUNT}`);
+	private async _validateMinimumWithdrawAmount(amount: number): Promise<void> {
+		if (amount < MINIMUM_WITHDRAW_AMOUNT) {
+			throw new Error(`The amount to be withdrawn must be at least ${MINIMUM_WITHDRAW_AMOUNT}`);
 		}
 	}
 
@@ -57,6 +53,21 @@ export class TransferBalanceByUserIdUseCase {
 		const user = await this._userService.findUserById({ userId });
 		if (!user) {
 			throw new Error(`User ${userId} does not exist`);
+		}
+	}
+
+	private async _ensureReceiverIsCashierTopUp(topUpCashierId: string): Promise<void> {
+		const user = await this._userService.findUserById({ userId: topUpCashierId });
+		if (!user) {
+			throw new Error(`User ${topUpCashierId} does not exist`);
+		}
+
+		const hasPermission = await this._userRoleManagementService.hasPermission(
+			topUpCashierId,
+			USER_ACCOUNT_TYPE.CASH_TOP_UP,
+		);
+		if (!hasPermission) {
+			throw new Error(`User ${topUpCashierId} does not have the required permission`);
 		}
 	}
 
@@ -79,13 +90,13 @@ export class TransferBalanceByUserIdUseCase {
 		}
 	}
 
-	private async _updateWallets(wallets: IWallet[]): Promise<IWallet[]> {
-		const updatedWallets = await this._walletRepository.updateMany(wallets);
-		if (updatedWallets.length !== wallets.length) {
-			throw new Error("Some wallet failed to update");
+	private async _updateWallet(wallet: IWallet): Promise<IWallet> {
+		const updatedWallet = await this._walletRepository.update(wallet);
+		if (!updatedWallet) {
+			throw new Error("Something went wrong while updating wallet");
 		}
 
-		return updatedWallets;
+		return updatedWallet;
 	}
 
 	private async _createTransaction(
@@ -97,7 +108,7 @@ export class TransferBalanceByUserIdUseCase {
 			senderId,
 			receiverId,
 			amount,
-			type: TRANSACTION_TYPE.TRANSFER,
+			type: TRANSACTION_TYPE.WITHDRAW,
 		});
 	}
 }
