@@ -1,10 +1,9 @@
 import type { UserHydrateOption } from "@/modules/user/src/repositories/userRepository";
 import type { QueryOptions } from "@/shared/constant";
 
-export interface FindUsersByPaginationDTO {
+export interface GetUsersByPaginationDTO {
 	perPage: number;
 	page: number;
-	userId: string;
 }
 
 export interface FindUserByEmailDTO {

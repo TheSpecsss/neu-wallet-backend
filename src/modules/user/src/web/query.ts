@@ -1,6 +1,6 @@
 import { FindUserByIdUseCase } from "@/modules/user/src/useCase/findUserByIdUseCase";
-import { FindUsersByPaginationUseCase } from "@/modules/user/src/useCase/findUsersByPaginationUseCase";
 import { GetUserBalanceByUserIdUseCase } from "@/modules/user/src/useCase/getUserBalanceByUserIdUseCase";
+import { GetUsersByPaginationUseCase } from "@/modules/user/src/useCase/getUsersByPaginationUseCase";
 import { requireVerifiedUser } from "@/shared/infrastructure/http/authorization/requireVerifiedUser";
 import { extendType, intArg, nonNull } from "nexus";
 
@@ -30,12 +30,11 @@ export default extendType({
 				perPage: nonNull(intArg()),
 				page: nonNull(intArg()),
 			},
-			resolve: async (_, { perPage, page }, ctx) => {
-				const useCase = new FindUsersByPaginationUseCase();
+			resolve: async (_, { perPage, page }, __) => {
+				const useCase = new GetUsersByPaginationUseCase();
 				return await useCase.execute({
 					perPage,
 					page,
-					userId: ctx.user.idValue,
 				});
 			},
 		});

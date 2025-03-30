@@ -1,14 +1,13 @@
 import { beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
-import { FindUsersByPaginationUseCase } from "@/modules/user/src/useCase/findUsersByPaginationUseCase";
+import { GetUsersByPaginationUseCase } from "@/modules/user/src/useCase/getUsersByPaginationUseCase";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { db } from "@/shared/infrastructure/database";
 
-describe("FindUsersByPaginationUseCase", () => {
-	let useCase: FindUsersByPaginationUseCase;
+describe("GetUsersByPaginationUseCase", () => {
+	let useCase: GetUsersByPaginationUseCase;
 
 	beforeAll(() => {
-		useCase = new FindUsersByPaginationUseCase();
+		useCase = new GetUsersByPaginationUseCase();
 	});
 
 	beforeEach(async () => {
@@ -23,12 +22,9 @@ describe("FindUsersByPaginationUseCase", () => {
 		const seededUserTwo = await seedUser();
 		const seededUserThree = await seedUser();
 
-		const seededExecutor = await seedUser({ accountType: USER_ACCOUNT_TYPE.ADMIN });
-
 		const result = await useCase.execute({
 			perPage: 2,
 			page: 1,
-			userId: seededExecutor.id,
 		});
 
 		expect(result.users).toHaveLength(2);
@@ -42,9 +38,7 @@ describe("FindUsersByPaginationUseCase", () => {
 		expect(userIds).not.toContain(seededUserThree.id);
 	});
 
-	it("should thrown an error when executor does not have admin permission", async () => {
-		const seededExecutor = await seedUser({ accountType: USER_ACCOUNT_TYPE.USER });
-
+	it("should throw an error when perPage is less than 1", async () => {
 		await seedUser();
 		await seedUser();
 		await seedUser();
@@ -52,14 +46,31 @@ describe("FindUsersByPaginationUseCase", () => {
 		let errorMessage = "";
 		try {
 			await useCase.execute({
-				perPage: 2,
 				page: 1,
-				userId: seededExecutor.id,
+				perPage: -1,
 			});
 		} catch (error) {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe(`User ${seededExecutor.id} does not have admin permission`);
+		expect(errorMessage).toBe("perPage must be greater than or equal to 1");
+	});
+
+	it("should throw an error when page is less than 1", async () => {
+		await seedUser();
+		await seedUser();
+		await seedUser();
+
+		let errorMessage = "";
+		try {
+			await useCase.execute({
+				page: -1,
+				perPage: 10,
+			});
+		} catch (error) {
+			errorMessage = (error as Error).message;
+		}
+
+		expect(errorMessage).toBe("page must be greater than or equal to 1");
 	});
 });

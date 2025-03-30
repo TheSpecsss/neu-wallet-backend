@@ -6,7 +6,7 @@ import {
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { db } from "@/shared/infrastructure/database";
 
-describe("UserRepository findUsersByPagination", () => {
+describe("UserRepository getUsersByPagination", () => {
 	let userRepository: IUserRepository;
 
 	beforeAll(() => {
@@ -25,7 +25,7 @@ describe("UserRepository findUsersByPagination", () => {
 		const seededUserTwo = await seedUser();
 		const seededUserThree = await seedUser();
 
-		const result = await userRepository.findUsersByPagination({ start: 0, size: 2 });
+		const result = await userRepository.getUsersByPagination({ start: 0, size: 2 });
 
 		expect(result).toHaveLength(2);
 
@@ -42,7 +42,7 @@ describe("UserRepository findUsersByPagination", () => {
 		});
 		const seededUserThree = await seedUser();
 
-		const result = await userRepository.findUsersByPagination(
+		const result = await userRepository.getUsersByPagination(
 			{ start: 0, size: 2 },
 			{ includeDeleted: true },
 		);
@@ -60,7 +60,7 @@ describe("UserRepository findUsersByPagination", () => {
 		});
 		const seededUserThree = await seedUser();
 
-		const result = await userRepository.findUsersByPagination(
+		const result = await userRepository.getUsersByPagination(
 			{ start: 0, size: 2 },
 			{ includeDeleted: false },
 		);
@@ -71,7 +71,7 @@ describe("UserRepository findUsersByPagination", () => {
 	});
 
 	it("should return an empty list and pagination information when there's no user", async () => {
-		const result = await userRepository.findUsersByPagination({
+		const result = await userRepository.getUsersByPagination({
 			start: 0,
 			size: 10,
 		});

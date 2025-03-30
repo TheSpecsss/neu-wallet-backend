@@ -22,4 +22,14 @@ export default [
 			t.nonNull.boolean("target");
 		},
 	}),
+	objectType({
+		name: "AuditLogPagination",
+		definition(t) {
+			t.nonNull.list.field("auditLogs", { type: nonNull("AuditLog") });
+			t.nonNull.boolean("hasNextPage");
+			t.nonNull.boolean("hasPreviousPage");
+			t.nonNull.int("page");
+			t.nonNull.int("totalPages");
+		},
+	}),
 ];
