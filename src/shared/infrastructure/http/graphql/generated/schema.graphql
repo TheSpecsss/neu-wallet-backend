@@ -28,6 +28,14 @@ input AuditLogHydrateOption {
   target: Boolean!
 }
 
+type AuditLogPagination {
+  auditLogs: [AuditLog!]!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  page: Int!
+  totalPages: Int!
+}
+
 type Login {
   expiresAt: String!
   token: String!
@@ -47,6 +55,7 @@ type Mutation {
 }
 
 type Query {
+  getAuditLogsByPagination(page: Int!, perPage: Int!): AuditLogPagination
   getRecentTransactionsByUserId(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionByUserIdWithPagination
   getUser: User
   getUserBalanceByUserId: UserBalance

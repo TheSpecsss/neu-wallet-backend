@@ -19,5 +19,11 @@ export const schema = makeSchema({
 		schema: `${__dirname}/generated/schema.graphql`,
 		typegen: `${__dirname}/generated/types.ts`,
 	},
-	plugins: [fieldAuthorizePlugin()],
+	plugins: [
+		fieldAuthorizePlugin({
+			formatError: ({ error }) => {
+				return error ?? new Error("Not authorized");
+			},
+		}),
+	],
 });

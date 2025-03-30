@@ -23,7 +23,7 @@ export interface IUserRepository {
 		options?: QueryOptions,
 		hydrate?: UserHydrateOption,
 	): Promise<IUser[]>;
-	findUsersByPagination(
+	getUsersByPagination(
 		pagination: Pagination,
 		options?: QueryOptions,
 		hydrate?: UserHydrateOption,
@@ -78,7 +78,7 @@ export class UserRepository implements IUserRepository {
 		return usersRaw.map((user) => this._mapper.toDomain(user));
 	}
 
-	public async findUsersByPagination(
+	public async getUsersByPagination(
 		pagination: Pagination,
 		options?: QueryOptions,
 		hydrate?: UserHydrateOption,
@@ -95,6 +95,10 @@ export class UserRepository implements IUserRepository {
 	}
 
 	public async getUsersTotalPages(perPage: number, includeDeleted?: boolean): Promise<number> {
+		if (perPage < 1) {
+			throw new Error("perPage must be greater than or equal to 1");
+		}
+
 		const totalCount = await this._database.count({
 			where: this._deletedFilter(includeDeleted),
 		});

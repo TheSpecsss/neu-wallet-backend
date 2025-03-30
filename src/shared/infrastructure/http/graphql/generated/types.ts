@@ -54,6 +54,13 @@ export interface NexusGenObjects {
     from: string; // String!
     to: string; // String!
   }
+  AuditLogPagination: { // root type
+    auditLogs: NexusGenRootTypes['AuditLog'][]; // [AuditLog!]!
+    hasNextPage: boolean; // Boolean!
+    hasPreviousPage: boolean; // Boolean!
+    page: number; // Int!
+    totalPages: number; // Int!
+  }
   Login: { // root type
     expiresAt: string; // String!
     token: string; // String!
@@ -112,6 +119,13 @@ export interface NexusGenFieldTypes {
     from: string; // String!
     to: string; // String!
   }
+  AuditLogPagination: { // field return type
+    auditLogs: NexusGenRootTypes['AuditLog'][]; // [AuditLog!]!
+    hasNextPage: boolean; // Boolean!
+    hasPreviousPage: boolean; // Boolean!
+    page: number; // Int!
+    totalPages: number; // Int!
+  }
   Login: { // field return type
     expiresAt: string; // String!
     token: string; // String!
@@ -129,6 +143,7 @@ export interface NexusGenFieldTypes {
     withdrawBalance: NexusGenRootTypes['Wallet'] | null; // Wallet
   }
   Query: { // field return type
+    getAuditLogsByPagination: NexusGenRootTypes['AuditLogPagination'] | null; // AuditLogPagination
     getRecentTransactionsByUserId: NexusGenRootTypes['TransactionByUserIdWithPagination'] | null; // TransactionByUserIdWithPagination
     getUser: NexusGenRootTypes['User'] | null; // User
     getUserBalanceByUserId: NexusGenRootTypes['UserBalance'] | null; // UserBalance
@@ -214,6 +229,13 @@ export interface NexusGenFieldTypeNames {
     from: 'String'
     to: 'String'
   }
+  AuditLogPagination: { // field return type name
+    auditLogs: 'AuditLog'
+    hasNextPage: 'Boolean'
+    hasPreviousPage: 'Boolean'
+    page: 'Int'
+    totalPages: 'Int'
+  }
   Login: { // field return type name
     expiresAt: 'String'
     token: 'String'
@@ -231,6 +253,7 @@ export interface NexusGenFieldTypeNames {
     withdrawBalance: 'Wallet'
   }
   Query: { // field return type name
+    getAuditLogsByPagination: 'AuditLogPagination'
     getRecentTransactionsByUserId: 'TransactionByUserIdWithPagination'
     getUser: 'User'
     getUserBalanceByUserId: 'UserBalance'
@@ -342,6 +365,10 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    getAuditLogsByPagination: { // args
+      page: number; // Int!
+      perPage: number; // Int!
+    }
     getRecentTransactionsByUserId: { // args
       hydrate?: NexusGenInputs['TransactionHydrateOption'] | null; // TransactionHydrateOption
       page: number; // Int!
