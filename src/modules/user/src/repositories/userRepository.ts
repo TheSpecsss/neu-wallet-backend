@@ -12,7 +12,11 @@ export interface UserHydrateOption {
 }
 
 export interface IUserRepository {
-	findUserByEmail(email: string): Promise<IUser | null>;
+	findUserByEmail(
+		email: string,
+		options?: QueryOptions,
+		hydrate?: UserHydrateOption,
+	): Promise<IUser | null>;
 	findUserById(
 		userId: string,
 		options?: QueryOptions,
@@ -38,9 +42,15 @@ export class UserRepository implements IUserRepository {
 		private _mapper = UserMapper,
 	) {}
 
-	public async findUserByEmail(email: string): Promise<IUser | null> {
+	public async findUserByEmail(
+		email: string,
+		options?: QueryOptions,
+		hydrate?: UserHydrateOption,
+	): Promise<IUser | null> {
 		const userRaw = await this._database.findUnique({
-			where: { email },
+			where: { email, ...this._deletedFilter(options?.includeDeleted) },
+
+			include: this._hydrateFilter(hydrate),
 		});
 		if (userRaw === null) {
 			return null;
