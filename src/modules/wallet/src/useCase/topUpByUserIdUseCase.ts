@@ -27,7 +27,7 @@ export class TopUpByUserIdUseCase {
 
 		wallet.addBalance(amount);
 
-		const updatedWallet = await this._walletRepository.update(wallet);
+		const updatedWallet = await this._updateWallet(wallet);
 
 		await this._createTransaction(receiverId, topUpCashierId, amount);
 
@@ -70,6 +70,15 @@ export class TopUpByUserIdUseCase {
 		}
 
 		return wallet;
+	}
+
+	private async _updateWallet(wallet: IWallet) {
+		const updatedWallet = await this._walletRepository.update(wallet);
+		if (!updatedWallet) {
+			throw new Error("Something went wrong while updating wallet");
+		}
+
+		return updatedWallet;
 	}
 
 	private async _createTransaction(

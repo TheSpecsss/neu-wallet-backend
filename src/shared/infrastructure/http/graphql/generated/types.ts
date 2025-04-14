@@ -88,6 +88,10 @@ export interface NexusGenObjects {
   }
   Verification: {};
   Wallet: {};
+  WalletTransfer: { // root type
+    receiverWallet: NexusGenRootTypes['Wallet']; // Wallet!
+    senderWallet: NexusGenRootTypes['Wallet']; // Wallet!
+  }
 }
 
 export interface NexusGenInterfaces {
@@ -138,7 +142,8 @@ export interface NexusGenFieldTypes {
     resendVerification: NexusGenRootTypes['Verification'] | null; // Verification
     setBalance: NexusGenRootTypes['Wallet'] | null; // Wallet
     topUp: NexusGenRootTypes['Wallet'] | null; // Wallet
-    transferBalance: NexusGenRootTypes['Wallet'] | null; // Wallet
+    transferBalanceByUserEmail: NexusGenRootTypes['WalletTransfer'] | null; // WalletTransfer
+    transferBalanceByUserId: NexusGenRootTypes['WalletTransfer'] | null; // WalletTransfer
     updateUserAccountTypeByUserId: NexusGenRootTypes['User'] | null; // User
     withdrawBalance: NexusGenRootTypes['Wallet'] | null; // Wallet
   }
@@ -208,6 +213,10 @@ export interface NexusGenFieldTypes {
     updatedAt: string; // String!
     user: NexusGenRootTypes['User'] | null; // User
   }
+  WalletTransfer: { // field return type
+    receiverWallet: NexusGenRootTypes['Wallet']; // Wallet!
+    senderWallet: NexusGenRootTypes['Wallet']; // Wallet!
+  }
 }
 
 export interface NexusGenFieldTypeNames {
@@ -248,7 +257,8 @@ export interface NexusGenFieldTypeNames {
     resendVerification: 'Verification'
     setBalance: 'Wallet'
     topUp: 'Wallet'
-    transferBalance: 'Wallet'
+    transferBalanceByUserEmail: 'WalletTransfer'
+    transferBalanceByUserId: 'WalletTransfer'
     updateUserAccountTypeByUserId: 'User'
     withdrawBalance: 'Wallet'
   }
@@ -318,6 +328,10 @@ export interface NexusGenFieldTypeNames {
     updatedAt: 'String'
     user: 'User'
   }
+  WalletTransfer: { // field return type name
+    receiverWallet: 'Wallet'
+    senderWallet: 'Wallet'
+  }
 }
 
 export interface NexusGenArgTypes {
@@ -351,7 +365,11 @@ export interface NexusGenArgTypes {
       amount: number; // Int!
       receiverId: string; // String!
     }
-    transferBalance: { // args
+    transferBalanceByUserEmail: { // args
+      amount: number; // Int!
+      receiverEmail: string; // String!
+    }
+    transferBalanceByUserId: { // args
       amount: number; // Int!
       receiverId: string; // String!
     }

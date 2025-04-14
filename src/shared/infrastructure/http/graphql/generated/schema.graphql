@@ -49,7 +49,8 @@ type Mutation {
   resendVerification(email: String!): Verification
   setBalance(balance: Int!, userId: String!): Wallet
   topUp(amount: Int!, receiverId: String!): Wallet
-  transferBalance(amount: Int!, receiverId: String!): Wallet
+  transferBalanceByUserEmail(amount: Int!, receiverEmail: String!): WalletTransfer
+  transferBalanceByUserId(amount: Int!, receiverId: String!): WalletTransfer
   updateUserAccountTypeByUserId(accountType: String!, userId: String!): User
   withdrawBalance(amount: Int!, topUpCashierId: String!): Wallet
 }
@@ -142,4 +143,9 @@ type Wallet {
 input WalletHydrateOption {
   receiver: Boolean!
   sender: Boolean!
+}
+
+type WalletTransfer {
+  receiverWallet: Wallet!
+  senderWallet: Wallet!
 }
