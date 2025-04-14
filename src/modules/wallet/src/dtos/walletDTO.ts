@@ -27,3 +27,9 @@ export interface WithdrawBalanceByUserIdDTO {
 	senderId: string;
 	amount: number;
 }
+
+export interface TransferBalanceByEmailDTO {
+	receiverId: string;
+	senderEmail: string;
+	amount: number;
+}

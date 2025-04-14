@@ -1,6 +1,7 @@
 import { PayUseCase } from "@/modules/wallet/src/useCase/payUseCase";
 import { SetBalanceByUserIdUseCase } from "@/modules/wallet/src/useCase/setBalanceByUserIdUseCase";
 import { TopUpByUserIdUseCase } from "@/modules/wallet/src/useCase/topUpByUserIdUseCase";
+import { TransferBalanceByEmailUseCase } from "@/modules/wallet/src/useCase/transferBalanceByEmailUseCase";
 import { TransferBalanceByUserIdUseCase } from "@/modules/wallet/src/useCase/transferBalanceByUserIdUseCase";
 import { WithdrawBalanceByUserIdUseCase } from "@/modules/wallet/src/useCase/withdrawBalanceByUserIdUseCase";
 import { requireVerifiedUser } from "@/shared/infrastructure/http/authorization/requireVerifiedUser";
@@ -57,7 +58,7 @@ export default extendType({
 				});
 			},
 		});
-		t.field("transferBalance", {
+		t.field("transferBalanceByUserId", {
 			authorize: requireVerifiedUser,
 			type: "Wallet",
 			args: {
@@ -85,6 +86,22 @@ export default extendType({
 				return useCase.execute({
 					senderId: ctx.user.idValue,
 					topUpCashierId,
+					amount,
+				});
+			},
+		});
+		t.field("transferBalanceByUserEmail", {
+			authorize: requireVerifiedUser,
+			type: "Wallet",
+			args: {
+				receiverId: nonNull(stringArg()),
+				amount: nonNull(intArg()),
+			},
+			resolve: (_, { receiverId, amount }, ctx) => {
+				const useCase = new TransferBalanceByEmailUseCase();
+				return useCase.execute({
+					senderEmail: ctx.user.emailValue,
+					receiverId,
 					amount,
 				});
 			},
