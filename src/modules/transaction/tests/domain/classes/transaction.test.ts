@@ -1,7 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import { Transaction } from "@/modules/transaction/src/domain/classes/transaction";
+import { TransactionStatus } from "@/modules/transaction/src/domain/classes/transactionStatus";
 import { TransactionType } from "@/modules/transaction/src/domain/classes/transactionType";
-import { TRANSACTION_TYPE } from "@/modules/transaction/src/domain/shared/constant";
+import {
+	TRANSACTION_STATUS,
+	TRANSACTION_TYPE,
+} from "@/modules/transaction/src/domain/shared/constant";
 import { SnowflakeID } from "@/shared/domain/snowflakeId";
 import { faker } from "@faker-js/faker";
 
@@ -15,6 +19,9 @@ describe("Transaction", () => {
 		amount: faker.number.float({ min: 1, max: Number.MAX_SAFE_INTEGER }),
 		type: TransactionType.create(
 			faker.helpers.arrayElement(Object.values(TRANSACTION_TYPE)),
+		).getValue(),
+		status: TransactionStatus.create(
+			faker.helpers.arrayElement(Object.values(TRANSACTION_STATUS)),
 		).getValue(),
 		createdAt: new Date(),
 	};
@@ -30,6 +37,7 @@ describe("Transaction", () => {
 		expect(transaction.receiver).toBe(mockData.receiver);
 		expect(transaction.amount).toBe(mockData.amount);
 		expect(transaction.type).toBe(mockData.type);
+		expect(transaction.status).toBe(mockData.status);
 		expect(transaction.createdAt.toString()).toBe(mockData.createdAt.toString());
 	});
 });

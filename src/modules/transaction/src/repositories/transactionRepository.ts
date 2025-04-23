@@ -18,6 +18,7 @@ export interface ITransactionRepository {
 	): Promise<ITransaction[]>;
 	getTransactionsByUserIdTotalPages(userId: string, perPage: number): Promise<number>;
 	save(transaction: ITransaction): Promise<ITransaction>;
+	update(transaction: ITransaction): Promise<ITransaction>;
 }
 
 export class TransactionRepository implements ITransactionRepository {
@@ -79,6 +80,15 @@ export class TransactionRepository implements ITransactionRepository {
 
 	public async save(transaction: ITransaction): Promise<ITransaction> {
 		const transactionRaw = await this._database.create({
+			data: this._mapper.toPersistence(transaction),
+		});
+
+		return this._mapper.toDomain(transactionRaw);
+	}
+
+	public async update(transaction: ITransaction): Promise<ITransaction> {
+		const transactionRaw = await this._database.update({
+			where: { id: transaction.idValue },
 			data: this._mapper.toPersistence(transaction),
 		});
 

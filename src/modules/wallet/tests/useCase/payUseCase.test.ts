@@ -1,4 +1,6 @@
 import { beforeAll, describe, expect, it } from "bun:test";
+import { TRANSACTION_STATUS } from "@/modules/transaction/src/domain/shared/constant";
+import { TransactionRepository } from "@/modules/transaction/src/repositories/transactionRepository";
 import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { MINIMUM_PAY_AMOUNT } from "@/modules/wallet/src/domain/shared/constant";
@@ -9,9 +11,11 @@ import { SnowflakeID } from "@/shared/domain/snowflakeId";
 
 describe("PayUseCase", () => {
 	let useCase: PayUseCase;
+	let transactionRepository: TransactionRepository;
 
 	beforeAll(async () => {
 		useCase = new PayUseCase();
+		transactionRepository = new TransactionRepository();
 	});
 
 	it("should remove users wallet balance by the amount", async () => {
@@ -29,6 +33,14 @@ describe("PayUseCase", () => {
 		});
 		expect(wallet.idValue).toBe(seededSenderWallet.id);
 		expect(wallet.balanceValue).toBe(0);
+
+		const [successTransaction] = await transactionRepository.getTransactionsByPagination(
+			seededSender.id,
+			{ start: 0, size: 1 },
+		);
+		expect(successTransaction.senderIdValue).toBe(seededSender.id);
+		expect(successTransaction.receiverIdValue).toBe(seededCashier.id);
+		expect(successTransaction.statusValue).toBe(TRANSACTION_STATUS.SUCCESS);
 	});
 
 	it("should throw an error when amount is less than minimum pay amount", async () => {
@@ -156,5 +168,13 @@ describe("PayUseCase", () => {
 		}
 
 		expect(errorMessage).toBe(`User ${seededSender.id} does not have sufficient balance`);
+
+		const [failedTransaction] = await transactionRepository.getTransactionsByPagination(
+			seededSender.id,
+			{ start: 0, size: 1 },
+		);
+		expect(failedTransaction.senderIdValue).toBe(seededSender.id);
+		expect(failedTransaction.receiverIdValue).toBe(seededCashier.id);
+		expect(failedTransaction.statusValue).toBe(TRANSACTION_STATUS.FAILED);
 	});
 });

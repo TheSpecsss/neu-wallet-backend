@@ -14,6 +14,7 @@ const assertTransaction = (value: ITransaction | null, expectedValue: ITransacti
 	expect(value!.receiverIdValue).toBe(expectedValue.receiverId);
 	expect(value!.amount).toBe(expectedValue.amount.toNumber());
 	expect(value!.typeValue).toBe(expectedValue.type);
+	expect(value!.statusValue).toBe(expectedValue.status);
 };
 
 describe("Test Transaction Repository findTransactionsByIds", () => {

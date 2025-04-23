@@ -2,6 +2,7 @@ import type { ITransaction } from "@/modules/transaction/src/domain/classes/tran
 import { TransactionFactory } from "@/modules/transaction/src/domain/factory";
 import {
 	type ITransactionRawObject,
+	TRANSACTION_STATUS,
 	TRANSACTION_TYPE,
 } from "@/modules/transaction/src/domain/shared/constant";
 import { SnowflakeID } from "@/shared/domain/snowflakeId";
@@ -23,6 +24,7 @@ export const createTransactionDomainObject = (
 			}),
 		),
 		type: faker.helpers.arrayElement(Object.values(TRANSACTION_TYPE)),
+		status: faker.helpers.arrayElement(Object.values(TRANSACTION_STATUS)),
 		createdAt: new Date(),
 	};
 

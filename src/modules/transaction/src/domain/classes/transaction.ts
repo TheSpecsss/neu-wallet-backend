@@ -1,4 +1,9 @@
+import {
+	type ITransactionStatus,
+	TransactionStatus,
+} from "@/modules/transaction/src/domain/classes/transactionStatus";
 import type { ITransactionType } from "@/modules/transaction/src/domain/classes/transactionType";
+import type { TransactionStatusKind } from "@/modules/transaction/src/domain/shared/constant";
 import type { IUser } from "@/modules/user/src/domain/classes/user";
 import type { SnowflakeID } from "@/shared/domain/snowflakeId";
 
@@ -10,6 +15,7 @@ export interface ITransactionData {
 	receiver: IUser | null;
 	amount: number;
 	type: ITransactionType;
+	status: ITransactionStatus;
 	createdAt: Date;
 }
 
@@ -18,6 +24,8 @@ export interface ITransaction extends ITransactionData {
 	senderIdValue: string;
 	receiverIdValue: string;
 	typeValue: string;
+	statusValue: string;
+	updateStatus(status: TransactionStatusKind): void;
 }
 
 export class Transaction implements ITransaction {
@@ -28,6 +36,7 @@ export class Transaction implements ITransaction {
 	private readonly _receiver: IUser | null;
 	private readonly _amount: number;
 	private readonly _type: ITransactionType;
+	private _status: ITransactionStatus;
 	private readonly _createdAt: Date;
 
 	constructor(data: ITransactionData) {
@@ -38,6 +47,7 @@ export class Transaction implements ITransaction {
 		this._receiver = data.receiver;
 		this._amount = data.amount;
 		this._type = data.type;
+		this._status = data.status;
 		this._createdAt = data.createdAt;
 	}
 
@@ -85,8 +95,25 @@ export class Transaction implements ITransaction {
 		return this.type.value;
 	}
 
+	get status(): ITransactionStatus {
+		return this._status;
+	}
+
+	get statusValue(): string {
+		return this.status.value;
+	}
+
 	get createdAt(): Date {
 		return this._createdAt;
+	}
+
+	public updateStatus(status: TransactionStatusKind): void {
+		const statusOrError = TransactionStatus.create(status);
+		if (statusOrError.isFailure) {
+			throw new Error(statusOrError.getErrorMessage() ?? "Failed to update transaction's status");
+		}
+
+		this._status = statusOrError.getValue();
 	}
 
 	public static create(props: ITransactionData): ITransaction {

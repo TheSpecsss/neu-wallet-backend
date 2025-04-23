@@ -19,31 +19,37 @@ export class WithdrawBalanceByUserIdUseCase {
 	public async execute(dto: WithdrawBalanceByUserIdDTO): Promise<IWallet> {
 		const { senderId, topUpCashierId, amount } = dto;
 
-		await this._validateMinimumWithdrawAmount(amount);
-		await this._ensureSenderIsNotSendingToThemselves(senderId, topUpCashierId);
-		await this._ensureUserExist(senderId);
-		await this._ensureReceiverIsCashierTopUp(topUpCashierId);
+		await this._validateRequest(dto);
 
-		const senderWallet = await this._getWalletByUserId(senderId);
-
-		await this._ensureSenderHaveEnoughMoney(senderId, senderWallet.balanceValue, amount);
-
-		senderWallet.reduceBalance(amount);
-
-		const updatedWallet = await this._updateWallet(senderWallet);
-
-		await this._createTransaction(senderId, topUpCashierId, amount);
-
-		return updatedWallet;
+		return await this._createTransactionService.executeTransaction(
+			{
+				senderId,
+				receiverId: topUpCashierId,
+				amount,
+				type: TRANSACTION_TYPE.WITHDRAW,
+			},
+			async () => this._performWithdrawal(senderId, amount),
+		);
 	}
 
-	private async _validateMinimumWithdrawAmount(amount: number): Promise<void> {
+	private async _validateRequest({
+		amount,
+		senderId,
+		topUpCashierId,
+	}: WithdrawBalanceByUserIdDTO): Promise<void> {
+		this._validateMinimumWithdrawAmount(amount);
+		this._ensureSenderIsNotSendingToThemselves(senderId, topUpCashierId);
+		await this._ensureUserExist(senderId);
+		await this._ensureReceiverIsCashierTopUp(topUpCashierId);
+	}
+
+	private _validateMinimumWithdrawAmount(amount: number): void {
 		if (amount < MINIMUM_WITHDRAW_AMOUNT) {
 			throw new Error(`The amount to be withdrawn must be at least ${MINIMUM_WITHDRAW_AMOUNT}`);
 		}
 	}
 
-	private async _ensureSenderIsNotSendingToThemselves(senderId: string, receiverId: string) {
+	private _ensureSenderIsNotSendingToThemselves(senderId: string, receiverId: string): void {
 		if (senderId === receiverId) {
 			throw new Error("You cannot send to yourself");
 		}
@@ -63,12 +69,21 @@ export class WithdrawBalanceByUserIdUseCase {
 		}
 
 		const hasPermission = await this._userRoleManagementService.hasPermission(
-			topUpCashierId,
+			user,
 			USER_ACCOUNT_TYPE.CASH_TOP_UP,
 		);
 		if (!hasPermission) {
 			throw new Error(`User ${topUpCashierId} does not have the required permission`);
 		}
+	}
+
+	private async _performWithdrawal(senderId: string, amount: number): Promise<IWallet> {
+		const senderWallet = await this._getWalletByUserId(senderId);
+		await this._ensureSenderHaveEnoughMoney(senderId, senderWallet.balanceValue, amount);
+
+		senderWallet.reduceBalance(amount);
+
+		return await this._updateWallet(senderWallet);
 	}
 
 	private async _getWalletByUserId(userId: string): Promise<IWallet> {
@@ -97,18 +112,5 @@ export class WithdrawBalanceByUserIdUseCase {
 		}
 
 		return updatedWallet;
-	}
-
-	private async _createTransaction(
-		senderId: string,
-		receiverId: string,
-		amount: number,
-	): Promise<void> {
-		await this._createTransactionService.createTransaction({
-			senderId,
-			receiverId,
-			amount,
-			type: TRANSACTION_TYPE.WITHDRAW,
-		});
 	}
 }

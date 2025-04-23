@@ -10,3 +10,10 @@ export const TRANSACTION_TYPE = {
 	PAYMENT: "PAYMENT",
 } as const;
 export type TransactionTypeKind = (typeof TRANSACTION_TYPE)[keyof typeof TRANSACTION_TYPE];
+
+export const TRANSACTION_STATUS = {
+	PROCESSING: "PROCESSING",
+	SUCCESS: "SUCCESS",
+	FAILED: "FAILED",
+} as const;
+export type TransactionStatusKind = (typeof TRANSACTION_STATUS)[keyof typeof TRANSACTION_STATUS];

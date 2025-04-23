@@ -19,54 +19,77 @@ export class TransferBalanceByEmailUseCase {
 	): Promise<{ senderWallet: IWallet; receiverWallet: IWallet }> {
 		const { senderId, receiverEmail, amount } = dto;
 
-		await this._validateMinimumTransferAmount(amount);
-		await this._ensureSenderExist(senderId);
+		const receiver = await this._getReceiverByEmail(receiverEmail);
 
-		const receiver = await this._getReceiverByEmail(receiverEmail, senderId);
-		const senderWallet = await this._getWalletByUserId(senderId);
+		await this._validateRequest({ senderId, receiverId: receiver.idValue, amount });
 
-		await this._ensureSenderHaveEnoughMoney(senderId, senderWallet.balanceValue, amount);
-
-		senderWallet.reduceBalance(amount);
-		receiver.wallet!.addBalance(amount);
-
-		const [updatedSenderWallet, updatedReceiverWallet] = await this._updateWallets([
-			senderWallet,
-			receiver.wallet!,
-		]);
-
-		await this._createTransaction(senderId, receiver.idValue, amount);
-
-		return { senderWallet: updatedSenderWallet, receiverWallet: updatedReceiverWallet };
+		return await this._createTransactionService.executeTransaction(
+			{
+				senderId,
+				receiverId: receiver.idValue,
+				amount,
+				type: TRANSACTION_TYPE.TRANSFER,
+			},
+			async () => this._performTransfer(senderId, receiver.idValue, amount),
+		);
 	}
 
-	private async _validateMinimumTransferAmount(amount: number): Promise<void> {
+	private async _validateRequest({
+		amount,
+		receiverId,
+		senderId,
+	}: { amount: number; receiverId: string; senderId: string }): Promise<void> {
+		this._validateMinimumTransferAmount(amount);
+		this._ensureSenderIsNotSendingToThemselves(senderId, receiverId);
+		await this._ensureSenderExist(senderId);
+	}
+
+	private _validateMinimumTransferAmount(amount: number): void {
 		if (amount < MINIMUM_TRANSFER_AMOUNT) {
 			throw new Error(`The transfer amount must be at least ${MINIMUM_TRANSFER_AMOUNT}`);
 		}
 	}
 
-	private async _ensureSenderExist(receiverId: string): Promise<IUser> {
-		const user = await this._userService.findUserById({ userId: receiverId });
+	private _ensureSenderIsNotSendingToThemselves(senderId: string, receiverId: string): void {
+		if (senderId === receiverId) {
+			throw new Error("You cannot send to yourself");
+		}
+	}
+
+	private async _ensureSenderExist(senderId: string): Promise<IUser> {
+		const user = await this._userService.findUserById({ userId: senderId });
 		if (!user) {
-			throw new Error(`User ${receiverId} does not exist`);
+			throw new Error(`User ${senderId} does not exist`);
 		}
 
 		return user;
 	}
 
-	private async _getReceiverByEmail(email: string, senderId: string): Promise<IUser> {
+	private async _performTransfer(
+		senderId: string,
+		receiverId: string,
+		amount: number,
+	): Promise<{ senderWallet: IWallet; receiverWallet: IWallet }> {
+		const senderWallet = await this._getWalletByUserId(senderId);
+		const receiverWallet = await this._getWalletByUserId(receiverId);
+
+		this._ensureSenderHaveEnoughMoney(senderWallet.userIdValue, senderWallet.balanceValue, amount);
+
+		senderWallet.reduceBalance(amount);
+		receiverWallet.addBalance(amount);
+
+		const updatedWallets = await this._updateWallets([senderWallet, receiverWallet]);
+
+		return {
+			senderWallet: updatedWallets[0],
+			receiverWallet: updatedWallets[1],
+		};
+	}
+
+	private async _getReceiverByEmail(email: string): Promise<IUser> {
 		const user = await this._userService.findUserByEmail({ email });
 		if (!user) {
 			throw new Error(`User ${email} does not exist`);
-		}
-
-		if (user?.idValue === senderId) {
-			throw new Error("You cannot send to yourself");
-		}
-
-		if (!user?.wallet) {
-			throw new Error(`User ${email} wallet does not exist`);
 		}
 
 		return user;
@@ -81,11 +104,11 @@ export class TransferBalanceByEmailUseCase {
 		return wallet;
 	}
 
-	private async _ensureSenderHaveEnoughMoney(
+	private _ensureSenderHaveEnoughMoney(
 		senderId: string,
 		balance: number,
 		amount: number,
-	): Promise<void> {
+	): void {
 		if (balance - amount < 0) {
 			throw new Error(`User ${senderId} does not have sufficient balance`);
 		}
@@ -98,18 +121,5 @@ export class TransferBalanceByEmailUseCase {
 		}
 
 		return updatedWallets;
-	}
-
-	private async _createTransaction(
-		senderId: string,
-		receiverId: string,
-		amount: number,
-	): Promise<void> {
-		await this._createTransactionService.createTransaction({
-			senderId,
-			receiverId,
-			amount,
-			type: TRANSACTION_TYPE.TRANSFER,
-		});
 	}
 }

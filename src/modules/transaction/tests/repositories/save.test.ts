@@ -1,6 +1,9 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
-import { TRANSACTION_TYPE } from "@/modules/transaction/src/domain/shared/constant";
+import {
+	TRANSACTION_STATUS,
+	TRANSACTION_TYPE,
+} from "@/modules/transaction/src/domain/shared/constant";
 import {
 	type ITransactionRepository,
 	TransactionRepository,
@@ -15,6 +18,7 @@ const assertTransaction = (value: ITransaction, expectedValue: ITransaction) => 
 	expect(value!.receiverIdValue).toBe(expectedValue.receiverIdValue);
 	expect(value!.amount).toBe(expectedValue.amount);
 	expect(value!.typeValue).toEqual(expectedValue.typeValue);
+	expect(value!.statusValue).toEqual(expectedValue.statusValue);
 };
 
 describe("Test Transaction Repository save", () => {
@@ -33,6 +37,7 @@ describe("Test Transaction Repository save", () => {
 			receiverId: seededReceiver.id,
 			amount: new Decimal(100),
 			type: TRANSACTION_TYPE.PAYMENT,
+			status: TRANSACTION_STATUS.PROCESSING,
 		});
 
 		const savedTransaction = await transactionRepository.save(transactionDomainObject);

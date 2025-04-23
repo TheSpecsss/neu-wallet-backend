@@ -19,30 +19,33 @@ export class PayUseCase {
 	public async execute(dto: PayDTO): Promise<IWallet> {
 		const { senderId, cashierId, amount } = dto;
 
-		await this._validateMinimumPayAmount(amount);
-		await this._ensureSenderIsNotSendingToThemselves(senderId, cashierId);
-		await this._ensureSenderExist(senderId);
-		await this._validateCashier(cashierId);
+		await this._validateRequest(dto);
 
-		const wallet = await this._getWalletByUserId(senderId);
-		await this._ensureSenderHaveEnoughMoney(senderId, wallet.balanceValue, amount);
-
-		wallet.reduceBalance(amount);
-
-		const updatedWallet = await this._updateWallet(wallet);
-
-		await this._createTransaction(senderId, cashierId, amount);
-
-		return updatedWallet;
+		return await this._createTransactionService.executeTransaction(
+			{
+				senderId,
+				receiverId: cashierId,
+				amount,
+				type: TRANSACTION_TYPE.PAYMENT,
+			},
+			async () => this._performPayment(senderId, amount),
+		);
 	}
 
-	private async _validateMinimumPayAmount(amount: number): Promise<void> {
+	private async _validateRequest({ amount, cashierId, senderId }: PayDTO): Promise<void> {
+		this._validateMinimumPayAmount(amount);
+		this._ensureSenderIsNotSendingToThemselves(senderId, cashierId);
+		await this._ensureSenderExist(senderId);
+		await this._validateCashier(cashierId);
+	}
+
+	private _validateMinimumPayAmount(amount: number): void {
 		if (amount < MINIMUM_PAY_AMOUNT) {
 			throw new Error(`The amount to be sent must be at least ${MINIMUM_PAY_AMOUNT}`);
 		}
 	}
 
-	private async _ensureSenderIsNotSendingToThemselves(senderId: string, cashierId: string) {
+	private _ensureSenderIsNotSendingToThemselves(senderId: string, cashierId: string): void {
 		if (senderId === cashierId) {
 			throw new Error("You cannot send to yourself");
 		}
@@ -70,6 +73,14 @@ export class PayUseCase {
 		}
 	}
 
+	private async _performPayment(senderId: string, amount: number): Promise<IWallet> {
+		const wallet = await this._getWalletByUserId(senderId);
+		this._ensureSenderHaveEnoughMoney(senderId, wallet.balanceValue, amount);
+
+		wallet.reduceBalance(amount);
+		return await this._updateWallet(wallet);
+	}
+
 	private async _getWalletByUserId(userId: string): Promise<IWallet> {
 		const wallet = await this._walletRepository.findWalletByUserId(userId);
 		if (!wallet) {
@@ -79,11 +90,7 @@ export class PayUseCase {
 		return wallet;
 	}
 
-	private async _ensureSenderHaveEnoughMoney(
-		senderId: string,
-		balance: number,
-		amount: number,
-	): Promise<void> {
+	private _ensureSenderHaveEnoughMoney(senderId: string, balance: number, amount: number): void {
 		if (balance - amount < 0) {
 			throw new Error(`User ${senderId} does not have sufficient balance`);
 		}
@@ -96,18 +103,5 @@ export class PayUseCase {
 		}
 
 		return updatedWallet;
-	}
-
-	private async _createTransaction(
-		senderId: string,
-		receiverId: string,
-		amount: number,
-	): Promise<void> {
-		await this._createTransactionService.createTransaction({
-			senderId,
-			receiverId,
-			amount,
-			type: TRANSACTION_TYPE.PAYMENT,
-		});
 	}
 }

@@ -19,6 +19,7 @@ describe("TransactionMapper", () => {
 		expect(domainObject.receiverIdValue).toBe(schemaObject.receiverId);
 		expect(domainObject.amount).toBe(schemaObject.amount.toNumber());
 		expect(domainObject.typeValue).toBe(schemaObject.type);
+		expect(domainObject.statusValue).toBe(schemaObject.status);
 	});
 
 	it("should map to persistence from domain", async () => {
@@ -30,5 +31,6 @@ describe("TransactionMapper", () => {
 		expect(schemaObject.receiverId).toBe(domainObject.receiverIdValue);
 		expect(schemaObject.amount).toBe(domainObject.amount);
 		expect(schemaObject.type).toBe(domainObject.typeValue);
+		expect(schemaObject.status).toBe(domainObject.statusValue);
 	});
 });
