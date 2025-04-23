@@ -4,7 +4,10 @@ import {
 	type ITransactionFactory,
 	TransactionFactory,
 } from "@/modules/transaction/src/domain/factory";
-import { TRANSACTION_TYPE } from "@/modules/transaction/src/domain/shared/constant";
+import {
+	TRANSACTION_STATUS,
+	TRANSACTION_TYPE,
+} from "@/modules/transaction/src/domain/shared/constant";
 import { SnowflakeID } from "@/shared/domain/snowflakeId";
 import { faker } from "@faker-js/faker";
 
@@ -18,6 +21,7 @@ describe("TransactionFactory", () => {
 			receiverId: new SnowflakeID().toString(),
 			amount: faker.number.float({ min: 1, max: Number.MAX_SAFE_INTEGER }),
 			type: faker.helpers.arrayElement(Object.values(TRANSACTION_TYPE)),
+			status: faker.helpers.arrayElement(Object.values(TRANSACTION_STATUS)),
 			createdAt: faker.date.past(),
 		};
 	});
@@ -35,6 +39,7 @@ describe("TransactionFactory", () => {
 		expect(user.receiverIdValue).toBe(mockData.receiverId);
 		expect(user.amount).toBe(mockData.amount);
 		expect(user.typeValue).toBe(mockData.type);
+		expect(user.statusValue).toBe(mockData.status);
 		expect(user.createdAt.toString()).toBe(mockData.createdAt.toString());
 	});
 

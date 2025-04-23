@@ -1,4 +1,6 @@
 import { beforeAll, describe, expect, it } from "bun:test";
+import { TRANSACTION_STATUS } from "@/modules/transaction/src/domain/shared/constant";
+import { TransactionRepository } from "@/modules/transaction/src/repositories/transactionRepository";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { MINIMUM_TRANSFER_AMOUNT } from "@/modules/wallet/src/domain/shared/constant";
 import {
@@ -13,10 +15,12 @@ import { SnowflakeID } from "@/shared/domain/snowflakeId";
 describe("TransferBalanceByUserIdUseCase", () => {
 	let useCase: TransferBalanceByUserIdUseCase;
 	let walletRepository: IWalletRepository;
+	let transactionRepository: TransactionRepository;
 
 	beforeAll(async () => {
 		useCase = new TransferBalanceByUserIdUseCase();
 		walletRepository = new WalletRepository();
+		transactionRepository = new TransactionRepository();
 	});
 
 	it("should transfer sender wallet balance into receiver wallet balance", async () => {
@@ -48,6 +52,14 @@ describe("TransferBalanceByUserIdUseCase", () => {
 
 		const updatedReceiverWallet = await walletRepository.findWalletById(seededReceiverWallet.id);
 		expect(updatedReceiverWallet?.balanceValue).toBe(500);
+
+		const [successTransaction] = await transactionRepository.getTransactionsByPagination(
+			seededSender.id,
+			{ start: 0, size: 1 },
+		);
+		expect(successTransaction.senderIdValue).toBe(seededSender.id);
+		expect(successTransaction.receiverIdValue).toBe(seededReceiver.id);
+		expect(successTransaction.statusValue).toBe(TRANSACTION_STATUS.SUCCESS);
 	});
 
 	it("should throw an error when amount is less than minimum transfer amount", async () => {
@@ -157,6 +169,14 @@ describe("TransferBalanceByUserIdUseCase", () => {
 		}
 
 		expect(errorMessage).toBe(`User ${seededSender.id} wallet does not exist`);
+
+		const [failedTransaction] = await transactionRepository.getTransactionsByPagination(
+			seededSender.id,
+			{ start: 0, size: 1 },
+		);
+		expect(failedTransaction.senderIdValue).toBe(seededSender.id);
+		expect(failedTransaction.receiverIdValue).toBe(seededReceiver.id);
+		expect(failedTransaction.statusValue).toBe(TRANSACTION_STATUS.FAILED);
 	});
 
 	it("should throw an error when receiver wallet does not exist", async () => {
@@ -180,6 +200,14 @@ describe("TransferBalanceByUserIdUseCase", () => {
 		}
 
 		expect(errorMessage).toBe(`User ${seededReceiver.id} wallet does not exist`);
+
+		const [failedTransaction] = await transactionRepository.getTransactionsByPagination(
+			seededSender.id,
+			{ start: 0, size: 1 },
+		);
+		expect(failedTransaction.senderIdValue).toBe(seededSender.id);
+		expect(failedTransaction.receiverIdValue).toBe(seededReceiver.id);
+		expect(failedTransaction.statusValue).toBe(TRANSACTION_STATUS.FAILED);
 	});
 
 	it("should throw an error when sender does not have enough balance", async () => {
@@ -207,5 +235,13 @@ describe("TransferBalanceByUserIdUseCase", () => {
 		}
 
 		expect(errorMessage).toBe(`User ${seededSender.id} does not have sufficient balance`);
+
+		const [failedTransaction] = await transactionRepository.getTransactionsByPagination(
+			seededSender.id,
+			{ start: 0, size: 1 },
+		);
+		expect(failedTransaction.senderIdValue).toBe(seededSender.id);
+		expect(failedTransaction.receiverIdValue).toBe(seededReceiver.id);
+		expect(failedTransaction.statusValue).toBe(TRANSACTION_STATUS.FAILED);
 	});
 });

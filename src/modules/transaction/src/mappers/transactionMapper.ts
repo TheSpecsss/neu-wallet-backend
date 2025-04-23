@@ -22,6 +22,7 @@ export class TransactionMapper {
 			receiverId: transaction.receiverIdValue,
 			amount: transaction.amount,
 			type: transaction.typeValue,
+			status: transaction.statusValue,
 		};
 	}
 }

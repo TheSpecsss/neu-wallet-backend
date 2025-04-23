@@ -18,36 +18,37 @@ export class TransferBalanceByUserIdUseCase {
 	): Promise<{ senderWallet: IWallet; receiverWallet: IWallet }> {
 		const { senderId, receiverId, amount } = dto;
 
-		await this._validateMinimumTransferAmount(amount);
-		await this._ensureSenderIsNotSendingToThemselves(senderId, receiverId);
-		await this._ensureUserExist(senderId);
-		await this._ensureUserExist(receiverId);
+		await this._validateRequest(dto);
 
-		const senderWallet = await this._getWalletByUserId(senderId);
-		const receiverWallet = await this._getWalletByUserId(receiverId);
-
-		await this._ensureSenderHaveEnoughMoney(senderId, senderWallet.balanceValue, amount);
-
-		senderWallet.reduceBalance(amount);
-		receiverWallet.addBalance(amount);
-
-		const [updatedSenderWallet, updatedReceiverWallet] = await this._updateWallets([
-			senderWallet,
-			receiverWallet,
-		]);
-
-		await this._createTransaction(senderId, receiverId, amount);
-
-		return { senderWallet: updatedSenderWallet, receiverWallet: updatedReceiverWallet };
+		return await this._createTransactionService.executeTransaction(
+			{
+				senderId,
+				receiverId,
+				amount,
+				type: TRANSACTION_TYPE.TRANSFER,
+			},
+			async () => this._performTransfer(senderId, receiverId, amount),
+		);
 	}
 
-	private async _validateMinimumTransferAmount(amount: number): Promise<void> {
+	private async _validateRequest({
+		amount,
+		receiverId,
+		senderId,
+	}: TransferBalanceByUserIdDTO): Promise<void> {
+		this._validateMinimumTransferAmount(amount);
+		this._ensureSenderIsNotSendingToThemselves(senderId, receiverId);
+		await this._ensureUserExist(senderId);
+		await this._ensureUserExist(receiverId);
+	}
+
+	private _validateMinimumTransferAmount(amount: number): void {
 		if (amount < MINIMUM_TRANSFER_AMOUNT) {
 			throw new Error(`The amount to be transfer must be at least ${MINIMUM_TRANSFER_AMOUNT}`);
 		}
 	}
 
-	private async _ensureSenderIsNotSendingToThemselves(senderId: string, receiverId: string) {
+	private _ensureSenderIsNotSendingToThemselves(senderId: string, receiverId: string): void {
 		if (senderId === receiverId) {
 			throw new Error("You cannot send to yourself");
 		}
@@ -58,6 +59,27 @@ export class TransferBalanceByUserIdUseCase {
 		if (!user) {
 			throw new Error(`User ${userId} does not exist`);
 		}
+	}
+
+	private async _performTransfer(
+		senderId: string,
+		receiverId: string,
+		amount: number,
+	): Promise<{ senderWallet: IWallet; receiverWallet: IWallet }> {
+		const senderWallet = await this._getWalletByUserId(senderId);
+		const receiverWallet = await this._getWalletByUserId(receiverId);
+
+		await this._ensureSenderHaveEnoughMoney(senderId, senderWallet.balanceValue, amount);
+
+		senderWallet.reduceBalance(amount);
+		receiverWallet.addBalance(amount);
+
+		const updatedWallets = await this._updateWallets([senderWallet, receiverWallet]);
+
+		return {
+			senderWallet: updatedWallets[0],
+			receiverWallet: updatedWallets[1],
+		};
 	}
 
 	private async _getWalletByUserId(userId: string): Promise<IWallet> {
@@ -86,18 +108,5 @@ export class TransferBalanceByUserIdUseCase {
 		}
 
 		return updatedWallets;
-	}
-
-	private async _createTransaction(
-		senderId: string,
-		receiverId: string,
-		amount: number,
-	): Promise<void> {
-		await this._createTransactionService.createTransaction({
-			senderId,
-			receiverId,
-			amount,
-			type: TRANSACTION_TYPE.TRANSFER,
-		});
 	}
 }

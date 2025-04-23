@@ -19,20 +19,24 @@ export class SetBalanceByUserIdUseCase {
 	public async execute(dto: SetBalanceByUserIdDTO): Promise<IWallet> {
 		const { userId, balance, executorId } = dto;
 
-		await this._ensureExecutorIsAdmin(executorId);
-		await this._ensureUserExist(userId);
-		await this._ensureExecutorHasHigherPermission(executorId, userId);
+		await this._validateRequest(dto);
 
 		const wallet = await this._getWalletByUserId(userId);
 
 		const oldWallet = this._cloneWallet(wallet);
 		wallet.setBalance(balance);
 
-		const updatedWallet = await this._walletRepository.update(wallet);
+		const updatedWallet = await this._updateWallet(wallet);
 
 		await this._logAuditAction(executorId, oldWallet, updatedWallet);
 
 		return updatedWallet;
+	}
+
+	private async _validateRequest({ executorId, userId }: SetBalanceByUserIdDTO): Promise<void> {
+		await this._ensureExecutorIsAdmin(executorId);
+		await this._ensureUserExist(userId);
+		await this._ensureExecutorHasHigherPermission(executorId, userId);
 	}
 
 	private async _ensureExecutorIsAdmin(executorId: string): Promise<void> {
@@ -75,6 +79,15 @@ export class SetBalanceByUserIdUseCase {
 		}
 
 		return wallet;
+	}
+
+	private async _updateWallet(wallet: IWallet): Promise<IWallet> {
+		const updatedWallet = await this._walletRepository.update(wallet);
+		if (!updatedWallet) {
+			throw new Error("Something went wrong while updating wallet");
+		}
+
+		return updatedWallet;
 	}
 
 	private async _logAuditAction(

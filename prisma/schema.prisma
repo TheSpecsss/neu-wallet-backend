@@ -48,6 +48,7 @@ model UserTransaction {
   receiverId String
   amount     Decimal
   type       String
+  status     String   @default("PROCESSING")
   createdAt  DateTime @default(now())
   sender     User     @relation("SenderTransaction", fields: [senderId], references: [id])
   receiver   User     @relation("ReceiverTransaction", fields: [receiverId], references: [id])
@@ -55,6 +56,7 @@ model UserTransaction {
   @@index([senderId])
   @@index([receiverId])
   @@index([createdAt])
+  @@index([status])
 }
 
 model UserAuditLog {

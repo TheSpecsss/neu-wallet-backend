@@ -19,37 +19,44 @@ export class TopUpByUserIdUseCase {
 	public async execute(dto: TopUpByUserIdDTO): Promise<IWallet> {
 		const { receiverId, topUpCashierId, amount } = dto;
 
-		await this._validateMinimumTopUpAmount(amount);
-		await this._validateTopUpCashier(topUpCashierId);
-		await this._ensureReceiverExist(receiverId);
+		await this._validateRequest(dto);
 
-		const wallet = await this._getWalletByUserId(receiverId);
-
-		wallet.addBalance(amount);
-
-		const updatedWallet = await this._updateWallet(wallet);
-
-		await this._createTransaction(receiverId, topUpCashierId, amount);
-
-		return updatedWallet;
+		return await this._createTransactionService.executeTransaction(
+			{
+				senderId: topUpCashierId,
+				receiverId: receiverId,
+				amount,
+				type: TRANSACTION_TYPE.DEPOSIT,
+			},
+			async () => this._performTopUp(receiverId, amount),
+		);
 	}
 
-	private async _validateMinimumTopUpAmount(amount: number): Promise<void> {
+	private async _validateRequest({
+		amount,
+		receiverId,
+		topUpCashierId,
+	}: TopUpByUserIdDTO): Promise<void> {
+		this._validateMinimumTopUpAmount(amount);
+		this._ensureSenderIsNotSendingToThemselves(topUpCashierId, receiverId);
+		await this._validateTopUpCashier(topUpCashierId);
+		await this._validateReceiver(receiverId);
+	}
+
+	private _validateMinimumTopUpAmount(amount: number): void {
 		if (amount < MINIMUM_TOPUP_AMOUNT) {
 			throw new Error(`The amount to be topped up must be at least ${MINIMUM_TOPUP_AMOUNT}`);
 		}
 	}
 
-	private async _ensureReceiverExist(receiverId: string): Promise<void> {
-		const user = await this._userService.findUserById({ userId: receiverId });
-		if (!user) {
-			throw new Error(`User ${receiverId} does not exist`);
+	private _ensureSenderIsNotSendingToThemselves(topUpCashierId: string, receiverId: string): void {
+		if (topUpCashierId === receiverId) {
+			throw new Error("You cannot send to yourself");
 		}
 	}
 
 	private async _validateTopUpCashier(topUpCashierId: string): Promise<void> {
 		const user = await this._userService.findUserById({ userId: topUpCashierId });
-
 		if (!user) {
 			throw new Error(`User ${topUpCashierId} does not exist`);
 		}
@@ -61,6 +68,21 @@ export class TopUpByUserIdUseCase {
 		if (!hasPermission) {
 			throw new Error(`User ${topUpCashierId} does not have the required permission`);
 		}
+	}
+
+	private async _validateReceiver(receiverId: string): Promise<void> {
+		const user = await this._userService.findUserById({ userId: receiverId });
+		if (!user) {
+			throw new Error(`User ${receiverId} does not exist`);
+		}
+	}
+
+	private async _performTopUp(receiverId: string, amount: number): Promise<IWallet> {
+		const wallet = await this._getWalletByUserId(receiverId);
+
+		wallet.addBalance(amount);
+
+		return await this._updateWallet(wallet);
 	}
 
 	private async _getWalletByUserId(userId: string): Promise<IWallet> {
@@ -79,18 +101,5 @@ export class TopUpByUserIdUseCase {
 		}
 
 		return updatedWallet;
-	}
-
-	private async _createTransaction(
-		receiverId: string,
-		senderId: string,
-		amount: number,
-	): Promise<void> {
-		await this._createTransactionService.createTransaction({
-			receiverId,
-			senderId,
-			amount,
-			type: TRANSACTION_TYPE.DEPOSIT,
-		});
 	}
 }
