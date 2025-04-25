@@ -6,3 +6,9 @@ export interface GetRecentTransactionsByUserIdDTO {
 	page: number;
 	hydrate?: TransactionHydrateOption;
 }
+
+export interface GetCashierTransactionsByPaginationDTO {
+	perPage: number;
+	page: number;
+	hydrate?: TransactionHydrateOption;
+}

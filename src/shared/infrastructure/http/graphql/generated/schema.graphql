@@ -57,7 +57,8 @@ type Mutation {
 
 type Query {
   getAuditLogsByPagination(page: Int!, perPage: Int!): AuditLogPagination
-  getRecentTransactionsByUserId(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionByUserIdWithPagination
+  getCashierTransactionsByPagination(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionsWithPagination
+  getRecentTransactionsByUserId(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionsWithPagination
   getUser: User
   getUserBalanceByUserId: UserBalance
   getUsersByPagination(page: Int!, perPage: Int!): UserPagination
@@ -74,17 +75,17 @@ type Transaction {
   type: String!
 }
 
-type TransactionByUserIdWithPagination {
+input TransactionHydrateOption {
+  receiver: Boolean!
+  sender: Boolean!
+}
+
+type TransactionsWithPagination {
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
   page: Int!
   totalPages: Int!
   transactions: [Transaction!]!
-}
-
-input TransactionHydrateOption {
-  receiver: Boolean!
-  sender: Boolean!
 }
 
 type User {

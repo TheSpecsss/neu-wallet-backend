@@ -2,7 +2,7 @@ import { inputObjectType, nonNull, objectType } from "nexus";
 
 export default [
 	objectType({
-		name: "TransactionByUserIdWithPagination",
+		name: "TransactionsWithPagination",
 		definition(t) {
 			t.nonNull.list.field("transactions", { type: nonNull("Transaction") });
 			t.nonNull.boolean("hasNextPage");
