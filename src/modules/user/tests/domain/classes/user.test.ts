@@ -22,6 +22,8 @@ describe("User", () => {
 			faker.helpers.arrayElement(Object.values(USER_ACCOUNT_TYPE)),
 		).getValue(),
 		wallet: null,
+		executorAuditLogs: [],
+		targetAuditLogs: [],
 		sentTransactions: [],
 		receivedTransactions: [],
 		isDeleted: false,
