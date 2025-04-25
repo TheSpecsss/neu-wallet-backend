@@ -8,17 +8,17 @@ on:
 
 env:
   DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
-  JWT_SECRET: "secret"
-  SMTP_HOST: "smtp-relay.brevo.com"
-  SMTP_PORT: "587"
+  JWT_SECRET: secret
+  SMTP_HOST: smtp-relay.brevo.com
+  SMTP_PORT: 587
   SMTP_EMAIL: ${{ secrets.SMTP_EMAIL }}
   SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
   SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
 
 jobs:
   auditLog-test:
+    name: "Audit Log Module Test"
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres
@@ -33,27 +33,22 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
       - name: Install dependencies
         run: bun install
-
       - name: Synchronize database
         run: bun db:push
-
       - name: Test auditLog module
         run: bun test src/modules/auditLog
   transaction-test:
+    name: "Transaction Module Test"
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres
@@ -68,27 +63,22 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
       - name: Install dependencies
         run: bun install
-
       - name: Synchronize database
         run: bun db:push
-
       - name: Test transaction module
         run: bun test src/modules/transaction
   user-test:
+    name: "User Module Test"
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres
@@ -103,27 +93,22 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
       - name: Install dependencies
         run: bun install
-
       - name: Synchronize database
         run: bun db:push
-
       - name: Test user module
         run: bun test src/modules/user
   verification-test:
+    name: "Verification Module Test"
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres
@@ -138,27 +123,22 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
       - name: Install dependencies
         run: bun install
-
       - name: Synchronize database
         run: bun db:push
-
       - name: Test verification module
         run: bun test src/modules/verification
   wallet-test:
+    name: "Wallet Module Test"
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres
@@ -173,21 +153,16 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
       - name: Install dependencies
         run: bun install
-
       - name: Synchronize database
         run: bun db:push
-
       - name: Test wallet module
         run: bun test src/modules/wallet
