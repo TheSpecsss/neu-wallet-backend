@@ -68,7 +68,7 @@ export interface NexusGenObjects {
   Mutation: {};
   Query: {};
   Transaction: {};
-  TransactionByUserIdWithPagination: { // root type
+  TransactionsWithPagination: { // root type
     hasNextPage: boolean; // Boolean!
     hasPreviousPage: boolean; // Boolean!
     page: number; // Int!
@@ -149,7 +149,8 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     getAuditLogsByPagination: NexusGenRootTypes['AuditLogPagination'] | null; // AuditLogPagination
-    getRecentTransactionsByUserId: NexusGenRootTypes['TransactionByUserIdWithPagination'] | null; // TransactionByUserIdWithPagination
+    getCashierTransactionsByPagination: NexusGenRootTypes['TransactionsWithPagination'] | null; // TransactionsWithPagination
+    getRecentTransactionsByUserId: NexusGenRootTypes['TransactionsWithPagination'] | null; // TransactionsWithPagination
     getUser: NexusGenRootTypes['User'] | null; // User
     getUserBalanceByUserId: NexusGenRootTypes['UserBalance'] | null; // UserBalance
     getUsersByPagination: NexusGenRootTypes['UserPagination'] | null; // UserPagination
@@ -164,7 +165,7 @@ export interface NexusGenFieldTypes {
     senderId: string; // ID!
     type: string; // String!
   }
-  TransactionByUserIdWithPagination: { // field return type
+  TransactionsWithPagination: { // field return type
     hasNextPage: boolean; // Boolean!
     hasPreviousPage: boolean; // Boolean!
     page: number; // Int!
@@ -264,7 +265,8 @@ export interface NexusGenFieldTypeNames {
   }
   Query: { // field return type name
     getAuditLogsByPagination: 'AuditLogPagination'
-    getRecentTransactionsByUserId: 'TransactionByUserIdWithPagination'
+    getCashierTransactionsByPagination: 'TransactionsWithPagination'
+    getRecentTransactionsByUserId: 'TransactionsWithPagination'
     getUser: 'User'
     getUserBalanceByUserId: 'UserBalance'
     getUsersByPagination: 'UserPagination'
@@ -279,7 +281,7 @@ export interface NexusGenFieldTypeNames {
     senderId: 'ID'
     type: 'String'
   }
-  TransactionByUserIdWithPagination: { // field return type name
+  TransactionsWithPagination: { // field return type name
     hasNextPage: 'Boolean'
     hasPreviousPage: 'Boolean'
     page: 'Int'
@@ -384,6 +386,11 @@ export interface NexusGenArgTypes {
   }
   Query: {
     getAuditLogsByPagination: { // args
+      page: number; // Int!
+      perPage: number; // Int!
+    }
+    getCashierTransactionsByPagination: { // args
+      hydrate?: NexusGenInputs['TransactionHydrateOption'] | null; // TransactionHydrateOption
       page: number; // Int!
       perPage: number; // Int!
     }
