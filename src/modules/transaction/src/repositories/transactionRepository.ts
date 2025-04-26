@@ -1,4 +1,5 @@
 import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
+import { TRANSACTION_TYPE } from "@/modules/transaction/src/domain/shared/constant";
 import { TransactionMapper } from "@/modules/transaction/src/mappers/transactionMapper";
 import { UserService } from "@/modules/user/src";
 import type { Pagination } from "@/shared/constant";
@@ -23,6 +24,11 @@ export interface ITransactionRepository {
 		hydrate?: TransactionHydrateOption,
 	): Promise<ITransaction[]>;
 	getCashierTransactionsTotalPages(perPage: number): Promise<number>;
+	getCashierTopUpTransactionsByPagination(
+		pagination: Pagination,
+		hydrate?: TransactionHydrateOption,
+	): Promise<ITransaction[]>;
+	getCashierTopUpTransactionsTotalPages(perPage: number): Promise<number>;
 	save(transaction: ITransaction): Promise<ITransaction>;
 	update(transaction: ITransaction): Promise<ITransaction>;
 }
@@ -110,6 +116,49 @@ export class TransactionRepository implements ITransactionRepository {
 				OR: [
 					{ sender: { accountType: UserService.ACCOUNT_TYPE.CASHIER } },
 					{ receiver: { accountType: UserService.ACCOUNT_TYPE.CASHIER } },
+				],
+			},
+		});
+
+		return Math.ceil(totalCount / perPage);
+	}
+
+	public async getCashierTopUpTransactionsByPagination(
+		pagination: Pagination,
+		hydrate?: TransactionHydrateOption,
+	): Promise<ITransaction[]> {
+		const transactionsRaw = await this._database.findMany({
+			where: {
+				AND: [
+					{
+						OR: [
+							{ sender: { accountType: UserService.ACCOUNT_TYPE.CASH_TOP_UP } },
+							{ receiver: { accountType: UserService.ACCOUNT_TYPE.CASH_TOP_UP } },
+						],
+					},
+					{ OR: [{ type: TRANSACTION_TYPE.DEPOSIT }, { type: TRANSACTION_TYPE.WITHDRAW }] },
+				],
+			},
+			skip: pagination.start,
+			take: pagination.size,
+			include: this._hydrateFilter(hydrate),
+			orderBy: [{ createdAt: "desc" }],
+		});
+
+		return transactionsRaw.map((transaction) => this._mapper.toDomain(transaction));
+	}
+
+	public async getCashierTopUpTransactionsTotalPages(perPage: number): Promise<number> {
+		const totalCount = await this._database.count({
+			where: {
+				AND: [
+					{
+						OR: [
+							{ sender: { accountType: UserService.ACCOUNT_TYPE.CASH_TOP_UP } },
+							{ receiver: { accountType: UserService.ACCOUNT_TYPE.CASH_TOP_UP } },
+						],
+					},
+					{ OR: [{ type: TRANSACTION_TYPE.DEPOSIT }, { type: TRANSACTION_TYPE.WITHDRAW }] },
 				],
 			},
 		});

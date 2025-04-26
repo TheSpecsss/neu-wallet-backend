@@ -25,14 +25,17 @@ describe("AuditLogRepository getAuditLogsByPagination", () => {
 		const seededAuditLogOne = await seedAuditLog({
 			executorId: executorUser.id,
 			targetId: targetUser.id,
+			createdAt: new Date(2025, 0 , 1)
 		});
 		const seededAuditLogTwo = await seedAuditLog({
 			executorId: executorUser.id,
 			targetId: targetUser.id,
+			createdAt: new Date(2025, 0 , 2)
 		});
 		const seededAuditLogThree = await seedAuditLog({
 			executorId: executorUser.id,
 			targetId: targetUser.id,
+			createdAt: new Date(2025, 0 , 3)
 		});
 
 		const result = await auditLogRepository.getAuditLogsByPagination({ start: 0, size: 2 });
