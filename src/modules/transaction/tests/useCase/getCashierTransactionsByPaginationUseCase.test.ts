@@ -20,6 +20,7 @@ describe("GetCashierTransactionsByPaginationUseCase", () => {
 	it("should return transactions involving cashiers, limited by pagination size", async () => {
 		const seededCashier = await seedUser({ accountType: USER_ACCOUNT_TYPE.CASHIER });
 		const seededUser = await seedUser({ accountType: USER_ACCOUNT_TYPE.USER });
+		const anotherUser = await seedUser({ accountType: USER_ACCOUNT_TYPE.USER });
 
 		const seededTransactionOne = await seedTransaction({
 			senderId: seededUser.id,
@@ -31,8 +32,6 @@ describe("GetCashierTransactionsByPaginationUseCase", () => {
 			receiverId: seededUser.id,
 			type: TRANSACTION_TYPE.TRANSFER,
 		});
-
-		const anotherUser = await seedUser();
 		const seededTransactionThree = await seedTransaction({
 			senderId: seededUser.id,
 			receiverId: anotherUser.id,

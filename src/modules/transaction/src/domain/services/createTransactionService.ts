@@ -1,12 +1,16 @@
 import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
 import { TransactionFactory } from "@/modules/transaction/src/domain/factory";
-import { TRANSACTION_STATUS } from "@/modules/transaction/src/domain/shared/constant";
+import {
+	TRANSACTION_STATUS,
+	TRANSACTION_TYPE,
+} from "@/modules/transaction/src/domain/shared/constant";
 import type {
 	CreateTransactionServiceDTO,
 	ExecuteTransactionCallback,
 } from "@/modules/transaction/src/dtos/transactionServiceDTO";
 import { TransactionRepository } from "@/modules/transaction/src/repositories/transactionRepository";
-import { UserService } from "@/modules/user/src";
+import { USER_ACCOUNT_TYPE, UserService } from "@/modules/user/src";
+import type { IUser } from "@/modules/user/src/domain/classes/user";
 
 export class CreateTransactionService {
 	constructor(
@@ -15,7 +19,7 @@ export class CreateTransactionService {
 	) {}
 
 	public async createTransaction(dto: CreateTransactionServiceDTO): Promise<ITransaction> {
-		await this._validateUsers(dto.senderId, dto.receiverId);
+		await this._validateUsers(dto);
 		const transactionDomain = this._createTransactionDomain(this._prepareTransactionData(dto));
 		return await this._saveTransaction(transactionDomain);
 	}
@@ -36,9 +40,39 @@ export class CreateTransactionService {
 		}
 	}
 
-	private async _validateUsers(senderId: string, receiverId: string): Promise<void> {
-		await this._ensureUserExist(senderId);
-		await this._ensureUserExist(receiverId);
+	private async _validateUsers({
+		type,
+		receiverId,
+		senderId,
+	}: CreateTransactionServiceDTO): Promise<void> {
+		const sender = await this._ensureUserExist(senderId);
+		const receiver = await this._ensureUserExist(receiverId);
+
+		await this._validateTransactionType(type, sender, receiver);
+	}
+
+	private async _validateTransactionType(
+		type: string,
+		sender: IUser,
+		receiver: IUser,
+	): Promise<void> {
+		switch (type) {
+			case TRANSACTION_TYPE.DEPOSIT:
+				if (sender.accountTypeValue !== USER_ACCOUNT_TYPE.CASH_TOP_UP) {
+					throw new Error("DEPOSIT transactions require a sender with CASH_TOP_UP account type");
+				}
+				break;
+			case TRANSACTION_TYPE.WITHDRAW:
+				if (receiver.accountTypeValue !== USER_ACCOUNT_TYPE.CASH_TOP_UP) {
+					throw new Error("WITHDRAW transactions require a receiver with CASH_TOP_UP account type");
+				}
+				break;
+			case TRANSACTION_TYPE.PAYMENT:
+				if (receiver.accountTypeValue !== USER_ACCOUNT_TYPE.CASHIER) {
+					throw new Error("PAYMENT transactions require a receiver with CASHIER account type");
+				}
+				break;
+		}
 	}
 
 	private _prepareTransactionData(dto: CreateTransactionServiceDTO): CreateTransactionServiceDTO {
@@ -62,11 +96,12 @@ export class CreateTransactionService {
 		await this._transactionRepository.update(transaction);
 	}
 
-	private async _ensureUserExist(userId: string): Promise<void> {
+	private async _ensureUserExist(userId: string): Promise<IUser> {
 		const user = await this._userService.findUserById({ userId });
 		if (!user) {
 			throw new Error(`User ${userId} does not exist`);
 		}
+		return user;
 	}
 
 	private _createTransactionDomain(dto: CreateTransactionServiceDTO): ITransaction {

@@ -22,14 +22,17 @@ describe("GetAuditLogsByPaginationUseCase", () => {
 		const seededAuditLogOne = await seedAuditLog({
 			executorId: executorUser.id,
 			targetId: targetUser.id,
+			createdAt: new Date(2025, 0 , 1)
 		});
 		const seededAuditLogTwo = await seedAuditLog({
 			executorId: executorUser.id,
 			targetId: targetUser.id,
+			createdAt: new Date(2025, 0 , 2)
 		});
 		const seededAuditLogThree = await seedAuditLog({
 			executorId: executorUser.id,
 			targetId: targetUser.id,
+			createdAt: new Date(2025, 0 , 3)
 		});
 
 		const result = await useCase.execute({ page: 1, perPage: 2 });
@@ -65,14 +68,17 @@ describe("GetAuditLogsByPaginationUseCase", () => {
 		await seedAuditLog({
 			executorId: executorUser.id,
 			targetId: targetUser.id,
+			createdAt: new Date(2025, 0 , 1)
 		});
 		await seedAuditLog({
 			executorId: executorUser.id,
 			targetId: targetUser.id,
+			createdAt: new Date(2025, 0 , 2)
 		});
 		await seedAuditLog({
 			executorId: executorUser.id,
 			targetId: targetUser.id,
+			createdAt: new Date(2025, 0 , 3)
 		});
 
 		let errorMessage = "";
