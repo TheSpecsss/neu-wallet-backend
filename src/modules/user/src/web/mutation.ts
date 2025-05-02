@@ -47,5 +47,16 @@ export default extendType({
 				});
 			},
 		});
+		t.field("loginAdmin", {
+			type: "Login",
+			args: {
+				email: nonNull(stringArg()),
+				password: nonNull(stringArg()),
+			},
+			resolve: (_, args) => {
+				const useCase = new LoginUserUseCase();
+				return useCase.execute(args);
+			},
+		});
 	},
 });

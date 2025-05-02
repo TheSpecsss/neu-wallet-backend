@@ -44,6 +44,7 @@ type Login {
 type Mutation {
   confirmVerification(code: String!, email: String!): Verification
   login(email: String!, password: String!): Login
+  loginAdmin(email: String!, password: String!): Login
   pay(amount: Int!, cashierId: String!): Wallet
   register(confirmPassword: String!, email: String!, name: String!, password: String!): User
   resendVerification(email: String!): Verification
@@ -57,6 +58,7 @@ type Mutation {
 
 type Query {
   getAuditLogsByPagination(page: Int!, perPage: Int!): AuditLogPagination
+  getCashierTopUpTransactionsByPagination(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionsWithPagination
   getCashierTransactionsByPagination(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionsWithPagination
   getRecentTransactionsByUserId(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionsWithPagination
   getUser: User

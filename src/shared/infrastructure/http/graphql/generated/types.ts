@@ -137,6 +137,7 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     confirmVerification: NexusGenRootTypes['Verification'] | null; // Verification
     login: NexusGenRootTypes['Login'] | null; // Login
+    loginAdmin: NexusGenRootTypes['Login'] | null; // Login
     pay: NexusGenRootTypes['Wallet'] | null; // Wallet
     register: NexusGenRootTypes['User'] | null; // User
     resendVerification: NexusGenRootTypes['Verification'] | null; // Verification
@@ -149,6 +150,7 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     getAuditLogsByPagination: NexusGenRootTypes['AuditLogPagination'] | null; // AuditLogPagination
+    getCashierTopUpTransactionsByPagination: NexusGenRootTypes['TransactionsWithPagination'] | null; // TransactionsWithPagination
     getCashierTransactionsByPagination: NexusGenRootTypes['TransactionsWithPagination'] | null; // TransactionsWithPagination
     getRecentTransactionsByUserId: NexusGenRootTypes['TransactionsWithPagination'] | null; // TransactionsWithPagination
     getUser: NexusGenRootTypes['User'] | null; // User
@@ -253,6 +255,7 @@ export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
     confirmVerification: 'Verification'
     login: 'Login'
+    loginAdmin: 'Login'
     pay: 'Wallet'
     register: 'User'
     resendVerification: 'Verification'
@@ -265,6 +268,7 @@ export interface NexusGenFieldTypeNames {
   }
   Query: { // field return type name
     getAuditLogsByPagination: 'AuditLogPagination'
+    getCashierTopUpTransactionsByPagination: 'TransactionsWithPagination'
     getCashierTransactionsByPagination: 'TransactionsWithPagination'
     getRecentTransactionsByUserId: 'TransactionsWithPagination'
     getUser: 'User'
@@ -346,6 +350,10 @@ export interface NexusGenArgTypes {
       email: string; // String!
       password: string; // String!
     }
+    loginAdmin: { // args
+      email: string; // String!
+      password: string; // String!
+    }
     pay: { // args
       amount: number; // Int!
       cashierId: string; // String!
@@ -386,6 +394,11 @@ export interface NexusGenArgTypes {
   }
   Query: {
     getAuditLogsByPagination: { // args
+      page: number; // Int!
+      perPage: number; // Int!
+    }
+    getCashierTopUpTransactionsByPagination: { // args
+      hydrate?: NexusGenInputs['TransactionHydrateOption'] | null; // TransactionHydrateOption
       page: number; // Int!
       perPage: number; // Int!
     }
