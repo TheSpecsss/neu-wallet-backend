@@ -1,3 +1,4 @@
+import { LoginAdminUseCase } from "@/modules/user/src/useCase/loginAdminUseCase";
 import { LoginUserUseCase } from "@/modules/user/src/useCase/loginUserUseCase";
 import { RegisterUserUseCase } from "@/modules/user/src/useCase/registerUserUseCase";
 import { UpdateUserAccountTypeByUserIdUseCase } from "@/modules/user/src/useCase/updateUserAccountTypeByUserId";
@@ -54,7 +55,7 @@ export default extendType({
 				password: nonNull(stringArg()),
 			},
 			resolve: (_, args) => {
-				const useCase = new LoginUserUseCase();
+				const useCase = new LoginAdminUseCase();
 				return useCase.execute(args);
 			},
 		});

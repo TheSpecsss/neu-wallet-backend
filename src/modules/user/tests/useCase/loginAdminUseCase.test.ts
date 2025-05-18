@@ -1,14 +1,14 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import { USER_ACCOUNT_TYPE } from "@/modules/user/src";
-import { LoginUserUseCase } from "@/modules/user/src/useCase/loginUserUseCase";
+import { LoginAdminUseCase } from "@/modules/user/src/useCase/loginAdminUseCase";
 import { seedUser } from "@/modules/user/tests/utils/seedUser";
 import { saltPassword } from "@/shared/infrastructure/authentication/saltPassword";
 
-describe("LoginUserUseCase", () => {
-	let useCase: LoginUserUseCase;
+describe("LoginAdminUseCase", () => {
+	let useCase: LoginAdminUseCase;
 
 	beforeAll(() => {
-		useCase = new LoginUserUseCase();
+		useCase = new LoginAdminUseCase();
 	});
 
 	it("should login admin user", async () => {
@@ -101,14 +101,17 @@ describe("LoginUserUseCase", () => {
 			errorMessage = (error as Error).message;
 		}
 
-		expect(errorMessage).toBe("Incorrect password. Please try again");
+		expect(errorMessage).toBe(`User ${seededUser.email} does not have admin permission`);
 	});
 
 	it("should throw error if password does not match", async () => {
 		const password = "password";
 		const saltedPassword = await saltPassword(password);
 
-		const seededUser = await seedUser({ password: saltedPassword });
+		const seededUser = await seedUser({
+			password: saltedPassword,
+			accountType: USER_ACCOUNT_TYPE.ADMIN,
+		});
 
 		let errorMessage = "";
 		try {

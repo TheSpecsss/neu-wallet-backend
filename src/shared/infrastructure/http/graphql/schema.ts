@@ -4,7 +4,8 @@ import userTypes from "@/modules/user/src/web";
 import verificationTypes from "@/modules/verification/src/web";
 import walletTypes from "@/modules/wallet/src/web";
 import types from "@/shared/infrastructure/http/graphql/types";
-import { fieldAuthorizePlugin, makeSchema } from "nexus";
+import { DateTimeResolver } from "graphql-scalars";
+import { asNexusMethod, fieldAuthorizePlugin, makeSchema } from "nexus";
 
 export const schema = makeSchema({
 	types: [
@@ -14,6 +15,7 @@ export const schema = makeSchema({
 		...userTypes,
 		...verificationTypes,
 		...walletTypes,
+		asNexusMethod(DateTimeResolver, "date"),
 	],
 	outputs: {
 		schema: `${__dirname}/generated/schema.graphql`,

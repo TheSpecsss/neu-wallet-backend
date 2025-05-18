@@ -24,7 +24,7 @@ export const AuditLog = objectType({
 		t.nonNull.string("actionType", {
 			resolve: (source) => (source as IAuditLog).actionTypeValue,
 		});
-		t.list.field("changes", {
+		t.nonNull.list.nonNull.field("changes", {
 			type: nonNull("AuditLogChange"),
 			resolve: (source) => (source as IAuditLog).changes,
 		});
