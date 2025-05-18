@@ -1,4 +1,7 @@
-import type { TransactionTypeKind } from "@/modules/transaction/src/domain/shared/constant";
+import type {
+	TransactionStatusKind,
+	TransactionTypeKind,
+} from "@/modules/transaction/src/domain/shared/constant";
 import type { TransactionHydrateOption } from "@/modules/transaction/src/repositories/transactionRepository";
 import type { UserAccountTypeKind } from "@/modules/user/src/domain/shared/constant";
 import type { OrderBy } from "@/shared/constant";
@@ -27,6 +30,9 @@ export interface GetTransactionsByFilterAndPaginationDTO {
 		endDate?: Date;
 		types?: TransactionTypeKind[];
 		accountTypes?: UserAccountTypeKind[];
+		status?: TransactionStatusKind[];
+		id?: string;
 		name?: string;
+		email?: string;
 	};
 }

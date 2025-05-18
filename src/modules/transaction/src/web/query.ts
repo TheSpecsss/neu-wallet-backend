@@ -1,4 +1,7 @@
-import type { TransactionTypeKind } from "@/modules/transaction/src/domain/shared/constant";
+import type {
+	TransactionStatusKind,
+	TransactionTypeKind,
+} from "@/modules/transaction/src/domain/shared/constant";
 import type { TransactionHydrateOption } from "@/modules/transaction/src/repositories/transactionRepository";
 import { GetCashierTopUpTransactionsByPaginationUseCase } from "@/modules/transaction/src/useCase/getCashierTopUpTransactionsByPaginationUseCase";
 import { GetCashierTransactionsByPaginationUseCase } from "@/modules/transaction/src/useCase/getCashierTransactionsByPaginationUseCase";
@@ -91,7 +94,10 @@ export default extendType({
 						endDate: filter?.endDate,
 						types: filter?.types as TransactionTypeKind[] | undefined,
 						accountTypes: filter?.accountTypes as UserAccountTypeKind[] | undefined,
+						status: filter?.status as TransactionStatusKind[] | undefined,
+						id: filter?.id as string | undefined,
 						name: filter?.name as string | undefined,
+						email: filter?.email as string | undefined,
 					}),
 				});
 			},

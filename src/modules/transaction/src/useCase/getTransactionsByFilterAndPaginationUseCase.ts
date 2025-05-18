@@ -34,7 +34,10 @@ export class GetTransactionsByFilterAndPaginationUseCase {
 				date: { from: filter?.startDate, to: filter?.endDate },
 				types: filter?.types,
 				accountTypes: filter?.accountTypes,
+				status: filter?.status,
+				id: filter?.id,
 				name: filter?.name,
+				email: filter?.email,
 			},
 			orderBy,
 		});
@@ -48,7 +51,9 @@ export class GetTransactionsByFilterAndPaginationUseCase {
 					date: { from: filter?.startDate, to: filter?.endDate },
 					types: filter?.types,
 					accountTypes: filter?.accountTypes,
+					id: filter?.id,
 					name: filter?.name,
+					email: filter?.email,
 				},
 			);
 

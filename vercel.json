@@ -1,0 +1,16 @@
+{
+	"version": 2,
+	"buildCommand": "npm run build",
+	"devCommand": "npm run dev",
+	"installCommand": "npm install",
+	"builds": [
+		{
+			"src": "dist/index.cjs",
+			"use": "@vercel/node"
+		}
+	],
+	"rewrites": [{ "source": "/(.*)", "destination": "/dist/index.cjs" }],
+	"env": {
+		"NODEJS_HELPERS": "0"
+	}
+}

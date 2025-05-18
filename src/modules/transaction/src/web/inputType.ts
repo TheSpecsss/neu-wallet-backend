@@ -1,8 +1,6 @@
 import {
 	TRANSACTION_STATUS,
 	TRANSACTION_TYPE,
-	type TransactionStatusKind,
-	type TransactionTypeKind,
 } from "@/modules/transaction/src/domain/shared/constant";
 import { enumType, inputObjectType, nonNull, objectType } from "nexus";
 
@@ -39,7 +37,10 @@ export default [
 			t.nullable.field("endDate", { type: "DateTime" });
 			t.nullable.list.nonNull.field("types", { type: "TransactionType" });
 			t.nullable.list.nonNull.field("accountTypes", { type: "UserAccountType" });
+			t.nullable.list.nonNull.field("status", { type: "TransactionStatus" });
+			t.nullable.string("id");
 			t.nullable.string("name");
+			t.nullable.string("email");
 		},
 	}),
 ];

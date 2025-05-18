@@ -1,0 +1,40 @@
+# Development
+.git
+.github
+.vscode
+.DS_Store
+*.swp
+*.env*
+!.env.example
+
+# Node.js
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# TypeScript
+*.tsbuildinfo
+*.ts.map
+
+# Build output that will be regenerated
+tsconfig.json
+tsup.config.ts
+biome.json
+README.md
+*.md
+
+# Misc
+.vercel
+.husky
+.editorconfig
+.eslint*
+.prettier*
+LICENSE
+*.lock
+.gitattributes
+docs
+test
+tests
+**/*.spec.*
+**/*.test.* 

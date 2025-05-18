@@ -109,17 +109,26 @@ async function seedUsers(count: number): Promise<IUserRawObject[]> {
 			name: faker.internet.username(),
 			accountType: faker.helpers.arrayElement(filteredAccountTypes),
 			isDeleted: false,
-			isVerified: true,
+			isVerified: faker.datatype.boolean(),
 			deletedAt: null,
 			createdAt: faker.date.past({ years: 1 }),
 			updatedAt: new Date(),
 		});
 
+		const status = user.isVerified
+			? VERIFICATION_STATUS.DONE
+			: faker.helpers.arrayElement([VERIFICATION_STATUS.EXPIRED, VERIFICATION_STATUS.PENDING]);
+
+		const expiredAt =
+			status === VERIFICATION_STATUS.EXPIRED
+				? new Date(user.createdAt.getTime() - 60 * 60 * 1000)
+				: new Date(user.createdAt.getTime() + 60 * 60 * 1000);
+
 		await seedVerification({
 			userId: user.id,
 			code: generateVerificationCode(),
-			status: VERIFICATION_STATUS.DONE,
-			expiredAt: new Date(user.createdAt.getTime() + 60 * 60 * 1000),
+			status,
+			expiredAt,
 			createdAt: user.createdAt,
 			updatedAt: user.createdAt,
 		});

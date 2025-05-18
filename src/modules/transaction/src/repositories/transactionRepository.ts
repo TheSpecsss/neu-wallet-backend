@@ -1,6 +1,7 @@
 import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
 import {
 	TRANSACTION_TYPE,
+	type TransactionStatusKind,
 	type TransactionTypeKind,
 } from "@/modules/transaction/src/domain/shared/constant";
 import { TransactionMapper } from "@/modules/transaction/src/mappers/transactionMapper";
@@ -8,6 +9,7 @@ import { UserService } from "@/modules/user/src";
 import type { UserAccountTypeKind } from "@/modules/user/src/domain/shared/constant";
 import type { OrderBy, Pagination } from "@/shared/constant";
 import { db } from "@/shared/infrastructure/database";
+import { addFilterCondition } from "@/shared/infrastructure/database/repositoryUtils";
 import type { Prisma } from "@prisma/client";
 
 export interface TransactionHydrateOption {
@@ -20,7 +22,10 @@ export interface TransactionFilterOption {
 	date?: { from?: Date; to?: Date };
 	types?: TransactionTypeKind[];
 	accountTypes?: UserAccountTypeKind[];
+	status?: TransactionStatusKind[];
+	id?: string;
 	name?: string;
+	email?: string;
 }
 
 export interface ITransactionRepository {
@@ -273,23 +278,26 @@ export class TransactionRepository implements ITransactionRepository {
 			where.type = { in: filter.types };
 		}
 
-		if (filter.accountTypes && filter.accountTypes.length > 0) {
-			const query = [
-				{ receiver: { accountType: { in: filter.accountTypes } } },
-				{ sender: { accountType: { in: filter.accountTypes } } },
-			];
-
-			where.OR = [...(where.OR || []), ...query];
+		if (filter.status && filter.status.length > 0) {
+			where.status = { in: filter.status };
 		}
 
-		if (filter.name) {
-			const query = [
-				{ sender: { name: { contains: filter.name } } },
-				{ receiver: { name: { contains: filter.name } } },
-			];
+		addFilterCondition(where, filter, "accountTypes", [
+			{ receiver: { accountType: { in: filter.accountTypes } } },
+			{ sender: { accountType: { in: filter.accountTypes } } },
+		]);
 
-			where.OR = [...(where.OR || []), ...query];
-		}
+		addFilterCondition(where, filter, "id", [{ senderId: filter.id }, { receiverId: filter.id }]);
+
+		addFilterCondition(where, filter, "name", [
+			{ sender: { name: { contains: filter.name, mode: "insensitive" } } },
+			{ receiver: { name: { contains: filter.name, mode: "insensitive" } } },
+		]);
+
+		addFilterCondition(where, filter, "email", [
+			{ sender: { email: { contains: filter.email, mode: "insensitive" } } },
+			{ receiver: { email: { contains: filter.email, mode: "insensitive" } } },
+		]);
 
 		if (!filter.isAdmin) {
 			const query = [{ senderId: userId }, { receiverId: userId }];

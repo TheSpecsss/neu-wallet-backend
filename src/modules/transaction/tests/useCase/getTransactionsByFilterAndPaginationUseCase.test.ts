@@ -68,6 +68,40 @@ describe("GetTransactionsByFilterAndPaginationUseCase", () => {
 		expect(transactionIds).toEqual([inRangeDepositOne.id, inRangeDepositTwo.id]);
 	});
 
+	it("should return all transactions when user is admin and filter transactions by user id", async () => {
+		const userAdmin = await seedUser({ accountType: USER_ACCOUNT_TYPE.ADMIN });
+		const userAlice = await seedUser();
+		const userBob = await seedUser();
+		const userCharlie = await seedUser();
+
+		const transaction1 = await seedTransaction({
+			senderId: userAlice.id,
+			receiverId: userBob.id,
+			type: TRANSACTION_TYPE.DEPOSIT,
+		});
+		const transaction2 = await seedTransaction({
+			senderId: userBob.id,
+			receiverId: userAlice.id,
+			type: TRANSACTION_TYPE.DEPOSIT,
+		});
+		await seedTransaction({
+			senderId: userCharlie.id,
+			receiverId: userBob.id,
+			type: TRANSACTION_TYPE.DEPOSIT,
+		});
+
+		const result = await useCase.execute({
+			perPage: 10,
+			page: 1,
+			userId: userAdmin.id,
+			filter: { id: userAlice.id },
+		});
+
+		expect(result.transactions).toHaveLength(2);
+		const ids = result.transactions.map((t) => t.idValue);
+		expect(ids).toEqual([transaction1.id, transaction2.id]);
+	});
+
 	it("should return all transactions when user is admin and filter transactions by user name", async () => {
 		const userAdmin = await seedUser({ accountType: USER_ACCOUNT_TYPE.ADMIN });
 		const userAlice = await seedUser({ name: "Alice" });
@@ -94,9 +128,41 @@ describe("GetTransactionsByFilterAndPaginationUseCase", () => {
 			perPage: 10,
 			page: 1,
 			userId: userAdmin.id,
-			filter: {
-				name: "Alice",
-			},
+			filter: { name: "Alice" },
+		});
+
+		expect(result.transactions).toHaveLength(2);
+		const ids = result.transactions.map((t) => t.idValue);
+		expect(ids).toEqual([transaction1.id, transaction2.id]);
+	});
+
+	it("should return all transactions when user is admin and filter transactions by user email", async () => {
+		const userAdmin = await seedUser({ accountType: USER_ACCOUNT_TYPE.ADMIN });
+		const userAlice = await seedUser();
+		const userBob = await seedUser();
+		const userCharlie = await seedUser();
+
+		const transaction1 = await seedTransaction({
+			senderId: userAlice.id,
+			receiverId: userBob.id,
+			type: TRANSACTION_TYPE.DEPOSIT,
+		});
+		const transaction2 = await seedTransaction({
+			senderId: userBob.id,
+			receiverId: userAlice.id,
+			type: TRANSACTION_TYPE.DEPOSIT,
+		});
+		await seedTransaction({
+			senderId: userCharlie.id,
+			receiverId: userBob.id,
+			type: TRANSACTION_TYPE.DEPOSIT,
+		});
+
+		const result = await useCase.execute({
+			perPage: 10,
+			page: 1,
+			userId: userAdmin.id,
+			filter: { email: userAlice.email },
 		});
 
 		expect(result.transactions).toHaveLength(2);
