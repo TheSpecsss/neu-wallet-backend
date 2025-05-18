@@ -5,7 +5,7 @@ export default [
 		name: "AuditLogChange",
 		definition(t) {
 			t.nonNull.string("key");
-			t.nonNull.list.field("values", { type: nonNull("AuditLogChangeValue") });
+			t.nonNull.list.nonNull.field("values", { type: nonNull("AuditLogChangeValue") });
 		},
 	}),
 	objectType({
@@ -25,7 +25,7 @@ export default [
 	objectType({
 		name: "AuditLogPagination",
 		definition(t) {
-			t.nonNull.list.field("auditLogs", { type: nonNull("AuditLog") });
+			t.nonNull.list.nonNull.field("auditLogs", { type: nonNull("AuditLog") });
 			t.nonNull.boolean("hasNextPage");
 			t.nonNull.boolean("hasPreviousPage");
 			t.nonNull.int("page");

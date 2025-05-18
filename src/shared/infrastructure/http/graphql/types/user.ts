@@ -21,11 +21,11 @@ export const User = objectType({
 			type: "Wallet",
 			resolve: (source) => (source as IUser).wallet,
 		});
-		t.list.field("sentTransactions", {
+		t.nonNull.list.nonNull.field("sentTransactions", {
 			type: nonNull("Transaction"),
 			resolve: (source) => (source as IUser).sentTransactions,
 		});
-		t.list.field("receivedTransactions", {
+		t.nonNull.list.nonNull.field("receivedTransactions", {
 			type: nonNull("Transaction"),
 			resolve: (source) => (source as IUser).receivedTransactions,
 		});

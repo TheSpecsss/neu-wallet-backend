@@ -1,4 +1,5 @@
-import { inputObjectType, nonNull, objectType } from "nexus";
+import { USER_ACCOUNT_TYPE } from "@/modules/user/src/domain/shared/constant";
+import { enumType, inputObjectType, nonNull, objectType } from "nexus";
 
 export default [
 	objectType({
@@ -17,7 +18,7 @@ export default [
 	objectType({
 		name: "UserPagination",
 		definition(t) {
-			t.nonNull.list.field("users", { type: nonNull("User") });
+			t.nonNull.list.nonNull.field("users", { type: nonNull("User") });
 			t.nonNull.boolean("hasNextPage");
 			t.nonNull.boolean("hasPreviousPage");
 			t.nonNull.int("page");
@@ -31,5 +32,9 @@ export default [
 			t.nonNull.boolean("sentTransactions");
 			t.nonNull.boolean("receivedTransactions");
 		},
+	}),
+	enumType({
+		name: "UserAccountType",
+		members: Object.keys(USER_ACCOUNT_TYPE),
 	}),
 ];

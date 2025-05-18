@@ -24,6 +24,9 @@ export const Transaction = objectType({
 		t.nonNull.float("amount", {
 			resolve: (source) => (source as ITransaction).amount,
 		});
+		t.nonNull.string("status", {
+			resolve: (source) => (source as ITransaction).statusValue,
+		});
 		t.nonNull.string("type", {
 			resolve: (source) => (source as ITransaction).typeValue,
 		});

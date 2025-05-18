@@ -5,8 +5,23 @@
 
 
 import type { FieldAuthorizeResolver } from "nexus/dist/plugins/fieldAuthorizePlugin"
-
-
+import type { core } from "nexus"
+declare global {
+  interface NexusGenCustomInputMethods<TypeName extends string> {
+    /**
+     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    date<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "DateTime";
+  }
+}
+declare global {
+  interface NexusGenCustomOutputMethods<TypeName extends string> {
+    /**
+     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "DateTime";
+  }
+}
 
 
 declare global {
@@ -17,6 +32,13 @@ export interface NexusGenInputs {
   AuditLogHydrateOption: { // input type
     executor: boolean; // Boolean!
     target: boolean; // Boolean!
+  }
+  TransactionFilter: { // input type
+    accountTypes?: NexusGenEnums['UserAccountType'][] | null; // [UserAccountType!]
+    endDate?: NexusGenScalars['DateTime'] | null; // DateTime
+    name?: string | null; // String
+    startDate?: NexusGenScalars['DateTime'] | null; // DateTime
+    types?: NexusGenEnums['TransactionType'][] | null; // [TransactionType!]
   }
   TransactionHydrateOption: { // input type
     receiver: boolean; // Boolean!
@@ -34,6 +56,10 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  OrderBy: "asc" | "desc"
+  TransactionStatus: "FAILED" | "PROCESSING" | "SUCCESS"
+  TransactionType: "DEPOSIT" | "PAYMENT" | "TRANSFER" | "WITHDRAW"
+  UserAccountType: "ADMIN" | "CASHIER" | "CASH_TOP_UP" | "SUPER_ADMIN" | "USER"
 }
 
 export interface NexusGenScalars {
@@ -42,6 +68,7 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
+  DateTime: any
 }
 
 export interface NexusGenObjects {
@@ -102,12 +129,12 @@ export interface NexusGenUnions {
 
 export type NexusGenRootTypes = NexusGenObjects
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
   AuditLog: { // field return type
     actionType: string; // String!
-    changes: NexusGenRootTypes['AuditLogChange'][] | null; // [AuditLogChange!]
+    changes: NexusGenRootTypes['AuditLogChange'][]; // [AuditLogChange!]!
     createdAt: string; // String!
     executor: NexusGenRootTypes['User'] | null; // User
     executorId: string; // ID!
@@ -153,6 +180,7 @@ export interface NexusGenFieldTypes {
     getCashierTopUpTransactionsByPagination: NexusGenRootTypes['TransactionsWithPagination'] | null; // TransactionsWithPagination
     getCashierTransactionsByPagination: NexusGenRootTypes['TransactionsWithPagination'] | null; // TransactionsWithPagination
     getRecentTransactionsByUserId: NexusGenRootTypes['TransactionsWithPagination'] | null; // TransactionsWithPagination
+    getTransactionsByFilterAndPagination: NexusGenRootTypes['TransactionsWithPagination'] | null; // TransactionsWithPagination
     getUser: NexusGenRootTypes['User'] | null; // User
     getUserBalanceByUserId: NexusGenRootTypes['UserBalance'] | null; // UserBalance
     getUsersByPagination: NexusGenRootTypes['UserPagination'] | null; // UserPagination
@@ -165,6 +193,7 @@ export interface NexusGenFieldTypes {
     receiverId: string; // ID!
     sender: NexusGenRootTypes['User'] | null; // User
     senderId: string; // ID!
+    status: string; // String!
     type: string; // String!
   }
   TransactionsWithPagination: { // field return type
@@ -182,8 +211,8 @@ export interface NexusGenFieldTypes {
     id: string; // String!
     isDeleted: boolean; // Boolean!
     name: string; // String!
-    receivedTransactions: NexusGenRootTypes['Transaction'][] | null; // [Transaction!]
-    sentTransactions: NexusGenRootTypes['Transaction'][] | null; // [Transaction!]
+    receivedTransactions: NexusGenRootTypes['Transaction'][]; // [Transaction!]!
+    sentTransactions: NexusGenRootTypes['Transaction'][]; // [Transaction!]!
     updatedAt: string; // String!
     wallet: NexusGenRootTypes['Wallet'] | null; // Wallet
   }
@@ -271,6 +300,7 @@ export interface NexusGenFieldTypeNames {
     getCashierTopUpTransactionsByPagination: 'TransactionsWithPagination'
     getCashierTransactionsByPagination: 'TransactionsWithPagination'
     getRecentTransactionsByUserId: 'TransactionsWithPagination'
+    getTransactionsByFilterAndPagination: 'TransactionsWithPagination'
     getUser: 'User'
     getUserBalanceByUserId: 'UserBalance'
     getUsersByPagination: 'UserPagination'
@@ -283,6 +313,7 @@ export interface NexusGenFieldTypeNames {
     receiverId: 'ID'
     sender: 'User'
     senderId: 'ID'
+    status: 'String'
     type: 'String'
   }
   TransactionsWithPagination: { // field return type name
@@ -412,6 +443,13 @@ export interface NexusGenArgTypes {
       page: number; // Int!
       perPage: number; // Int!
     }
+    getTransactionsByFilterAndPagination: { // args
+      filter?: NexusGenInputs['TransactionFilter'] | null; // TransactionFilter
+      hydrate?: NexusGenInputs['TransactionHydrateOption'] | null; // TransactionHydrateOption
+      orderBy?: NexusGenEnums['OrderBy'] | null; // OrderBy
+      page: number; // Int!
+      perPage: number; // Int!
+    }
     getUsersByPagination: { // args
       page: number; // Int!
       perPage: number; // Int!
@@ -429,7 +467,7 @@ export type NexusGenObjectNames = keyof NexusGenObjects;
 
 export type NexusGenInputNames = keyof NexusGenInputs;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = keyof NexusGenEnums;
 
 export type NexusGenInterfaceNames = never;
 

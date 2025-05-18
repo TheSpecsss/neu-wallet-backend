@@ -6,7 +6,7 @@ import { UserRepository } from "@/modules/user/src/repositories/userRepository";
 import { comparePassword } from "@/shared/infrastructure/authentication/comparePassword";
 import { createToken } from "@/shared/infrastructure/authentication/createToken";
 
-export class LoginUserUseCase {
+export class LoginAdminUseCase {
 	constructor(
 		private _userRepository = new UserRepository(),
 		private _userRoleManagementService = new UserRoleManagementService(),

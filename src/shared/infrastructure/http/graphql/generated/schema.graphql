@@ -4,7 +4,7 @@
 
 type AuditLog {
   actionType: String!
-  changes: [AuditLogChange!]
+  changes: [AuditLogChange!]!
   createdAt: String!
   executor: User
   executorId: ID!
@@ -36,6 +36,11 @@ type AuditLogPagination {
   totalPages: Int!
 }
 
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
 type Login {
   expiresAt: String!
   token: String!
@@ -56,11 +61,17 @@ type Mutation {
   withdrawBalance(amount: Int!, topUpCashierId: String!): Wallet
 }
 
+enum OrderBy {
+  asc
+  desc
+}
+
 type Query {
   getAuditLogsByPagination(page: Int!, perPage: Int!): AuditLogPagination
   getCashierTopUpTransactionsByPagination(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionsWithPagination
   getCashierTransactionsByPagination(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionsWithPagination
   getRecentTransactionsByUserId(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionsWithPagination
+  getTransactionsByFilterAndPagination(filter: TransactionFilter, hydrate: TransactionHydrateOption, orderBy: OrderBy, page: Int!, perPage: Int!): TransactionsWithPagination
   getUser: User
   getUserBalanceByUserId: UserBalance
   getUsersByPagination(page: Int!, perPage: Int!): UserPagination
@@ -74,12 +85,34 @@ type Transaction {
   receiverId: ID!
   sender: User
   senderId: ID!
+  status: String!
   type: String!
+}
+
+input TransactionFilter {
+  accountTypes: [UserAccountType!]
+  endDate: DateTime
+  name: String
+  startDate: DateTime
+  types: [TransactionType!]
 }
 
 input TransactionHydrateOption {
   receiver: Boolean!
   sender: Boolean!
+}
+
+enum TransactionStatus {
+  FAILED
+  PROCESSING
+  SUCCESS
+}
+
+enum TransactionType {
+  DEPOSIT
+  PAYMENT
+  TRANSFER
+  WITHDRAW
 }
 
 type TransactionsWithPagination {
@@ -98,10 +131,18 @@ type User {
   id: String!
   isDeleted: Boolean!
   name: String!
-  receivedTransactions: [Transaction!]
-  sentTransactions: [Transaction!]
+  receivedTransactions: [Transaction!]!
+  sentTransactions: [Transaction!]!
   updatedAt: String!
   wallet: Wallet
+}
+
+enum UserAccountType {
+  ADMIN
+  CASHIER
+  CASH_TOP_UP
+  SUPER_ADMIN
+  USER
 }
 
 type UserBalance {

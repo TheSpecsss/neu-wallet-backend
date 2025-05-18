@@ -1,13 +1,26 @@
 import type { ITransaction } from "@/modules/transaction/src/domain/classes/transaction";
-import { TRANSACTION_TYPE } from "@/modules/transaction/src/domain/shared/constant";
+import {
+	TRANSACTION_TYPE,
+	type TransactionTypeKind,
+} from "@/modules/transaction/src/domain/shared/constant";
 import { TransactionMapper } from "@/modules/transaction/src/mappers/transactionMapper";
 import { UserService } from "@/modules/user/src";
-import type { Pagination } from "@/shared/constant";
+import type { UserAccountTypeKind } from "@/modules/user/src/domain/shared/constant";
+import type { OrderBy, Pagination } from "@/shared/constant";
 import { db } from "@/shared/infrastructure/database";
+import type { Prisma } from "@prisma/client";
 
 export interface TransactionHydrateOption {
 	sender?: boolean;
 	receiver?: boolean;
+}
+
+export interface TransactionFilterOption {
+	isAdmin?: boolean;
+	date?: { from?: Date; to?: Date };
+	types?: TransactionTypeKind[];
+	accountTypes?: UserAccountTypeKind[];
+	name?: string;
 }
 
 export interface ITransactionRepository {
@@ -19,6 +32,18 @@ export interface ITransactionRepository {
 		hydrate?: TransactionHydrateOption,
 	): Promise<ITransaction[]>;
 	getTransactionsByUserIdTotalPages(userId: string, perPage: number): Promise<number>;
+	getTransactionsByFilterAndPagination(args: {
+		pagination: Pagination;
+		userId: string;
+		hydrate?: TransactionHydrateOption;
+		filter?: TransactionFilterOption;
+		orderBy?: OrderBy;
+	}): Promise<ITransaction[]>;
+	getTransactionsByFilterAndPaginationTotalPages(
+		perPage: number,
+		userId: string,
+		filter?: TransactionFilterOption,
+	): Promise<number>;
 	getCashierTransactionsByPagination(
 		pagination: Pagination,
 		hydrate?: TransactionHydrateOption,
@@ -85,6 +110,42 @@ export class TransactionRepository implements ITransactionRepository {
 	public async getTransactionsByUserIdTotalPages(userId: string, perPage: number): Promise<number> {
 		const totalCount = await this._database.count({
 			where: { OR: [{ senderId: userId }, { receiverId: userId }] },
+		});
+
+		return Math.ceil(totalCount / perPage);
+	}
+
+	public async getTransactionsByFilterAndPagination({
+		pagination,
+		userId,
+		hydrate,
+		filter = { isAdmin: false },
+		orderBy,
+	}: {
+		pagination: Pagination;
+		userId: string;
+		hydrate?: TransactionHydrateOption;
+		filter?: TransactionFilterOption;
+		orderBy?: OrderBy;
+	}): Promise<ITransaction[]> {
+		const transactionsRaw = await this._database.findMany({
+			where: this._transactionFilter(userId, filter),
+			skip: pagination.start,
+			take: pagination.size,
+			include: this._hydrateFilter(hydrate),
+			orderBy: { createdAt: orderBy ?? "asc" },
+		});
+
+		return transactionsRaw.map((transaction) => this._mapper.toDomain(transaction));
+	}
+
+	public async getTransactionsByFilterAndPaginationTotalPages(
+		perPage: number,
+		userId: string,
+		filter: TransactionFilterOption = { isAdmin: false },
+	): Promise<number> {
+		const totalCount = await this._database.count({
+			where: this._transactionFilter(userId, filter),
 		});
 
 		return Math.ceil(totalCount / perPage);
@@ -188,5 +249,53 @@ export class TransactionRepository implements ITransactionRepository {
 			sender: hydrate?.sender ?? true,
 			receiver: hydrate?.receiver ?? true,
 		};
+	}
+
+	private _transactionFilter(
+		userId: string,
+		filter: TransactionFilterOption,
+	): Prisma.UserTransactionWhereInput {
+		if (!filter) return {};
+
+		const where: Prisma.UserTransactionWhereInput = {};
+
+		if (filter.date) {
+			where.createdAt = {};
+			if (filter.date.from) {
+				where.createdAt.gte = filter.date.from;
+			}
+			if (filter.date.to) {
+				where.createdAt.lte = filter.date.to;
+			}
+		}
+
+		if (filter.types && filter.types.length > 0) {
+			where.type = { in: filter.types };
+		}
+
+		if (filter.accountTypes && filter.accountTypes.length > 0) {
+			const query = [
+				{ receiver: { accountType: { in: filter.accountTypes } } },
+				{ sender: { accountType: { in: filter.accountTypes } } },
+			];
+
+			where.OR = [...(where.OR || []), ...query];
+		}
+
+		if (filter.name) {
+			const query = [
+				{ sender: { name: { contains: filter.name } } },
+				{ receiver: { name: { contains: filter.name } } },
+			];
+
+			where.OR = [...(where.OR || []), ...query];
+		}
+
+		if (!filter.isAdmin) {
+			const query = [{ senderId: userId }, { receiverId: userId }];
+			where.OR = [...(where.OR || []), ...query];
+		}
+
+		return where;
 	}
 }
