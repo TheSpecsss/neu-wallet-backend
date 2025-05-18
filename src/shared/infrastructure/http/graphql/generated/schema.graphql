@@ -13,6 +13,13 @@ type AuditLog {
   targetId: ID!
 }
 
+enum AuditLogActionType {
+  USER_DELETE
+  USER_UPDATE
+  WALLET_DELETE
+  WALLET_UPDATE
+}
+
 type AuditLogChange {
   key: String!
   values: [AuditLogChangeValue!]!
@@ -21,6 +28,15 @@ type AuditLogChange {
 type AuditLogChangeValue {
   from: String!
   to: String!
+}
+
+input AuditLogFilter {
+  actionTypes: [AuditLogActionType!]
+  email: String
+  endDate: DateTime
+  id: String
+  name: String
+  startDate: DateTime
 }
 
 input AuditLogHydrateOption {
@@ -67,6 +83,7 @@ enum OrderBy {
 }
 
 type Query {
+  getAuditLogsByFilterAndPagination(filter: AuditLogFilter, hydrate: AuditLogHydrateOption, orderBy: OrderBy, page: Int!, perPage: Int!): AuditLogPagination
   getAuditLogsByPagination(page: Int!, perPage: Int!): AuditLogPagination
   getCashierTopUpTransactionsByPagination(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionsWithPagination
   getCashierTransactionsByPagination(hydrate: TransactionHydrateOption, page: Int!, perPage: Int!): TransactionsWithPagination

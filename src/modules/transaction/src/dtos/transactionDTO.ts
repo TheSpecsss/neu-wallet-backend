@@ -27,6 +27,8 @@ export interface GetTransactionsByFilterAndPaginationDTO {
 		endDate?: Date;
 		types?: TransactionTypeKind[];
 		accountTypes?: UserAccountTypeKind[];
+		id?: string;
 		name?: string;
+		email?: string;
 	};
 }

@@ -29,6 +29,14 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  AuditLogFilter: { // input type
+    actionTypes?: NexusGenEnums['AuditLogActionType'][] | null; // [AuditLogActionType!]
+    email?: string | null; // String
+    endDate?: NexusGenScalars['DateTime'] | null; // DateTime
+    id?: string | null; // String
+    name?: string | null; // String
+    startDate?: NexusGenScalars['DateTime'] | null; // DateTime
+  }
   AuditLogHydrateOption: { // input type
     executor: boolean; // Boolean!
     target: boolean; // Boolean!
@@ -56,6 +64,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  AuditLogActionType: "USER_DELETE" | "USER_UPDATE" | "WALLET_DELETE" | "WALLET_UPDATE"
   OrderBy: "asc" | "desc"
   TransactionStatus: "FAILED" | "PROCESSING" | "SUCCESS"
   TransactionType: "DEPOSIT" | "PAYMENT" | "TRANSFER" | "WITHDRAW"
@@ -176,6 +185,7 @@ export interface NexusGenFieldTypes {
     withdrawBalance: NexusGenRootTypes['Wallet'] | null; // Wallet
   }
   Query: { // field return type
+    getAuditLogsByFilterAndPagination: NexusGenRootTypes['AuditLogPagination'] | null; // AuditLogPagination
     getAuditLogsByPagination: NexusGenRootTypes['AuditLogPagination'] | null; // AuditLogPagination
     getCashierTopUpTransactionsByPagination: NexusGenRootTypes['TransactionsWithPagination'] | null; // TransactionsWithPagination
     getCashierTransactionsByPagination: NexusGenRootTypes['TransactionsWithPagination'] | null; // TransactionsWithPagination
@@ -296,6 +306,7 @@ export interface NexusGenFieldTypeNames {
     withdrawBalance: 'Wallet'
   }
   Query: { // field return type name
+    getAuditLogsByFilterAndPagination: 'AuditLogPagination'
     getAuditLogsByPagination: 'AuditLogPagination'
     getCashierTopUpTransactionsByPagination: 'TransactionsWithPagination'
     getCashierTransactionsByPagination: 'TransactionsWithPagination'
@@ -424,6 +435,13 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    getAuditLogsByFilterAndPagination: { // args
+      filter?: NexusGenInputs['AuditLogFilter'] | null; // AuditLogFilter
+      hydrate?: NexusGenInputs['AuditLogHydrateOption'] | null; // AuditLogHydrateOption
+      orderBy?: NexusGenEnums['OrderBy'] | null; // OrderBy
+      page: number; // Int!
+      perPage: number; // Int!
+    }
     getAuditLogsByPagination: { // args
       page: number; // Int!
       perPage: number; // Int!
